@@ -1,0 +1,56 @@
+{
+  "tree": {
+    "fusebox-hot-reload@0.0.0": {
+      "deps": {
+        "fusebox-websocket@0.0.0": {
+          "deps": {
+            "events@0.0.0": {
+              "deps": {},
+              "name": "events",
+              "version": "0.0.0"
+            }
+          },
+          "name": "fusebox-websocket",
+          "version": "0.0.0"
+        }
+      },
+      "name": "fusebox-hot-reload",
+      "version": "0.0.0"
+    },
+    "p5@0.6.0": {
+      "deps": {},
+      "name": "p5",
+      "version": "0.6.0"
+    }
+  },
+  "flat": {
+    "fusebox-hot-reload@0.0.0": {
+      "name": "fusebox-hot-reload",
+      "version": "0.0.0",
+      "files": [
+        "index.js"
+      ]
+    },
+    "fusebox-websocket@0.0.0": {
+      "name": "fusebox-websocket",
+      "version": "0.0.0",
+      "files": [
+        "index.js"
+      ]
+    },
+    "events@0.0.0": {
+      "name": "events",
+      "version": "0.0.0",
+      "files": [
+        "index.js"
+      ]
+    },
+    "p5@0.6.0": {
+      "name": "p5",
+      "version": "0.6.0",
+      "files": [
+        "lib/p5.js"
+      ]
+    }
+  }
+}

@@ -1,0 +1,3 @@
+class LightQueue {
+  private priorityQueue;
+}
