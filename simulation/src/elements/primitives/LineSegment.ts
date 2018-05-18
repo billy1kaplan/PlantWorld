@@ -189,4 +189,12 @@ export class LineSegment implements Drawable, Primitive {
     return firstOpt.map(f => Optional.of(new LineSegment(p1, p2)))
         .getOrElse(Optional.empty());
   }
+
+  getP1() {
+    return this.p1;
+  }
+
+  getP2() {
+    return this.p2;
+  }
 }

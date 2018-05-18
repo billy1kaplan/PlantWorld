@@ -5,22 +5,34 @@ import {Point} from '../elements/primitives/Point';
 import {Sun} from '../world/Sun';
 
 import {Doodle} from './Doodle';
-import {DoodleSubSegment} from './DoodleSubSegment';
+import {DoodlePart} from './DoodlePart';
+import {SpokePart} from './SpokePart';
 
-export class DoodleSegment {
-  private doodle: Doodle;
+export interface IDoodleSegment {
+  update(visible: LineSegment[]): void;
+  collectEnergy(sun: Sun): void;
+  grow(): DoodlePart;
+}
+
+export class DoodleSegment implements IDoodleSegment, DoodlePart {
   private lineSegment: LineSegment;
   private visible: LineSegment[];
 
-  static of(doodle: Doodle, lineSegment: LineSegment) {
-    return new DoodleSegment(doodle, lineSegment, []);
+  private nextPart: DoodlePart;
+
+  static of(nextPart: DoodlePart, lineSegment: LineSegment) {
+    return new DoodleSegment(nextPart, lineSegment, []);
   }
 
   private constructor(
-      doodle: Doodle, lineSegment: LineSegment, visible: LineSegment[]) {
-    this.doodle = doodle;
+      nextPart: DoodlePart, lineSegment: LineSegment, visible: LineSegment[]) {
+    this.nextPart = nextPart;
     this.lineSegment = lineSegment;
     this.visible = visible;
+  }
+
+  children() {
+    return [this.nextPart];
   }
 
   update(visible: LineSegment[]) {
@@ -39,10 +51,22 @@ export class DoodleSegment {
     const energy = this.visible.map(a => sun.energyFunctionFromLineSegment(a))
                        .reduce((a, b) => a + b, 0);
     console.log(energy);
-    this.doodle.collectEnergy(energy);
   }
 
   getSegment() {
+    return this.lineSegment;
+  }
+
+  grow(): DoodlePart {
+    return this.nextPart.grow();
+  }
+
+  print(): void {
+    console.log(this);
+    this.nextPart.print();
+  }
+
+  getLine() {
     return this.lineSegment;
   }
 }

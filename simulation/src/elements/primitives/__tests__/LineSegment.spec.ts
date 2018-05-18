@@ -2,7 +2,7 @@ import 'mocha';
 
 import {expect} from 'chai';
 
-import {Optional} from '../../../optional/Optional';
+import {Optional} from 'Optional';
 import {LineSegment} from '../LineSegment';
 import {Point} from '../Point';
 

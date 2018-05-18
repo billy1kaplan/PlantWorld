@@ -1,10 +1,14 @@
 import {Doodle} from './doodle/Doodle';
+import {DoodleGenome} from './doodle/DoodleGenome';
 import {DoodleSegment} from './doodle/DoodleSegment';
+import {Seed, SeedGenome} from './doodle/SeedGenome';
+import {UnidirectionalStem} from './doodle/UnidirectionalStem';
 import {LineSegment} from './elements/primitives/LineSegment';
 import {Point} from './elements/primitives/Point';
 import {EnergyBoard} from './world/Board';
 import {Sun} from './world/Sun';
 
+/*
 const sun = new Sun(1, 10);
 const lineSegment = new LineSegment(new Point(0.1, 0.1), new Point(1, 1));
 const doodle = new Doodle(10);
@@ -15,6 +19,23 @@ doodle.act(energyBoard);
 energyBoard.distributeEnergy();
 doodle.act(energyBoard);
 energyBoard.distributeEnergy();
+*/
+
+const doodleGenome = new DoodleGenome();
+const seedGenome = new SeedGenome(doodleGenome);
+console.log('Start');
+const seed = new Seed(seedGenome);
+seed.print();
+console.log('-------------------');
+const plant = seed.grow();
+plant.print();
+console.log('-------------------');
+const plant2 = plant.grow();
+plant2.print();
+console.log('-------------------');
+const plant3 = plant2.grow();
+plant3.print();
+console.log('-------------------');
 
 /*
 const MS_PER_UPDATE = 1;

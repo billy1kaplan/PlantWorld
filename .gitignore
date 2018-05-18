@@ -8,5 +8,5 @@ application.windows64
 application.macosx
 **/dist
 **/build
-core/.fusebox
+**/.fusebox
 **/npm-debug.log

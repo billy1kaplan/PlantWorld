@@ -23,8 +23,9 @@ export class Doodle {
     const a = this.energyLevel * Math.random();
     const b = this.energyLevel * Math.random();
 
-    return DoodleSegment.of(
-        this, new LineSegment(new Point(0.5, 0.5), new Point(a, b)));
+    return null;  // DoodleSegment.of(
+                  // this, new LineSegment(new Point(0.5, 0.5), new Point(a,
+                  // b)));
   }
 
   collectEnergy(energy: number): void {

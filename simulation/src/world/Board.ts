@@ -1,5 +1,4 @@
 import {DoodleSegment} from '../doodle/DoodleSegment';
-import {DoodleSubSegment} from '../doodle/DoodleSubSegment';
 import {LineSegment} from '../elements/primitives/LineSegment';
 import {Point} from '../elements/primitives/Point';
 
@@ -18,7 +17,7 @@ export class EnergyBoard {
     this.visibleSegments.insertSegment(doodleSegment);
   }
 
-  distributeEnergy() {
+  distributeEnergy(): void {
     this.visibleSegments.getSeg().forEach(element => {
       element.collectEnergy(this.sun);
     });

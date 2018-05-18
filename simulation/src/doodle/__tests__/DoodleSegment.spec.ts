@@ -7,6 +7,7 @@ import {Point} from '../../elements/primitives/Point';
 import {DoodleSegment} from '../DoodleSegment';
 
 
+/*
 describe('Visible segments test', () => {
   it('Should construct the segment of appropriate visibility', () => {
     const lineSegment = new LineSegment(new Point(0, 0), new Point(1, 1));
@@ -45,3 +46,4 @@ describe('Visible segments test', () => {
 const assertEqualsJson = (actual: any, expected: any) => {
   expect(JSON.stringify(expected)).to.equal(JSON.stringify(actual));
 }
+*/
