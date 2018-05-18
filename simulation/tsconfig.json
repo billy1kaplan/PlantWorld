@@ -12,6 +12,7 @@
             "mocha-typescript",
             "mocha",
             "chai",
+            "node"
         ]
     },
     "include": [
