@@ -45,4 +45,12 @@ export class UnidirectionalStem implements IDoodleSegment {
   collectEnergy(sun: Sun): void {
     throw new Error('Method not implemented.');
   }
+
+  segments() {
+    return [];
+  }
+
+  getLine() {
+    return this.lineSegment;
+  }
 }

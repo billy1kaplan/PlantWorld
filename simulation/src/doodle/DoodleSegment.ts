@@ -8,10 +8,11 @@ import {Doodle} from './Doodle';
 import {DoodlePart} from './DoodlePart';
 import {SpokePart} from './SpokePart';
 
+
 export interface IDoodleSegment {
-  update(visible: LineSegment[]): void;
   collectEnergy(sun: Sun): void;
   grow(): DoodlePart;
+  getLine(): LineSegment;
 }
 
 export class DoodleSegment implements IDoodleSegment, DoodlePart {
@@ -68,5 +69,9 @@ export class DoodleSegment implements IDoodleSegment, DoodlePart {
 
   getLine() {
     return this.lineSegment;
+  }
+
+  segments() {
+    return [this];
   }
 }

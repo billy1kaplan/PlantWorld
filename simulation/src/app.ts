@@ -4,10 +4,12 @@ import {DoodleSegment, IDoodleSegment} from './doodle/DoodleSegment';
 var canvas: HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D;
 
-type drawable = DoodlePart|IDoodleSegment;
-const drawPlant = (root: drawable): void => {
-  if (root instanceof DoodleSegment) {
-    const line = root.getLine();
+const drawPlant = (root: DoodlePart): void => {
+  const lines = root.segments()
+
+  lines.forEach(lineSeg => {
+    const line = lineSeg.getLine();
+
     const p1 = line.getP1();
     const p2 = line.getP2();
 
@@ -17,7 +19,9 @@ const drawPlant = (root: drawable): void => {
     ctx.lineWidth = 5;
     ctx.lineTo(p2.x, p2.y);
     ctx.stroke();
-  }
+  });
+
+  root.children().forEach(c => drawPlant(c));
 };
 
 function simulationLoop() {
@@ -30,7 +34,7 @@ function simulationLoop() {
   ctx.strokeStyle = 'white';
   ctx.moveTo(10, 10);
   ctx.lineWidth = 5;
-  ctx.lineTo(400, 400);
+  ctx.lineTo(200, 700);
   ctx.stroke();
 }
 

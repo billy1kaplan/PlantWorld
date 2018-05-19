@@ -22,4 +22,8 @@ export class UndifferentiatedPart implements DoodlePart {
   print(): void {
     console.log(this);
   }
+
+  segments() {
+    return [];
+  }
 }

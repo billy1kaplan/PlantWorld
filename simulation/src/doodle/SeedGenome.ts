@@ -52,4 +52,8 @@ export class Seed implements ISeedGenome, DoodlePart {
   getDoodleGenome(): IDoodleGenome {
     return this.doodleGenome.getDoodleGenome();
   }
+
+  segments() {
+    return [];
+  }
 }

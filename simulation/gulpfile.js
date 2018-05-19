@@ -4,12 +4,17 @@ var source = require('vinyl-source-stream');
 var tsify = require('tsify');
 var paths = {pages: ['src/*.html']};
 var server = require('gulp-webserver');
+var plumber = require('gulp-plumber');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 
 gulp.task('copy-html', function() {
   return gulp.src(paths.pages).pipe(gulp.dest('dist'));
 });
+
+const captureError = (err) => {
+  console.log(err);
+};
 
 gulp.task('build', ['copy-html'], function() {
   return browserify({
@@ -21,6 +26,7 @@ gulp.task('build', ['copy-html'], function() {
          })
       .plugin(tsify)
       .bundle()
+      .on('error', captureError)
       .pipe(source('bundle.js'))
       .pipe(gulp.dest('dist'))
 });

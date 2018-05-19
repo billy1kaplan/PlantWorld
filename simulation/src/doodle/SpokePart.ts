@@ -24,4 +24,8 @@ export class SpokePart implements DoodlePart {
     console.log(this);
     this.doodleSegments.forEach(e => e.print());
   }
+
+  segments() {
+    return [];
+  }
 }
