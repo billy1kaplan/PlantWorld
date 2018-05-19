@@ -26,5 +26,18 @@ gulp.task('build', ['copy-html'], function() {
 });
 
 gulp.task('server', ['build'], function() {
-  browserSync({server: {baseDir: 'dist'}})
+  browserSync({server: {baseDir: 'dist'}});
+});
+
+gulp.task('default', function() {
+  gulp.run('server');
+
+  gulp.watch(
+      [
+        'src/*.ts',
+      ],
+      () => {
+        gulp.run('build');
+        browserSync.reload();
+      })
 });
