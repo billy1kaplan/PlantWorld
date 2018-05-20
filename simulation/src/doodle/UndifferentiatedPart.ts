@@ -1,3 +1,8 @@
+import {IDrawingManager} from '../drawing/SimpleDrawingManager';
+import {Line} from '../elements/primitives/Line';
+import {LineSegment} from '../elements/primitives/LineSegment';
+import {Point} from '../elements/primitives/Point';
+
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodlePart} from './DoodlePart';
 import {DoodleSegment} from './DoodleSegment';
@@ -11,7 +16,9 @@ export class UndifferentiatedPart implements DoodlePart {
 
   grow(): DoodlePart {
     const undifferentiatedPart = new UndifferentiatedPart(this.doodleGenome);
-    const segment = DoodleSegment.of(undifferentiatedPart, null);
+    const segment = DoodleSegment.of(
+        undifferentiatedPart,
+        new LineSegment(new Point(20, 20), new Point(100, 100)));
     return new SpokePart(this.doodleGenome, [segment, segment, segment]);
   }
 
@@ -26,4 +33,6 @@ export class UndifferentiatedPart implements DoodlePart {
   segments() {
     return [];
   }
+
+  draw(drawingManager: IDrawingManager): void {}
 }

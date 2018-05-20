@@ -1,5 +1,6 @@
 import {Optional} from 'Optional';
 
+import {IDrawingManager} from '../drawing/SimpleDrawingManager';
 import {LineSegment} from '../elements/primitives/LineSegment';
 import {Point} from '../elements/primitives/Point';
 import {Sun} from '../world/Sun';
@@ -73,5 +74,9 @@ export class DoodleSegment implements IDoodleSegment, DoodlePart {
 
   segments() {
     return [this];
+  }
+
+  draw(drawingManager: IDrawingManager): void {
+    drawingManager.drawLine(this.lineSegment.getP1(), this.lineSegment.getP2());
   }
 }

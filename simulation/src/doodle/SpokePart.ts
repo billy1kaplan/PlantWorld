@@ -1,3 +1,5 @@
+import {IDrawingManager} from '../drawing/SimpleDrawingManager';
+
 import {DoodleGenome, IDoodleGenome} from './DoodleGenome';
 import {DoodlePart} from './DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './DoodleSegment';
@@ -27,5 +29,9 @@ export class SpokePart implements DoodlePart {
 
   segments() {
     return [];
+  }
+
+  draw(drawingManager: IDrawingManager): void {
+    this.doodleSegments.forEach(segment => segment.draw(drawingManager));
   }
 }

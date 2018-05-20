@@ -2,7 +2,6 @@ import {Doodle} from './doodle/Doodle';
 import {DoodleGenome} from './doodle/DoodleGenome';
 import {DoodleSegment} from './doodle/DoodleSegment';
 import {Seed, SeedGenome} from './doodle/SeedGenome';
-import {UnidirectionalStem} from './doodle/UnidirectionalStem';
 import {LineSegment} from './elements/primitives/LineSegment';
 import {Point} from './elements/primitives/Point';
 import {EnergyBoard} from './world/Board';

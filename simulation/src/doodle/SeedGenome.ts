@@ -1,3 +1,7 @@
+import {IDrawingManager} from '../drawing/SimpleDrawingManager';
+import {LineSegment} from '../elements/primitives/LineSegment';
+import {Point} from '../elements/primitives/Point';
+
 import {Doodle} from './Doodle';
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodlePart} from './DoodlePart';
@@ -18,7 +22,9 @@ export class SeedGenome implements ISeedGenome {
 
   grow() {
     const undifferentiatedPart = new UndifferentiatedPart(this.doodleGenome);
-    const segment = DoodleSegment.of(undifferentiatedPart, null);
+    const segment = DoodleSegment.of(
+        undifferentiatedPart,
+        new LineSegment(new Point(10, 10), new Point(50, 50)));
     return new SpokePart(this.doodleGenome, [segment, segment]);
   }
 
@@ -56,4 +62,6 @@ export class Seed implements ISeedGenome, DoodlePart {
   segments() {
     return [];
   }
+
+  draw(drawingManager: IDrawingManager): void {}
 }

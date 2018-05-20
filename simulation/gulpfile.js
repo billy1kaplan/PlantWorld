@@ -40,7 +40,7 @@ gulp.task('default', function() {
 
   gulp.watch(
       [
-        'src/*.ts',
+        'src/**/*.ts',
       ],
       () => {
         gulp.run('build');
