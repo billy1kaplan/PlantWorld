@@ -4,22 +4,27 @@ import {LineSegment} from '../elements/primitives/LineSegment';
 import {Point} from '../elements/primitives/Point';
 
 import {IDoodleGenome} from './DoodleGenome';
+import {DoodleLocation} from './DoodleLocation';
 import {DoodlePart} from './DoodlePart';
 import {DoodleSegment} from './DoodleSegment';
 import {SpokePart} from './SpokePart';
 
 export class UndifferentiatedPart implements DoodlePart {
   private doodleGenome: IDoodleGenome;
-  constructor(doodleGenome: IDoodleGenome) {
+  private doodleLocation: DoodleLocation;
+
+  constructor(doodleGenome: IDoodleGenome, doodleLocation: DoodleLocation) {
     this.doodleGenome = doodleGenome;
+    this.doodleLocation = doodleLocation;
   }
 
-  grow(): DoodlePart {
-    const undifferentiatedPart = new UndifferentiatedPart(this.doodleGenome);
-    const segment = DoodleSegment.of(
-        undifferentiatedPart,
-        new LineSegment(new Point(20, 20), new Point(100, 100)));
-    return new SpokePart(this.doodleGenome, [segment, segment, segment]);
+  grow(doodleLocation: DoodleLocation): DoodlePart {
+    const undifferentiatedPart =
+        new UndifferentiatedPart(this.doodleGenome, doodleLocation);
+    const segment =
+        DoodleSegment.of(undifferentiatedPart, 50, 50, doodleLocation);
+    return new SpokePart(
+        this.doodleGenome, doodleLocation, [segment, segment, segment]);
   }
 
   children() {

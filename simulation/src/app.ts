@@ -1,4 +1,5 @@
 import {DoodleGenome} from './doodle/DoodleGenome';
+import {DoodleLocation} from './doodle/DoodleLocation';
 import {DoodlePart} from './doodle/DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './doodle/DoodleSegment';
 import {Seed, SeedGenome} from './doodle/SeedGenome';
@@ -6,6 +7,8 @@ import {IDrawingManager, SimpleDrawingManager} from './drawing/SimpleDrawingMana
 
 var canvas: HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D;
+
+const doodleLocation = new DoodleLocation(10, 10);
 
 class Simulation {
   public lastTick: number;
@@ -16,7 +19,7 @@ class Simulation {
 
   update(): void {
     console.log('UPDATE');
-    this.root = this.root.grow();
+    this.root = this.root.grow(doodleLocation);
   }
 
   render(tFrame: number): void {
@@ -28,7 +31,7 @@ class Simulation {
 
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
-const seed = new Seed(seedGenome);
+const seed = new Seed(seedGenome, doodleLocation);
 const simulation = new Simulation();
 
 window.onload = function() {
@@ -40,29 +43,30 @@ window.onload = function() {
     if (tFrame > nextTick) {
       var timeSinceTick = tFrame - simulation.lastTick;
       numTicks = Math.floor(timeSinceTick / simulation.tickLength);
+      console.log(numTicks);
     }
 
-    queueUpdates(numTicks);
-    simulation.render(tFrame);
-    simulation.lastRender = tFrame;
+    queueUpdates(numTicks, tFrame);
   }
 
-  function queueUpdates(numTicks) {
+  function queueUpdates(numTicks, tFrame) {
     for (var i = 0; i < numTicks; i++) {
       simulation.lastTick = simulation.lastTick + simulation.tickLength;
       simulation.update();
+      simulation.render(tFrame);
+      simulation.lastRender = tFrame;
     }
   }
 
   simulation.lastTick = performance.now();
   simulation.lastRender = simulation.lastTick;
-  simulation.tickLength = 1000;
+  simulation.tickLength = 10000;
 
   // Render
   canvas = <HTMLCanvasElement>document.getElementById('canvas');
   ctx = canvas.getContext('2d');
 
-  simulation.drawingManager = new SimpleDrawingManager(ctx);
+  simulation.drawingManager = new SimpleDrawingManager(1080, 720, ctx);
   simulation.root = seed;
 
   main(performance.now());

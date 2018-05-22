@@ -6,8 +6,12 @@ export interface IDrawingManager {
 }
 
 export class SimpleDrawingManager implements IDrawingManager {
+  private width: number;
+  private height: number;
   private ctx: CanvasRenderingContext2D;
-  constructor(ctx: CanvasRenderingContext2D) {
+  constructor(width: number, height: number, ctx: CanvasRenderingContext2D) {
+    this.width = width;
+    this.height = height;
     this.ctx = ctx;
   }
 
@@ -16,16 +20,20 @@ export class SimpleDrawingManager implements IDrawingManager {
     const context = this.ctx;
     context.beginPath();
     context.strokeStyle = 'white';
-    context.moveTo(p1.x, p1.y);
+    context.moveTo(p1.x, this.correctY(p1.y));
     context.lineWidth = 5;
-    context.lineTo(p2.x, p2.y);
+    context.lineTo(p2.x, this.correctY(p2.y));
     context.stroke();
   }
 
   drawBlankScreen() {
     this.ctx.beginPath();
-    this.ctx.rect(0, 0, 1080, 720);
+    this.ctx.rect(0, 0, this.width, this.height);
     this.ctx.fillStyle = 'black';
     this.ctx.fill();
+  }
+
+  private correctY(y: number) {
+    return this.height - y;
   }
 }

@@ -4,13 +4,14 @@ import {Point} from '../elements/primitives/Point';
 
 import {Doodle} from './Doodle';
 import {IDoodleGenome} from './DoodleGenome';
+import {DoodleLocation} from './DoodleLocation';
 import {DoodlePart} from './DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './DoodleSegment';
 import {SpokePart} from './SpokePart';
 import {UndifferentiatedPart} from './UndifferentiatedPart';
 
 export interface ISeedGenome {
-  grow: () => DoodlePart;
+  grow(doodleLocation: DoodleLocation): DoodlePart;
   getDoodleGenome: () => IDoodleGenome;
 }
 
@@ -20,12 +21,12 @@ export class SeedGenome implements ISeedGenome {
     this.doodleGenome = doodleGenome;
   }
 
-  grow() {
-    const undifferentiatedPart = new UndifferentiatedPart(this.doodleGenome);
-    const segment = DoodleSegment.of(
-        undifferentiatedPart,
-        new LineSegment(new Point(10, 10), new Point(50, 50)));
-    return new SpokePart(this.doodleGenome, [segment, segment]);
+  grow(doodleLocation: DoodleLocation) {
+    const undifferentiatedPart =
+        new UndifferentiatedPart(this.doodleGenome, doodleLocation);
+    const segment =
+        DoodleSegment.of(undifferentiatedPart, 100, 100, doodleLocation);
+    return new SpokePart(this.doodleGenome, doodleLocation, [segment, segment]);
   }
 
   print(): void {
@@ -39,12 +40,15 @@ export class SeedGenome implements ISeedGenome {
 
 export class Seed implements ISeedGenome, DoodlePart {
   private doodleGenome: ISeedGenome;
-  constructor(doodleGenome: ISeedGenome) {
+  private doodleLocation: DoodleLocation;
+
+  constructor(doodleGenome: ISeedGenome, doodleLocation: DoodleLocation) {
     this.doodleGenome = doodleGenome;
+    this.doodleLocation = doodleLocation;
   }
 
-  grow(): DoodlePart {
-    return this.doodleGenome.grow();
+  grow(doodleLocation: DoodleLocation): DoodlePart {
+    return this.doodleGenome.grow(doodleLocation);
   }
 
   print(): void {
