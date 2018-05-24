@@ -1,37 +1,40 @@
 import {DoodleGenome} from './doodle/DoodleGenome';
-import {DoodleLocation} from './doodle/DoodleLocation';
+import {DoodleLocation, RootPoint} from './doodle/DoodleLocation';
 import {DoodlePart} from './doodle/DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './doodle/DoodleSegment';
-import {Seed, SeedGenome} from './doodle/SeedGenome';
+import {DoodleRoot, DrawableRoot, RootPart, Seed, SeedGenome} from './doodle/SeedGenome';
 import {IDrawingManager, SimpleDrawingManager} from './drawing/SimpleDrawingManager';
+import {Point} from './elements/primitives/Point';
 
 var canvas: HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D;
-
-const doodleLocation = new DoodleLocation(10, 10);
+var totalTicks = 0;
 
 class Simulation {
   public lastTick: number;
   public tickLength: number;
   public lastRender: number;
   public drawingManager: IDrawingManager;
-  public root: DoodlePart;
+  public root: DrawableRoot;
 
   update(): void {
-    console.log('UPDATE');
-    this.root = this.root.grow(doodleLocation);
+    if (totalTicks < 10) {
+      this.root = this.root.grow();
+    }
+    totalTicks += 1;
   }
 
   render(tFrame: number): void {
-    console.log('RENDER');
-    this.drawingManager.drawBlankScreen();
+    // this.drawingManager.drawBlankScreen();
+    this.drawingManager.clearCanvas();
     this.root.draw(this.drawingManager);
   }
 }
 
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
-const seed = new Seed(seedGenome, doodleLocation);
+const rootPoint = new RootPoint(new Point(10, 0), 90);
+const seed = new Seed(seedGenome, rootPoint);
 const simulation = new Simulation();
 
 window.onload = function() {
@@ -43,7 +46,6 @@ window.onload = function() {
     if (tFrame > nextTick) {
       var timeSinceTick = tFrame - simulation.lastTick;
       numTicks = Math.floor(timeSinceTick / simulation.tickLength);
-      console.log(numTicks);
     }
 
     queueUpdates(numTicks, tFrame);
@@ -60,7 +62,7 @@ window.onload = function() {
 
   simulation.lastTick = performance.now();
   simulation.lastRender = simulation.lastTick;
-  simulation.tickLength = 10000;
+  simulation.tickLength = 1000;
 
   // Render
   canvas = <HTMLCanvasElement>document.getElementById('canvas');

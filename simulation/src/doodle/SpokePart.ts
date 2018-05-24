@@ -1,28 +1,23 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
 
 import {DoodleGenome, IDoodleGenome} from './DoodleGenome';
-import {DoodleLocation} from './DoodleLocation';
-import {DoodlePart} from './DoodlePart';
+import {DoodleLocation, LocalPoint} from './DoodleLocation';
+import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './DoodleSegment';
 
-export class SpokePart implements DoodlePart {
+export class SpokePart implements DrawableDoodle {
   private genome: IDoodleGenome;
-  private doodleParts: DoodlePart[];
+  private doodleParts: DrawableDoodle[];
 
-  private doodleLocation: DoodleLocation;
-
-  constructor(
-      genome: IDoodleGenome, doodleLocation: DoodleLocation,
-      doodleParts: DoodlePart[]) {
+  constructor(genome: IDoodleGenome, doodleParts: DrawableDoodle[]) {
     this.genome = genome;
     this.doodleParts = doodleParts;
-    this.doodleLocation = doodleLocation;
   }
 
-  grow(doodleLocation: DoodleLocation): DoodlePart {
+  grow(localDoodle: LocalPoint): DrawableDoodle {
     const newSegments =
-        this.doodleParts.map(segment => segment.grow(doodleLocation));
-    return new SpokePart(this.genome, doodleLocation, newSegments);
+        this.doodleParts.map(segment => segment.grow(localDoodle));
+    return new SpokePart(this.genome, newSegments);
   }
 
   children() {

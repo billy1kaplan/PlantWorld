@@ -1,8 +1,8 @@
 import {Doodle} from './doodle/Doodle';
 import {DoodleGenome} from './doodle/DoodleGenome';
-import {DoodleLocation} from './doodle/DoodleLocation';
+import {DoodleLocation, RootPoint} from './doodle/DoodleLocation';
 import {DoodleSegment} from './doodle/DoodleSegment';
-import {Seed, SeedGenome} from './doodle/SeedGenome';
+import {DrawableRoot, Seed, SeedGenome} from './doodle/SeedGenome';
 import {LineSegment} from './elements/primitives/LineSegment';
 import {Point} from './elements/primitives/Point';
 import {EnergyBoard} from './world/Board';
@@ -21,18 +21,17 @@ doodle.act(energyBoard);
 energyBoard.distributeEnergy();
 */
 
-const doodleLocation = new DoodleLocation(10, 10);
 
+console.log('Start');
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
-console.log('Start');
-const seed = new Seed(seedGenome, doodleLocation);
-const plant = seed.grow(doodleLocation);
-const grow1 = plant.grow(doodleLocation);
-const grow2 = plant.grow(doodleLocation);
-const grow3 = plant.grow(doodleLocation);
-const grow4 = plant.grow(doodleLocation);
-grow4.print();
+const rootPoint = new RootPoint(new Point(10, 0), 0);
+var plant: DrawableRoot = new Seed(seedGenome, rootPoint);
+
+var i = 0
+for (i; i < 10; i++) {
+  plant = plant.grow();
+}
 
 /*
 const MS_PER_UPDATE = 1;

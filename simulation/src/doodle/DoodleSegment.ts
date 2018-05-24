@@ -6,8 +6,8 @@ import {Point} from '../elements/primitives/Point';
 import {Sun} from '../world/Sun';
 
 import {Doodle} from './Doodle';
-import {DoodleLocation} from './DoodleLocation';
-import {DoodlePart} from './DoodlePart';
+import {DoodleLocation, LocalPoint} from './DoodleLocation';
+import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
 import {SpokePart} from './SpokePart';
 
 
@@ -17,27 +17,17 @@ export interface IDoodleSegment {
   getLine(): LineSegment;
 }
 
-export class DoodleSegment implements IDoodleSegment, DoodlePart {
-  private width: number;
-  private height: number;
+export class DoodleSegment implements DrawableDoodle {
   private visible: LineSegment[];
-  private nextPart: DoodlePart;
-  private doodleLocation: DoodleLocation;
+  private nextPart: DrawableDoodle;
+  private localPoint: LocalPoint;
 
-  static of(
-      nextPart: DoodlePart, width: number, height: number,
-      doodleLocation: DoodleLocation) {
-    return new DoodleSegment(nextPart, width, height, [], doodleLocation);
-  }
-
-  private constructor(
-      nextPart: DoodlePart, width: number, height: number,
-      visible: LineSegment[], doodleLocation: DoodleLocation) {
+  constructor(
+      nextPart: DrawableDoodle, localPoint: LocalPoint,
+      visible: LineSegment[]) {
     this.nextPart = nextPart;
-    this.width = width;
-    this.height = height;
+    this.localPoint = localPoint;
     this.visible = visible;
-    this.doodleLocation = doodleLocation;
   }
 
   children() {
@@ -48,6 +38,7 @@ export class DoodleSegment implements IDoodleSegment, DoodlePart {
     this.visible = visible;
   }
 
+  /*
   lineSegment(): LineSegment {
     return this.doodleLocation.convertToGlobalPosition(this.width, this.height);
   }
@@ -60,20 +51,24 @@ export class DoodleSegment implements IDoodleSegment, DoodlePart {
     return this.lineSegment().overlap(other.lineSegment());
   }
 
+  getSegment() {
+    return this.lineSegment;
+  }
+
+  getLine() {
+    return this.lineSegment();
+  }
+  */
+
   collectEnergy(sun: Sun): void {
     const energy = this.visible.map(a => sun.energyFunctionFromLineSegment(a))
                        .reduce((a, b) => a + b, 0);
     console.log(energy);
   }
 
-  getSegment() {
-    return this.lineSegment;
-  }
-
-  grow(doodleLocation: DoodleLocation): DoodlePart {
+  grow(localPoint: LocalPoint): DrawableDoodle {
     return new DoodleSegment(
-        this.nextPart.grow(doodleLocation.shift(this.width, this.height)),
-        this.width, this.height, [], this.doodleLocation);
+        this.nextPart.grow(this.localPoint), this.localPoint, []);
   }
 
   print(): void {
@@ -81,17 +76,9 @@ export class DoodleSegment implements IDoodleSegment, DoodlePart {
     this.nextPart.print();
   }
 
-  getLine() {
-    return this.lineSegment();
-  }
-
-  segments() {
-    return [this];
-  }
-
   draw(drawingManager: IDrawingManager): void {
-    drawingManager.drawLine(
-        this.lineSegment().getP1(), this.lineSegment().getP2());
+    const lineSegment = this.localPoint.getParentOffset();
+    drawingManager.drawLine(lineSegment.getP1(), lineSegment.getP2());
     this.nextPart.draw(drawingManager);
   }
 }
