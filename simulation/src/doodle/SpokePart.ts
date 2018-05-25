@@ -1,9 +1,10 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
 
 import {DoodleGenome, IDoodleGenome} from './DoodleGenome';
-import {DoodleLocation, LocalPoint} from './DoodleLocation';
+import {DoodleLocation, LocalLocation, LocalPoint} from './DoodleLocation';
 import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './DoodleSegment';
+import {UndifferentiatedPart} from './UndifferentiatedPart';
 
 export class SpokePart implements DrawableDoodle {
   private genome: IDoodleGenome;
@@ -14,19 +15,18 @@ export class SpokePart implements DrawableDoodle {
     this.doodleParts = doodleParts;
   }
 
-  grow(localDoodle: LocalPoint): DrawableDoodle {
-    const newSegments =
-        this.doodleParts.map(segment => segment.grow(localDoodle));
-    return new SpokePart(this.genome, newSegments);
+  grow(growthPoint: LocalPoint): DrawableDoodle {
+    const newParts = this.doodleParts.map(p => p.grow(growthPoint));
+    return new SpokePart(this.genome, newParts);
   }
 
   children() {
     return this.doodleParts;
   }
 
-  print(): void {
+  log(): void {
     console.log(this);
-    this.doodleParts.forEach(e => e.print());
+    this.doodleParts.forEach(e => e.log());
   }
 
   segments() {

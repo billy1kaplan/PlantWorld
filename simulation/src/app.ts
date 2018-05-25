@@ -18,7 +18,7 @@ class Simulation {
   public root: DrawableRoot;
 
   update(): void {
-    if (totalTicks < 10) {
+    if (totalTicks < 6) {
       this.root = this.root.grow();
     }
     totalTicks += 1;
@@ -33,7 +33,7 @@ class Simulation {
 
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
-const rootPoint = new RootPoint(new Point(10, 0), 90);
+const rootPoint = new RootPoint(new Point(200, 100), 90);
 const seed = new Seed(seedGenome, rootPoint);
 const simulation = new Simulation();
 
@@ -62,7 +62,7 @@ window.onload = function() {
 
   simulation.lastTick = performance.now();
   simulation.lastRender = simulation.lastTick;
-  simulation.tickLength = 1000;
+  simulation.tickLength = 100;
 
   // Render
   canvas = <HTMLCanvasElement>document.getElementById('canvas');

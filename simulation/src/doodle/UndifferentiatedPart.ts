@@ -4,7 +4,7 @@ import {LineSegment} from '../elements/primitives/LineSegment';
 import {Point} from '../elements/primitives/Point';
 
 import {IDoodleGenome} from './DoodleGenome';
-import {DoodleLocation, LocalPoint} from './DoodleLocation';
+import {DoodleLocation, LocalLocation, LocalPoint} from './DoodleLocation';
 import {DoodlePart, DrawableDoodle} from './DoodlePart';
 import {DoodleSegment} from './DoodleSegment';
 import {SpokePart} from './SpokePart';
@@ -17,16 +17,18 @@ export class UndifferentiatedPart implements DrawableDoodle {
   }
 
   grow(localPoint: LocalPoint): DrawableDoodle {
-    const undifferentiatedPart = new UndifferentiatedPart(this.doodleGenome);
-    const segment = new DoodleSegment(undifferentiatedPart, localPoint, []);
-    return new SpokePart(this.doodleGenome, [segment, segment, segment]);
+    const placeholder = new UndifferentiatedPart(this.doodleGenome);
+    const angles = [-30, 30];
+    const locations = angles.map(a => new LocalLocation(localPoint, a, 20));
+    const nextParts = locations.map(n => new DoodleSegment(placeholder, n, []));
+    return new SpokePart(this.doodleGenome, nextParts);
   }
 
   children() {
     return [];
   }
 
-  print(): void {
+  log(): void {
     console.log(this);
   }
 

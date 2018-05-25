@@ -3,6 +3,7 @@ import {DoodleGenome} from './doodle/DoodleGenome';
 import {DoodleLocation, RootPoint} from './doodle/DoodleLocation';
 import {DoodleSegment} from './doodle/DoodleSegment';
 import {DrawableRoot, Seed, SeedGenome} from './doodle/SeedGenome';
+import {SimpleDrawingManager} from './drawing/SimpleDrawingManager';
 import {LineSegment} from './elements/primitives/LineSegment';
 import {Point} from './elements/primitives/Point';
 import {EnergyBoard} from './world/Board';
@@ -25,11 +26,12 @@ energyBoard.distributeEnergy();
 console.log('Start');
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
-const rootPoint = new RootPoint(new Point(10, 0), 0);
+const rootPoint = new RootPoint(new Point(300, 50), 90);
 var plant: DrawableRoot = new Seed(seedGenome, rootPoint);
 
 var i = 0
-for (i; i < 10; i++) {
+for (i; i < 3; i++) {
+  plant.log();
   plant = plant.grow();
 }
 

@@ -1,6 +1,7 @@
 import {Line} from '../elements/primitives/Line';
 import {LineSegment} from '../elements/primitives/LineSegment';
 import {Point} from '../elements/primitives/Point';
+import {cos, sin} from '../geometricmath/Utility';
 
 export class DoodleLocation {
   private x: number;
@@ -62,14 +63,16 @@ export class LocalLocation implements LocalPoint {
   private angularShift: number;
   private length: number;
 
-  constructor(parent: LocalPoint) {
+  constructor(parent: LocalPoint, angularShift: number, length: number) {
     this.parent = parent;
+    this.angularShift = angularShift;
+    this.length = length;
   }
 
   getGlobalPosition(): Point {
     const totalAngleOffset = this.parent.getAngularOffset() + this.angularShift;
-    const deltaX = Math.cos(totalAngleOffset * this.length);
-    const deltaY = Math.sin(totalAngleOffset * this.length);
+    const deltaX = cos(totalAngleOffset) * this.length;
+    const deltaY = sin(totalAngleOffset) * this.length;
     const parentPoint = this.parent.getGlobalPosition();
     return new Point(parentPoint.getX() + deltaX, parentPoint.getY() + deltaY);
   }
@@ -81,5 +84,15 @@ export class LocalLocation implements LocalPoint {
   getParentOffset(): LineSegment {
     return new LineSegment(
         this.parent.getGlobalPosition(), this.getGlobalPosition());
+  }
+
+  getOffset(localPoint: LocalPoint) {
+    const totalAngleOffset = this.parent.getAngularOffset() + this.angularShift;
+    const deltaX = cos(totalAngleOffset) * this.length;
+    const deltaY = sin(totalAngleOffset) * this.length;
+    const rootPoint = localPoint.getGlobalPosition();
+    const shifted =
+        new Point(rootPoint.getX() + deltaX, rootPoint.getY() + deltaY);
+    return new LineSegment(rootPoint, shifted);
   }
 }

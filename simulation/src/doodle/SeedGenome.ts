@@ -5,7 +5,7 @@ import {Point} from '../elements/primitives/Point';
 import {Doodle} from './Doodle';
 import {DoodleGenome, IDoodleGenome} from './DoodleGenome';
 import {DoodleLocation, LocalLocation, RootPoint} from './DoodleLocation';
-import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
+import {DoodlePart, Drawable, DrawableDoodle, Loggable} from './DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './DoodleSegment';
 import {SpokePart} from './SpokePart';
 import {UndifferentiatedPart} from './UndifferentiatedPart';
@@ -17,7 +17,7 @@ export interface ISeedGenome {
 
 export interface RootPart { grow(): DrawableRoot; }
 
-export type DrawableRoot = RootPart&Drawable;
+export type DrawableRoot = RootPart&Drawable&Loggable;
 
 export class SeedGenome implements ISeedGenome {
   private doodleGenome: IDoodleGenome;
@@ -27,13 +27,13 @@ export class SeedGenome implements ISeedGenome {
 
   grow(rootLocation: RootPoint): DrawableRoot {
     const placeholder = new UndifferentiatedPart(this.doodleGenome);
-    const angles = [60, 120];
-    const locations = angles.map(a => new LocalLocation(rootLocation, a, 10));
+    const angles = [-30, 30];
+    const locations = angles.map(a => new LocalLocation(rootLocation, a, 50));
     const nextParts = locations.map(n => new DoodleSegment(placeholder, n, []));
     return new DoodleRoot(rootLocation, this.doodleGenome, nextParts);
   }
 
-  print(): void {
+  log(): void {
     console.log(this);
   }
 
@@ -50,6 +50,8 @@ export class DoodleRoot implements DrawableRoot {
       rootPoint: RootPoint, doodleGenome: IDoodleGenome,
       children: DrawableDoodle[]) {
     this.rootPoint = rootPoint;
+    this.doodleGenome = doodleGenome;
+    this.children = children;
   }
 
   grow(): DrawableRoot {
@@ -59,6 +61,11 @@ export class DoodleRoot implements DrawableRoot {
 
   draw(drawingManager: IDrawingManager) {
     this.children.forEach(child => child.draw(drawingManager));
+  }
+
+  log() {
+    console.log(this);
+    this.children.forEach(child => child.log());
   }
 }
 
@@ -75,7 +82,7 @@ export class Seed implements DrawableRoot {
     return this.seedGenome.grow(this.rootPoint);
   }
 
-  print(): void {
+  log(): void {
     console.log(this);
   }
 

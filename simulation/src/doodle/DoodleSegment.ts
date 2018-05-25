@@ -6,24 +6,24 @@ import {Point} from '../elements/primitives/Point';
 import {Sun} from '../world/Sun';
 
 import {Doodle} from './Doodle';
-import {DoodleLocation, LocalPoint} from './DoodleLocation';
+import {DoodleLocation, LocalLocation, LocalPoint} from './DoodleLocation';
 import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
 import {SpokePart} from './SpokePart';
 
 
 export interface IDoodleSegment {
   collectEnergy(sun: Sun): void;
-  grow(doodleLocation: DoodleLocation): DoodlePart;
+  grow(doodleLocation: LocalLocation): DoodlePart;
   getLine(): LineSegment;
 }
 
 export class DoodleSegment implements DrawableDoodle {
   private visible: LineSegment[];
   private nextPart: DrawableDoodle;
-  private localPoint: LocalPoint;
+  private localPoint: LocalLocation;
 
   constructor(
-      nextPart: DrawableDoodle, localPoint: LocalPoint,
+      nextPart: DrawableDoodle, localPoint: LocalLocation,
       visible: LineSegment[]) {
     this.nextPart = nextPart;
     this.localPoint = localPoint;
@@ -71,9 +71,9 @@ export class DoodleSegment implements DrawableDoodle {
         this.nextPart.grow(this.localPoint), this.localPoint, []);
   }
 
-  print(): void {
+  log(): void {
     console.log(this);
-    this.nextPart.print();
+    this.nextPart.log();
   }
 
   draw(drawingManager: IDrawingManager): void {
