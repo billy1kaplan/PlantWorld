@@ -15,11 +15,11 @@ class Simulation {
   public tickLength: number;
   public lastRender: number;
   public drawingManager: IDrawingManager;
-  public root: DrawableRoot;
+  public roots: DrawableRoot[];
 
   update(): void {
-    if (totalTicks < 6) {
-      this.root = this.root.grow();
+    if (totalTicks < 10) {
+      this.roots = this.roots.map(r => r.grow());
     }
     totalTicks += 1;
   }
@@ -27,14 +27,16 @@ class Simulation {
   render(tFrame: number): void {
     // this.drawingManager.drawBlankScreen();
     this.drawingManager.clearCanvas();
-    this.root.draw(this.drawingManager);
+    this.roots.forEach(r => r.draw(this.drawingManager));
   }
 }
 
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
-const rootPoint = new RootPoint(new Point(200, 100), 90);
-const seed = new Seed(seedGenome, rootPoint);
+
+const starting = [300, 600];
+const roots = starting.map(s => new RootPoint(new Point(s, 50), 90));
+const seeds = roots.map(r => new Seed(seedGenome, r));
 const simulation = new Simulation();
 
 window.onload = function() {
@@ -69,7 +71,7 @@ window.onload = function() {
   ctx = canvas.getContext('2d');
 
   simulation.drawingManager = new SimpleDrawingManager(1080, 720, ctx);
-  simulation.root = seed;
+  simulation.roots = seeds;
 
   main(performance.now());
 }
