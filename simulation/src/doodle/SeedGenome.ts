@@ -27,7 +27,7 @@ export class SeedGenome implements ISeedGenome {
 
   grow(rootLocation: RootPoint): DrawableRoot {
     const placeholder = new UndifferentiatedPart(this.doodleGenome);
-    const angles = [-30, 30];
+    const angles = [0];
     const locations = angles.map(a => new LocalLocation(rootLocation, a, 50));
     const nextParts = locations.map(n => new DoodleSegment(placeholder, n, []));
     return new DoodleRoot(rootLocation, this.doodleGenome, nextParts);

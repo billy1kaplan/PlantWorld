@@ -67,8 +67,8 @@ export class DoodleSegment implements DrawableDoodle {
   }
 
   grow(localPoint: LocalPoint): DrawableDoodle {
-    return new DoodleSegment(
-        this.nextPart.grow(this.localPoint), this.localPoint, []);
+    const nextLocal = this.localPoint.scale(localPoint, 1.15);
+    return new DoodleSegment(this.nextPart.grow(nextLocal), nextLocal, []);
   }
 
   log(): void {

@@ -18,7 +18,7 @@ export class UndifferentiatedPart implements DrawableDoodle {
 
   grow(localPoint: LocalPoint): DrawableDoodle {
     const placeholder = new UndifferentiatedPart(this.doodleGenome);
-    const angles = [-30, 30];
+    const angles = [-45, 35];
     const locations = angles.map(a => new LocalLocation(localPoint, a, 20));
     const nextParts = locations.map(n => new DoodleSegment(placeholder, n, []));
     return new SpokePart(this.doodleGenome, nextParts);

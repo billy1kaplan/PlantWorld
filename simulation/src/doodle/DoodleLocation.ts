@@ -95,4 +95,9 @@ export class LocalLocation implements LocalPoint {
         new Point(rootPoint.getX() + deltaX, rootPoint.getY() + deltaY);
     return new LineSegment(rootPoint, shifted);
   }
+
+  scale(parent: LocalPoint, scaleFactor: number) {
+    return new LocalLocation(
+        parent, this.angularShift, this.length * scaleFactor);
+  }
 }
