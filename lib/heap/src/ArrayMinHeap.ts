@@ -1,7 +1,7 @@
 import {HeapElement} from './HeapElement';
 import {MinHeap} from './MinHeap';
 
-class ArrayMinHeap<T> implements MinHeap<T> {
+export class ArrayMinHeap<T> implements MinHeap<T> {
   private elements: HeapElement<T>[];
   private size: number;
   constructor() {
@@ -21,15 +21,15 @@ class ArrayMinHeap<T> implements MinHeap<T> {
     return (n - 1) / 2;
   }
 
-  getMin(): HeapElement<T> {
+  peekMin(): HeapElement<T> {
     if (this.size == 0) {
       throw new Error('Empty heap has no minimum element!');
     }
     return this.elements[0];
   }
 
-  popMin(): HeapElement<T> {
-    const element = this.getMin();
+  deleteMin(): HeapElement<T> {
+    const element = this.peekMin();
     this.elements[0] = this.elements[this.size - 1];
     this.siftDown();
     return element;
@@ -42,6 +42,10 @@ class ArrayMinHeap<T> implements MinHeap<T> {
     } else {
       this.sift(element)
     }
+  }
+
+  isEmpty(): boolean {
+    return this.size == 0;
   }
 
   private sift(element: HeapElement<T>): void {

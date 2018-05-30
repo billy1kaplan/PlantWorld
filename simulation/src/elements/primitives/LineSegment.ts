@@ -122,7 +122,7 @@ export class LineSegment implements Drawable, Primitive {
     return 0;
   }
 
-  intersection(lineSegment: LineSegment) {
+  intersection(lineSegment: LineSegment): Optional<Point> {
     return Optional.of(new Point(1, 1));
   }
 

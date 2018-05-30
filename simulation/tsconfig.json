@@ -7,7 +7,7 @@
         "allowJs": true,
         "sourceMap": true,
         "outDir": "dist",
-        "target": "es5",
+        "target": "es6",
         "types": [
             "mocha-typescript",
             "mocha",

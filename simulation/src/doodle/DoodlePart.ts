@@ -1,9 +1,11 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
+
+import {DoodleLocalSignal} from './DoodleLocalSignal';
 import {LocalPoint} from './DoodleLocation';
 
 
 export interface DoodlePart {
-  grow(doodleLocation: LocalPoint): DrawableDoodle;
+  grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle;
 }
 
 export interface Drawable { draw(drawingManager: IDrawingManager): void; }

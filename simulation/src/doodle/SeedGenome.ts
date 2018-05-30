@@ -4,6 +4,7 @@ import {Point} from '../elements/primitives/Point';
 
 import {Doodle} from './Doodle';
 import {DoodleGenome, IDoodleGenome} from './DoodleGenome';
+import {DoodleCharacteristics, DoodleLocalSignal} from './DoodleLocalSignal';
 import {DoodleLocation, LocalLocation, RootPoint} from './DoodleLocation';
 import {DoodlePart, Drawable, DrawableDoodle, Loggable} from './DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './DoodleSegment';
@@ -11,12 +12,10 @@ import {SpokePart} from './SpokePart';
 import {UndifferentiatedPart} from './UndifferentiatedPart';
 
 export interface ISeedGenome {
-  grow(rootLocation: RootPoint): DrawableRoot;
+  grow(rootCharacteristics: DoodleLocalSignal): DrawableRoot;
   getDoodleGenome: () => IDoodleGenome;
 }
-
 export interface RootPart { grow(): DrawableRoot; }
-
 export type DrawableRoot = RootPart&Drawable&Loggable;
 
 export class SeedGenome implements ISeedGenome {
@@ -25,12 +24,15 @@ export class SeedGenome implements ISeedGenome {
     this.doodleGenome = doodleGenome;
   }
 
-  grow(rootLocation: RootPoint): DrawableRoot {
+  grow(rootCharacteristics: DoodleLocalSignal): DrawableRoot {
+    console.log('HEREA;');
+    console.log(rootCharacteristics);
     const placeholder = new UndifferentiatedPart(this.doodleGenome);
     const angles = [0];
+    const rootLocation = rootCharacteristics.doodleLocation;
     const locations = angles.map(a => new LocalLocation(rootLocation, a, 50));
     const nextParts = locations.map(n => new DoodleSegment(placeholder, n, []));
-    return new DoodleRoot(rootLocation, this.doodleGenome, nextParts);
+    return new DoodleRoot(rootCharacteristics, this.doodleGenome, nextParts);
   }
 
   log(): void {
@@ -43,20 +45,22 @@ export class SeedGenome implements ISeedGenome {
 }
 
 export class DoodleRoot implements DrawableRoot {
-  private rootPoint: RootPoint;
+  private rootCharacteristics: DoodleLocalSignal;
   private doodleGenome: IDoodleGenome;
   private children: DrawableDoodle[];
   constructor(
-      rootPoint: RootPoint, doodleGenome: IDoodleGenome,
+      rootCharacteristics: DoodleLocalSignal, doodleGenome: IDoodleGenome,
       children: DrawableDoodle[]) {
-    this.rootPoint = rootPoint;
+    this.rootCharacteristics = rootCharacteristics;
     this.doodleGenome = doodleGenome;
     this.children = children;
   }
 
   grow(): DrawableRoot {
-    const newChildren = this.children.map(c => c.grow(this.rootPoint));
-    return new DoodleRoot(this.rootPoint, this.doodleGenome, newChildren);
+    const newChildren =
+        this.children.map(c => c.grow(this.rootCharacteristics));
+    return new DoodleRoot(
+        this.rootCharacteristics, this.doodleGenome, newChildren);
   }
 
   draw(drawingManager: IDrawingManager) {
@@ -71,15 +75,16 @@ export class DoodleRoot implements DrawableRoot {
 
 export class Seed implements DrawableRoot {
   private seedGenome: ISeedGenome;
-  private rootPoint: RootPoint;
+  private rootCharacteristics: DoodleLocalSignal;
 
-  constructor(seedGenome: ISeedGenome, rootPoint: RootPoint) {
+  constructor(seedGenome: ISeedGenome, rootCharacteristics: DoodleLocalSignal) {
     this.seedGenome = seedGenome;
-    this.rootPoint = rootPoint;
+    this.rootCharacteristics = rootCharacteristics;
   }
 
   grow(): DrawableRoot {
-    return this.seedGenome.grow(this.rootPoint);
+    console.log(this.rootCharacteristics);
+    return this.seedGenome.grow(this.rootCharacteristics);
   }
 
   log(): void {

@@ -6,6 +6,7 @@ import {Point} from '../elements/primitives/Point';
 import {Sun} from '../world/Sun';
 
 import {Doodle} from './Doodle';
+import {DoodleLocalSignal} from './DoodleLocalSignal';
 import {DoodleLocation, LocalLocation, LocalPoint} from './DoodleLocation';
 import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
 import {SpokePart} from './SpokePart';
@@ -66,9 +67,12 @@ export class DoodleSegment implements DrawableDoodle {
     console.log(energy);
   }
 
-  grow(localPoint: LocalPoint): DrawableDoodle {
-    const nextLocal = this.localPoint.scale(localPoint, 1.15);
-    return new DoodleSegment(this.nextPart.grow(nextLocal), nextLocal, []);
+  grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle {
+    const nextLocal =
+        this.localPoint.scale(doodleLocalSignal.doodleLocation, 1.15);
+    return new DoodleSegment(
+        this.nextPart.grow(new DoodleLocalSignal(nextLocal, 0, 0)), nextLocal,
+        []);
   }
 
   log(): void {

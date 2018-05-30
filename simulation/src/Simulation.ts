@@ -1,5 +1,6 @@
 import {Doodle} from './doodle/Doodle';
 import {DoodleGenome} from './doodle/DoodleGenome';
+import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
 import {DoodleLocation, RootPoint} from './doodle/DoodleLocation';
 import {DoodleSegment} from './doodle/DoodleSegment';
 import {DrawableRoot, Seed, SeedGenome} from './doodle/SeedGenome';
@@ -26,7 +27,8 @@ energyBoard.distributeEnergy();
 console.log('Start');
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
-const rootPoint = new RootPoint(new Point(300, 50), 90);
+const rootPoint =
+    DoodleLocalSignal.rootSignal(new RootPoint(new Point(300, 50), 90));
 var plant: DrawableRoot = new Seed(seedGenome, rootPoint);
 
 var i = 0

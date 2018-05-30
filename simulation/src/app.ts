@@ -1,4 +1,5 @@
 import {DoodleGenome} from './doodle/DoodleGenome';
+import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
 import {DoodleLocation, RootPoint} from './doodle/DoodleLocation';
 import {DoodlePart} from './doodle/DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './doodle/DoodleSegment';
@@ -18,7 +19,7 @@ class Simulation {
   public roots: DrawableRoot[];
 
   update(): void {
-    if (totalTicks < 10) {
+    if (totalTicks < 6) {
       this.roots = this.roots.map(r => r.grow());
     }
     totalTicks += 1;
@@ -34,9 +35,10 @@ class Simulation {
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
 
-const starting = [300, 600];
-const roots = starting.map(s => new RootPoint(new Point(s, 50), 90));
-const seeds = roots.map(r => new Seed(seedGenome, r));
+const starting = [300];
+const rootCharacteristics = starting.map(
+    s => DoodleLocalSignal.rootSignal(new RootPoint(new Point(s, 50), 90)));
+const seeds = rootCharacteristics.map(r => new Seed(seedGenome, r));
 const simulation = new Simulation();
 
 window.onload = function() {

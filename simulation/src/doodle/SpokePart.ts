@@ -1,6 +1,7 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
 
 import {DoodleGenome, IDoodleGenome} from './DoodleGenome';
+import {DoodleLocalSignal} from './DoodleLocalSignal';
 import {DoodleLocation, LocalLocation, LocalPoint} from './DoodleLocation';
 import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
 import {DoodleSegment, IDoodleSegment} from './DoodleSegment';
@@ -15,8 +16,8 @@ export class SpokePart implements DrawableDoodle {
     this.doodleParts = doodleParts;
   }
 
-  grow(growthPoint: LocalPoint): DrawableDoodle {
-    const newParts = this.doodleParts.map(p => p.grow(growthPoint));
+  grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle {
+    const newParts = this.doodleParts.map(p => p.grow(doodleLocalSignal));
     return new SpokePart(this.genome, newParts);
   }
 
