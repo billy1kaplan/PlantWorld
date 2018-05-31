@@ -17,15 +17,17 @@ class IntersectionNode {
   kind: 'Intersection';
 
   constructor(
-      public point: Point, public segment1: LineSegment,
-      public segment2: LineSegment) {}
+      public point: Point, public lowerSegment: LineSegment,
+      public upperSegment: LineSegment) {}
 
-  getPriority() {
-    return this.point.getX();
+  equals(other: TNode) {
+    return this.kind == other.kind && this.point.equals(other.point) &&
+        this.lowerSegment.equals(other.lowerSegment) &&
+        this.upperSegment.equals(other.upperSegment);
   }
 
-  getElement() {
-    return this;
+  compareTo(other: TNode) {
+    return this.point.compareTo(other.point);
   }
 }
 
@@ -34,10 +36,13 @@ class LeftNode {
   point: Point;
   segment: LineSegment;
 
-  getPriority() {}
+  equals(other: TNode) {
+    return this.kind == other.kind && this.point.equals(other.point) &&
+        this.segment.equals(other.segment);
+  }
 
-  getElement() {
-    return this;
+  compareTo(other: TNode) {
+    return this.point.compareTo(other.point);
   }
 }
 
@@ -46,10 +51,13 @@ class RightNode {
   point: Point;
   segment: LineSegment;
 
-  getPriority() {}
+  equals(other: TNode) {
+    return this.kind == other.kind && this.point.equals(other.point) &&
+        this.segment.equals(other.segment);
+  }
 
-  getElement() {
-    return this;
+  compareTo(other: TNode) {
+    return this.point.compareTo(other.point);
   }
 }
 
@@ -80,8 +88,7 @@ class LineSweeper {
   sweep() {
     var previousEvent: TNode;
     while (!this.priority.isEmpty()) {
-      const element = this.priority.deleteMin();
-      const event = element.getElement();
+      const event = this.priority.deleteMin();
 
       switch (event.kind) {
         case 'Left':
@@ -113,8 +120,7 @@ class LineSweeper {
           segmentAbove.intersection(segmentBelow)
               .ifPresent(intersectionPoint => {
                 const intersectionNode = new IntersectionNode(
-                    intersectionPoint, segmentAbove, segmentBelow);
-                // Change to uniqueInsert
+                    intersectionPoint, segmentBelow, segmentAbove);
                 this.priority.insert(intersectionNode);
               });
           break;
@@ -122,24 +128,22 @@ class LineSweeper {
           const intersectionBonus = new LineEntity(
               previousEvent.point, event.point, this.lines.peek());
           this.bonusEnergy.unshift(bonusEnergySegment);
-          // Make sure this invariant is not broken; above and below
-          const segment1 = event.segment1;
-          const segment2 = event.segment2;
-          this.lines.swapPositions(segment1, segment2);
-          const segA = this.lines.aboveSegment(segment2);
-          const segB = this.lines.belowSegment(segment1);
-          event.segment2.intersection(segmentAbove)
+
+          const lowerSegment = event.lowerSegment;
+          const upperSegment = event.upperSegment;
+          this.lines.swapPositions(lowerSegment, upperSegment);
+          const aboveUpperSegment = this.lines.aboveSegment(upperSegment);
+          const belowLowerSegment = this.lines.belowSegment(lowerSegment);
+          lowerSegment.intersection(aboveUpperSegment)
               .ifPresent(intersectionPoint => {
                 const intersectionNode = new IntersectionNode(
-                    intersectionPoint, segmentAbove, segment2);
-                // Change to uniqueInsert
+                    intersectionPoint, lowerSegment, aboveUpperSegment);
                 this.priority.insert(intersectionNode);
               });
-          event.segment1.intersection(segmentBelow)
+          upperSegment.intersection(belowLowerSegment)
               .ifPresent(intersectionPoint => {
                 const intersectionNode = new IntersectionNode(
-                    intersectionPoint, segmentBelow, segment1);
-                // Change to uniqueInsert
+                    intersectionPoint, belowLowerSegment, upperSegment);
                 this.priority.insert(intersectionNode);
               });
           break;

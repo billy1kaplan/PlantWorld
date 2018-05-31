@@ -51,4 +51,15 @@ export class Point implements Primitive {
   equals(other: Point) {
     return this.getX() == other.getX() && this.getY() == other.getY();
   }
+
+  compareTo(other: Point): number {
+    const xDiff = this.x - other.x;
+    const yDiff = this.y - other.y;
+
+    if (xDiff != 0) {
+      return xDiff;
+    } else {
+      return yDiff;
+    }
+  }
 }
