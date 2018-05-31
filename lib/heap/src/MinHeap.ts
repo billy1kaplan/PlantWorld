@@ -1,8 +1,8 @@
 import {HeapElement} from './HeapElement';
 
-export interface MinHeap<T> {
-  deleteMin(): HeapElement<T>;
-  peekMin(): HeapElement<T>;
-  insert(element: HeapElement<T>): void;
+export interface MinHeap<T extends HeapElement> {
+  deleteMin(): T;
+  peekMin(): T;
+  insert(element: T): void;
   isEmpty(): boolean;
 }

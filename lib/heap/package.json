@@ -4,12 +4,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ts-node node_modules/jasmine/bin/jasmine **/*.spec.ts",
     "compile": "tsc"
   },
   "devDependencies": {
-    "typescript": "2.8.3",
-    "ts-node": "^5.0.1"
+    "@types/jasmine": "^2.8.7",
+    "jasmine": "^3.1.0",
+    "ts-node": "^5.0.1",
+    "typescript": "^2.8.3"
   },
   "author": "",
   "license": "ISC"

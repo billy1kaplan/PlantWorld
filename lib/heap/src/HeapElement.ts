@@ -1,4 +1,4 @@
-export interface HeapElement<T> {
-  getPriority(): number;
-  getElement(): T;
+export interface HeapElement {
+  compareTo(other: HeapElement): number;
+  equals(other: HeapElement): boolean;
 }

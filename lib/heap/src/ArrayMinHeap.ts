@@ -1,8 +1,8 @@
 import {HeapElement} from './HeapElement';
 import {MinHeap} from './MinHeap';
 
-export class ArrayMinHeap<T> implements MinHeap<T> {
-  private elements: HeapElement<T>[];
+export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
+  private elements: T[];
   private size: number;
   constructor() {
     this.elements = [];
@@ -18,24 +18,35 @@ export class ArrayMinHeap<T> implements MinHeap<T> {
   }
 
   private getParent(n: number) {
-    return (n - 1) / 2;
+    return Math.floor((n - 1) / 2);
   }
 
-  peekMin(): HeapElement<T> {
+  peekMin(): T {
     if (this.size == 0) {
       throw new Error('Empty heap has no minimum element!');
     }
     return this.elements[0];
   }
 
-  deleteMin(): HeapElement<T> {
+  deleteMin(): T {
     const element = this.peekMin();
-    this.elements[0] = this.elements[this.size - 1];
-    this.siftDown();
+    this.deleteMinElement();
+
+    // Ensure that the heap does not return duplicates
+    while (this.size > 0 && element.equals(this.peekMin())) {
+      this.deleteMinElement();
+    }
+
     return element;
   }
 
-  insert(element: HeapElement<T>): void {
+  private deleteMinElement(): void {
+    this.elements[0] = this.elements[this.size - 1];
+    this.size--;
+    this.siftDown();
+  }
+
+  insert(element: T): void {
     if (this.size == 0) {
       this.elements[0] = element;
       this.size += 1;
@@ -48,12 +59,12 @@ export class ArrayMinHeap<T> implements MinHeap<T> {
     return this.size == 0;
   }
 
-  private sift(element: HeapElement<T>): void {
+  private sift(element: T): void {
     this.elements[this.size] = element;
     var index = this.size;
 
-    while (this.elements[this.getParent(index)].getPriority() >
-           element.getPriority()) {
+    while (index > 0 &&
+           element.compareTo(this.elements[this.getParent(index)]) < 0) {
       const parentIndex = this.getParent(index);
       this.swap(parentIndex, index);
       index = parentIndex;
