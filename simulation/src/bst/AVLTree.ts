@@ -1,58 +1,7 @@
 import {BalancableNode, BST} from './BST';
-import {BSTNode} from './BSTNode';
+import {BSTNode, BSTTree, EmptyTree, flip, NodeColor, TreeDirection} from './BSTNode';
 
 export class AVLTree<T extends BalancableNode> implements BST<T> {
-  private root: BSTNode<T> = null;
-
-  insert(node: T): void {
-    this.internalInsert(node, this.root)
-  }
-
-  private nodeHeight(node: BSTNode<T>) {
-    if (node == null) {
-      return 0;
-    }
-
-    return node.height;
-  }
-
-  private calculateBalance(node: BSTNode<T>): number {
-    if (node == null) {
-      return 0;
-    }
-
-    return this.nodeHeight(node.left) - this.nodeHeight(node.right);
-  }
-
-  private internalInsert(node: T, treeNode: BSTNode<T>) {
-    if (treeNode == null) {
-      treeNode = new BSTNode(node);
-      return;
-    }
-
-    if (node.getPriority() >= treeNode.getPriority()) {
-      this.internalInsert(node, treeNode.left);
-    } else {
-      this.internalInsert(node, treeNode.right);
-    }
-
-    treeNode.height = 1 +
-        Math.max(
-            this.nodeHeight(treeNode.left), this.nodeHeight(treeNode.right));
-
-    const balanceFactor = this.calculateBalance(treeNode);
-
-    if (balanceFactor > 1) {
-      if (treeNode.left.left != null && treeNode.left.left.equals(node)) {
-      } else {
-      }
-    } else {
-      if (treeNode.left.left != null && treeNode.left.left.equals(node)) {
-      } else {
-      }
-    }
-  }
-
   delete(node: T): void {
     throw new Error('Method not implemented.');
   }
@@ -67,5 +16,71 @@ export class AVLTree<T extends BalancableNode> implements BST<T> {
   }
   swapPositions(node1: T, node2: T): void {
     throw new Error('Method not implemented.');
+  }
+
+  private root: BSTTree<T>;
+
+  constructor() {
+    this.root = EmptyTree.getInstance();
+  }
+
+  insert(node: T): void {
+    this.internalInsert(node, this.root);
+  }
+
+  private singleRotate(treeNode: BSTNode<T>, dir: TreeDirection) {
+    const temp = treeNode.walk(flip(dir));
+
+    treeNode.walkSet(flip(dir), temp.walk(dir));
+    if (temp.kind == 'node') {
+      temp.walkSet(dir, treeNode);
+    }
+
+    treeNode.paintRed();
+    temp.paintBlack();
+
+    return temp;
+  }
+
+  private doubleRotate(treeNode: BSTNode<T>, dir: TreeDirection) {
+    treeNode.walkSet(
+        flip(dir), this.singleRotate(treeNode.walk(flip(dir)), flip(dir)));
+
+    return this.singleRotate(treeNode, dir);
+  }
+
+  private rightRotate(treeNode: BSTNode<T>) {}
+
+  private internalInsert(node: T, treeNode: BSTTree<T>): BSTTree<T> {
+    switch (treeNode.kind) {
+      case 'empty':
+        return BSTNode.leafNode<T>(node);
+      case 'node':
+        if (node.getPriority() > treeNode.getPriority()) {
+          treeNode.right = this.internalInsert(node, treeNode.right);
+
+          if (treeNode.right.isRed()) {
+            if (treeNode.left.isRed()) {
+              treeNode.paintRed();
+              treeNode.left.paintBlack();
+              treeNode.right.paintBlack();
+            } else {
+              const leftChild = treeNode.left;
+
+              switch (leftChild.kind) {
+                case 'empty':
+                  throw new Error('Unexpected empty node');
+                case 'node':
+                  if (leftChild.left.isRed()) {
+                    treeNode =
+                  }
+              }
+            }
+          } else {
+            treeNode.left = this.internalInsert(node, treeNode.left);
+          }
+          return treeNode;
+        }
+    }
   }
 }
