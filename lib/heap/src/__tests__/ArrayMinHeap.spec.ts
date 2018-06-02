@@ -31,7 +31,7 @@ describe('Heap', () => {
     expect(h.isEmpty()).toBe(false);
   });
 
-  it('insert an element', () => {
+  it('inserts an element', () => {
     const h = new Heap();
 
     h.insert(one)

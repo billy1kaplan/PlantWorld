@@ -16,6 +16,14 @@ export class AVLTree<T extends BalancableNode> implements BST<T> {
     return node.height;
   }
 
+  private calculateBalance(node: BSTNode<T>): number {
+    if (node == null) {
+      return 0;
+    }
+
+    return this.nodeHeight(node.left) - this.nodeHeight(node.right);
+  }
+
   private internalInsert(node: T, treeNode: BSTNode<T>) {
     if (treeNode == null) {
       treeNode = new BSTNode(node);
@@ -31,6 +39,18 @@ export class AVLTree<T extends BalancableNode> implements BST<T> {
     treeNode.height = 1 +
         Math.max(
             this.nodeHeight(treeNode.left), this.nodeHeight(treeNode.right));
+
+    const balanceFactor = this.calculateBalance(treeNode);
+
+    if (balanceFactor > 1) {
+      if (treeNode.left.left != null && treeNode.left.left.equals(node)) {
+      } else {
+      }
+    } else {
+      if (treeNode.left.left != null && treeNode.left.left.equals(node)) {
+      } else {
+      }
+    }
   }
 
   delete(node: T): void {
