@@ -11,5 +11,5 @@ export interface BST<T extends BalancableNode> {
 
 export interface BalancableNode {
   getPriority(): number;
-  equals(node: BalancableNode): boolean;
+  equals(other: BalancableNode): boolean
 }

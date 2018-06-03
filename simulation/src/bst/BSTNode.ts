@@ -1,126 +1,85 @@
 import {BalancableNode} from './BST';
 
-export enum NodeColor {
-  BLACK = 'black-node-color',
-  RED = 'red-node-color'
-}
-
-export enum TreeDirection {
-  LEFT = 'left-tree-direction',
-  RIGHT = 'right-tree-direction'
-}
-
-export function flip(dir: TreeDirection) {
-  if (dir == TreeDirection.LEFT) {
-    return TreeDirection.RIGHT;
-  } else {
-    return TreeDirection.LEFT;
-  }
-}
-
 export type BSTTree<T extends BalancableNode> = EmptyTree|BSTNode<T>;
 
 export class EmptyTree {
   kind: 'empty';
-  height: number;
-  nodeColor: NodeColor;
 
   private static emptyTree: EmptyTree = new EmptyTree();
 
   private constructor() {
-    this.height = 0;
-    this.nodeColor = NodeColor.BLACK;
+    this.kind = 'empty';
   }
 
   public static getInstance(): EmptyTree {
     return this.emptyTree;
   }
 
-  walk(dir: TreeDirection): EmptyTree {
+  walkLeft(): EmptyTree {
     return this;
   }
 
-  isRed() {
-    return this.nodeColor == NodeColor.RED;
+  walkRight(): EmptyTree {
+    return this;
   }
 
-  paintRed(): void {
-    this.nodeColor = NodeColor.RED;
-  }
-
-  paintBlack(): void {
-    this.nodeColor = NodeColor.BLACK;
-  }
-
-  getHeight() {
-    return this.height;
-  }
-
-  getBalance(): number {
+  getLevel() {
     return 0;
   }
 }
 
 export class BSTNode<T extends BalancableNode> {
   kind: 'node';
-  nodeColor: NodeColor;
+
+  private level: number;
+  private left: BSTTree<T>;
+  private right: BSTTree<T>;
 
   nodeInfo: T;
-  left: BSTTree<T>;
-  right: BSTTree<T>;
 
-  static leafNode<U extends BalancableNode>(nodeInfo: U) {
+  static leafNodeOf<U extends BalancableNode>(nodeInfo: U, level: number) {
     return new BSTNode(
-        nodeInfo, EmptyTree.getInstance(), EmptyTree.getInstance());
+        nodeInfo, EmptyTree.getInstance(), EmptyTree.getInstance(), level);
   }
 
-  constructor(nodeInfo: T, left: BSTTree<T>, right: BSTTree<T>) {
+  constructor(nodeInfo: T, left: BSTTree<T>, right: BSTTree<T>, level: number) {
+    this.kind = 'node';
+
     this.nodeInfo = nodeInfo;
     this.left = left;
     this.right = right;
+    this.level = level;
   }
 
-  walk(dir: TreeDirection): BSTTree<T> {
-    if (dir == TreeDirection.LEFT) {
-      return this.left;
-    } else {
-      return this.right;
-    }
+  setLeft(node: BSTTree<T>): void {
+    this.left = node;
   }
 
-  walkSet(dir: TreeDirection, node: BSTTree<T>): void {
-    if (dir == TreeDirection.LEFT) {
-      this.left = node;
-    } else {
-      this.right = node;
-    }
+  setRight(node: BSTTree<T>): void {
+    this.right = node;
   }
 
-  isRed() {
-    return this.nodeColor == NodeColor.RED;
+  walkLeft(): BSTTree<T> {
+    return this.left;
   }
 
-  paintRed(): void {
-    this.nodeColor = NodeColor.RED;
-  }
-
-  paintBlack(): void {
-    this.nodeColor = NodeColor.BLACK;
+  walkRight(): BSTTree<T> {
+    return this.right;
   }
 
   getPriority(): number {
     return this.nodeInfo.getPriority();
   }
 
-  equals(other: BalancableNode): boolean {
-    return this.nodeInfo.equals(other);
+  getLevel() {
+    return this.level;
   }
 
-  getHeight() {
-    return 1 + Math.max(this.left.getHeight(), this.right.getHeight());
+  incrementLevel() {
+    this.level += 1;
   }
 
-  getBalance(): number {
-    return this.left.getHeight() - this.right.getHeight();
+  decrementLevel() {
+    this.level -= 1;
   }
 }
