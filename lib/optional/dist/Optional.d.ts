@@ -4,7 +4,8 @@ export declare class Optional<T> {
     static empty(): Optional<any>;
     private constructor();
     isPresent(): boolean;
-    map<S>(f: (value: T) => S): Optional<any>;
+    map<S>(f: (value: T) => S): Optional<S>;
+    flatMap<S>(f: (value: T) => Optional<S>): Optional<S>;
     getOrElse(fallback: T): T;
     ifPresent(f: (value: T) => void): void;
     getOrError(): T;
