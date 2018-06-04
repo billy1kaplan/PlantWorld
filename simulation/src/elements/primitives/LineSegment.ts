@@ -197,4 +197,8 @@ export class LineSegment implements Drawable, Primitive {
   getP2() {
     return this.p2;
   }
+
+  magnitude() {
+    return this.p1.distanceToPoint(this.p2);
+  }
 }

@@ -23,6 +23,10 @@ doodle.act(energyBoard);
 energyBoard.distributeEnergy();
 */
 
+interface Pair {
+  root: DrawableRoot;
+  lineSegment: LineSegment;
+}
 
 console.log('Start');
 const doodleGenome = new DoodleGenome();
@@ -35,6 +39,15 @@ var i = 0
 for (i; i < 3; i++) {
   plant.log();
   plant = plant.grow();
+  const lightParts: Pair[] = plant.lightParts().map(p => {
+    return {
+      root: plant, lineSegment: p
+    }
+  });
+  const energy = lightParts.reduce((acc, cur) => {
+    return acc + cur.lineSegment.magnitude();
+  }, 0)
+  console.log(energy);
 }
 
 /*
