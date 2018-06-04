@@ -1,13 +1,11 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
 import {LineSegment} from '../elements/primitives/LineSegment';
-import {Point} from '../elements/primitives/Point';
 
-import {Doodle} from './Doodle';
 import {DoodleGenome, IDoodleGenome} from './DoodleGenome';
 import {DoodleCharacteristics, DoodleLocalSignal} from './DoodleLocalSignal';
 import {DoodleLocation, LocalLocation, RootPoint} from './DoodleLocation';
 import {DoodlePart, Drawable, DrawableDoodle, Loggable} from './DoodlePart';
-import {DoodleSegment, IDoodleSegment} from './DoodleSegment';
+import {DoodleSegment} from './DoodleSegment';
 import {SpokePart} from './SpokePart';
 import {UndifferentiatedPart} from './UndifferentiatedPart';
 
@@ -15,7 +13,10 @@ export interface ISeedGenome {
   grow(rootCharacteristics: DoodleLocalSignal): DrawableRoot;
   getDoodleGenome: () => IDoodleGenome;
 }
-export interface RootPart { grow(): DrawableRoot; }
+export interface RootPart {
+  grow(): DrawableRoot;
+  lightParts(): LineSegment[];
+}
 export type DrawableRoot = RootPart&Drawable&Loggable;
 
 export class SeedGenome implements ISeedGenome {
@@ -25,8 +26,6 @@ export class SeedGenome implements ISeedGenome {
   }
 
   grow(rootCharacteristics: DoodleLocalSignal): DrawableRoot {
-    console.log('HEREA;');
-    console.log(rootCharacteristics);
     const placeholder = new UndifferentiatedPart(this.doodleGenome);
     const angles = [0];
     const rootLocation = rootCharacteristics.doodleLocation;
@@ -71,6 +70,11 @@ export class DoodleRoot implements DrawableRoot {
     console.log(this);
     this.children.forEach(child => child.log());
   }
+
+  lightParts(): LineSegment[] {
+    return this.children.map(c => c.lightParts())
+        .reduce((acc, cur) => [...acc, ...cur], []);
+  }
 }
 
 export class Seed implements DrawableRoot {
@@ -91,19 +95,9 @@ export class Seed implements DrawableRoot {
     console.log(this);
   }
 
-  children(): DoodlePart[] {
-    return [];
-  }
-
-  /*
-  getDoodleGenome(): IDoodleGenome {
-    return this.seedGenome.getDoodleGenome();
-  }
-
-  segments() {
-    return [];
-  }
-  */
-
   draw(drawingManager: IDrawingManager): void {}
+
+  lightParts(): LineSegment[] {
+    return [];
+  }
 }

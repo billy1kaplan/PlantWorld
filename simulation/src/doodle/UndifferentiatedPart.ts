@@ -34,7 +34,7 @@ export class UndifferentiatedPart implements DrawableDoodle {
     console.log(this);
   }
 
-  segments() {
+  lightParts() {
     return [];
   }
 

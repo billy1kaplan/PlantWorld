@@ -1,5 +1,4 @@
 import {DoodlePart} from './DoodlePart';
-import {IDoodleSegment} from './DoodleSegment';
 
 export interface IDoodleGenome {
   differentiatePart: (part: DoodlePart) => DoodlePart;
