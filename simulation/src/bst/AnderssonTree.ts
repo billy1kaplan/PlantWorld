@@ -1,9 +1,25 @@
+import {Optional} from 'Optional';
+
 import {BalancableNode, BST} from './BST';
 import {BSTNode, BSTTree, EmptyTree} from './BSTNode';
 
+// Reference:
+// http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_andersson.aspx
 export class AnderssonTree<T extends BalancableNode> implements BST<T> {
   findMax(): T {
-    return null;
+    return this.findMaxInternal(this.root);
+  }
+
+  private findMaxInternal(root: BSTTree<T>): T {
+    if (root.kind == 'empty') {
+      throw new Error('No max of empty tree');
+    } else {
+      if (root.walkRight().kind == 'node') {
+        return this.findMaxInternal(root.walkRight());
+      } else {
+        return root.nodeInfo;
+      }
+    }
   }
 
   peek(): T {
@@ -14,14 +30,85 @@ export class AnderssonTree<T extends BalancableNode> implements BST<T> {
     }
   }
 
-  aboveSegment(node: T): T {
-    throw new Error('Method not implemented.');
+  private findPredecessor(node: T, root) {}
+
+  private find(node: T, root: BSTTree<T>): Optional<BSTTree<T>> {
+    switch (root.kind) {
+      case 'empty':
+        return Optional.empty();
+      case 'node':
+        if (node.equals(root.nodeInfo)) {
+          return Optional.of(root)
+        } else if (node.getPriority() < root.getPriority()) {
+          return this.find(node, root.walkLeft());
+        } else {
+          return this.find(node, root.walkRight());
+        }
+    }
   }
-  belowSegment(node: T): T {
-    throw new Error('Method not implemented.');
+  // Use optional
+  aboveSegment(node: T): Optional<T> {
+    const nodeLoc = this.find(node, this.root);
+
+    return nodeLoc.flatMap(loc => {
+      var curLoc = loc.walkRight();
+
+      while (curLoc.walkLeft().kind != 'empty') {
+        curLoc = curLoc.walkLeft();
+      }
+
+      if (curLoc.kind == 'node') {
+        return Optional.of(curLoc.nodeInfo);
+      } else {
+        return Optional.empty();
+      }
+    });
   }
+
+  belowSegment(node: T): Optional<T> {
+    const nodeLoc = this.find(node, this.root);
+
+    return nodeLoc.flatMap(loc => {
+      var curLoc = loc.walkLeft();
+
+      if (curLoc.kind == 'empty') {
+        var loc = this.root;
+        var pred: Optional<T> = Optional.empty();
+        while (loc.kind == 'node' && !loc.nodeInfo.equals(node)) {
+          if (loc.getPriority() < node.getPriority() &&
+              (!pred.isPresent() ||
+               pred.getOrError().getPriority() < loc.getPriority())) {
+            pred = Optional.of(loc.nodeInfo);
+          }
+
+          if (node.getPriority() < loc.nodeInfo.getPriority()) {
+            loc = loc.walkLeft();
+          } else {
+            loc = loc.walkRight();
+          }
+        }
+        return pred;
+      } else {
+        while (curLoc.walkRight().kind != 'empty') {
+          curLoc = curLoc.walkRight();
+        }
+
+        if (curLoc.kind == 'node') {
+          return Optional.of(curLoc.nodeInfo);
+        } else {
+          return Optional.empty();
+        }
+      }
+    });
+  }
+
   swapPositions(node1: T, node2: T): void {
-    throw new Error('Method not implemented.');
+    if (!(node1.getPriority() === node2.getPriority())) {
+      return;
+    }
+
+    const bstNode1 = this.find(node1, this.root);
+    const bstNode2 = this.find(node2, this.root);
   }
 
   private root: BSTTree<T>;
@@ -151,8 +238,7 @@ export class AnderssonTree<T extends BalancableNode> implements BST<T> {
         root = this.skew(root);
         root = this.split(root);
       }
-
-      return root;
     }
+    return root;
   }
 }

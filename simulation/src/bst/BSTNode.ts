@@ -82,4 +82,8 @@ export class BSTNode<T extends BalancableNode> {
   decrementLevel() {
     this.level -= 1;
   }
+
+  setLevel(level: number) {
+    this.level = level;
+  }
 }

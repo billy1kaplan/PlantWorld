@@ -1,6 +1,10 @@
 import 'jasmine';
+
+import {Optional} from 'Optional';
+
 import {AnderssonTree} from '../AnderssonTree';
 import {BalancableNode} from '../BST';
+import {EmptyTree} from '../BSTNode';
 
 class SimpleNode implements BalancableNode {
   n: number;
@@ -14,7 +18,11 @@ class SimpleNode implements BalancableNode {
   }
 
   equals(other: BalancableNode): boolean {
-    return false;
+    if (!(other instanceof SimpleNode)) {
+      return false;
+    } else {
+      return this.n === other.n;
+    }
   }
 }
 
@@ -40,5 +48,42 @@ describe('Tree', () => {
     tree.insert(three);
     tree.insert(four);
     tree.insert(five);
+  });
+
+  it('deletes nodes', () => {
+    const tree = new AnderssonTree();
+
+    tree.insert(one);
+    tree.delete(one);
+
+    expect(() => tree.peek())
+        .toThrow(new Error('Can\'t peek at the empty tree'));
+  });
+
+  it('deletes nodes', () => {
+    const tree = new AnderssonTree();
+
+    tree.insert(one);
+    tree.insert(two);
+
+    tree.delete(one);
+    expect(tree.peek()).toEqual(two);
+
+    tree.delete(two);
+    expect(() => tree.peek())
+        .toThrow(new Error('Can\'t peek at the empty tree'));
+  });
+
+  it('finds the predecessor', () => {
+    const tree = new AnderssonTree();
+
+    tree.insert(one);
+    tree.insert(two);
+    tree.insert(three);
+    tree.insert(four);
+
+    expect(tree.belowSegment(three).getOrError()).toEqual(two);
+    expect(tree.belowSegment(one)).toEqual(Optional.empty());
+    expect(tree.belowSegment(four).getOrError()).toEqual(three);
   });
 })
