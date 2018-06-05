@@ -9,3 +9,7 @@ export function cos(angle: number) {
 function toRadians(angle: number) {
   return (Math.PI / 180) * angle;
 }
+
+export function flatMap<T, S>(arr: T[], f: (f: T) => S[]) {
+  return arr.map(el => f(el)).reduce((acc, cur) => [...acc, ...cur], [])
+}
