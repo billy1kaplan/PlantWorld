@@ -9,6 +9,7 @@ import {LineSegment} from './elements/primitives/LineSegment';
 import {Point} from './elements/primitives/Point';
 import {EnergyBoard} from './world/Board';
 import {Sun} from './world/Sun';
+import {World} from './world/World';
 
 /*
 const sun = new Sun(1, 10);
@@ -28,26 +29,20 @@ interface Pair {
   lineSegment: LineSegment;
 }
 
-console.log('Start');
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
 const rootPoint =
     DoodleLocalSignal.rootSignal(new RootPoint(new Point(300, 50), 90));
 var plant: DrawableRoot = new Seed(seedGenome, rootPoint);
 
+const sun = new Sun(10, 10);
+var world = new World(sun, [plant]);
+
 var i = 0
 for (i; i < 3; i++) {
-  plant.log();
-  plant = plant.grow();
-  const lightParts: Pair[] = plant.lightParts().map(p => {
-    return {
-      root: plant, lineSegment: p
-    }
-  });
-  const energy = lightParts.reduce((acc, cur) => {
-    return acc + cur.lineSegment.magnitude();
-  }, 0)
-  console.log(energy);
+  // plant.log();
+  // plant = plant.grow();
+  world = world.step();
 }
 
 /*
