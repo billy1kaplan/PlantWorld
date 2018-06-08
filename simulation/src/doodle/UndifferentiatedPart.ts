@@ -1,12 +1,8 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-import {Line} from '../elements/primitives/Line';
-import {LineSegment} from '../elements/primitives/LineSegment';
-import {Point} from '../elements/primitives/Point';
-
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {DoodleLocation, LocalLocation, LocalPoint} from './DoodleLocation';
-import {DoodlePart, DrawableDoodle} from './DoodlePart';
+import {LocalLocation} from './DoodleLocation';
+import {DrawableDoodle} from './DoodlePart';
 import {DoodleSegment} from './DoodleSegment';
 import {SpokePart} from './SpokePart';
 

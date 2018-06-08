@@ -1,7 +1,10 @@
 import {Doodle} from '../doodle/Doodle';
+import {DoodleLocalSignal} from '../doodle/DoodleLocalSignal';
+import {RootPoint} from '../doodle/DoodleLocation';
 import {DoodleSegment} from '../doodle/DoodleSegment';
 import {DrawableRoot} from '../doodle/SeedGenome';
 import {LineSegment} from '../elements/primitives/LineSegment';
+import {Point} from '../elements/primitives/Point';
 import {flatMap} from '../geometricmath/Utility';
 
 import {EnergyBoard} from './Board';
@@ -37,8 +40,16 @@ export class World {
         energyPerRoot.set(e.plant, newEnergy);
       }
     });
-    console.log(energyPerRoot);
-    const grownPlants = this.plants.map(p => p.grow());
+    const grownPlants = this.plants.map(
+        p => p.grow(this.energyUpdateRoot(energyPerRoot.get(p))));
     return new World(this.sun, grownPlants);
+  }
+
+  energyUpdateRoot(energy: number) {
+    return (local: DoodleLocalSignal) => {
+      console.log(local);
+      return new DoodleLocalSignal(
+          local.doodleLocation, local.hopLength, local.freeEnergy + energy);
+    }
   }
 }

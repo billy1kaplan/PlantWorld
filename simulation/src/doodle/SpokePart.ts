@@ -1,12 +1,10 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-import {LineSegment} from '../elements/primitives/LineSegment';
+import {flatMap} from '../geometricmath/Utility';
 
-import {DoodleGenome, IDoodleGenome} from './DoodleGenome';
+import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {DoodleLocation, LocalLocation, LocalPoint} from './DoodleLocation';
-import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
-import {DoodleSegment} from './DoodleSegment';
-import {UndifferentiatedPart} from './UndifferentiatedPart';
+import {DrawableDoodle} from './DoodlePart';
+import {PressedDoodle} from './PressedDoodle';
 
 export class SpokePart implements DrawableDoodle {
   private genome: IDoodleGenome;
@@ -39,8 +37,7 @@ export class SpokePart implements DrawableDoodle {
     this.doodleParts.forEach(segment => segment.draw(drawingManager));
   }
 
-  lightParts(): LineSegment[] {
-    return this.doodleParts.map(c => c.lightParts())
-        .reduce((acc, cur) => [...acc, ...cur], []);
+  lightParts(): PressedDoodle[] {
+    return flatMap(this.doodleParts, c => c.lightParts());
   }
 }

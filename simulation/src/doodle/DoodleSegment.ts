@@ -1,20 +1,20 @@
-import {Optional} from 'Optional';
-
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
 import {LineSegment} from '../elements/primitives/LineSegment';
-import {Point} from '../elements/primitives/Point';
 import {Sun} from '../world/Sun';
 
-import {Doodle} from './Doodle';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {DoodleLocation, LocalLocation, LocalPoint} from './DoodleLocation';
-import {DoodlePart, Drawable, DrawableDoodle} from './DoodlePart';
-import {SpokePart} from './SpokePart';
+import {LocalLocation} from './DoodleLocation';
+import {DrawableDoodle} from './DoodlePart';
+import {PressedDoodle} from './PressedDoodle';
 
 export class DoodleSegment implements DrawableDoodle {
   private visible: LineSegment[];
   private nextPart: DrawableDoodle;
+
+  // Wire up
   private localPoint: LocalLocation;
+  private localCharacteristics: DoodleLocalSignal;
+
 
   constructor(
       nextPart: DrawableDoodle, localPoint: LocalLocation,
@@ -53,8 +53,12 @@ export class DoodleSegment implements DrawableDoodle {
     this.nextPart.draw(drawingManager);
   }
 
-  lightParts(): LineSegment[] {
+  // Return more than just the segments? Feedback into the root, i.e. feedback
+  // on the energy usage
+  lightParts(): PressedDoodle[] {
     const lineSegment = this.localPoint.getParentOffset();
-    return [lineSegment, ...this.nextPart.lightParts()];
+    const flattened =
+        new PressedDoodle([lineSegment], this.localCharacteristics.freeEnergy);
+    return [flattened, ...this.nextPart.lightParts()];
   }
 }

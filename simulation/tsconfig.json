@@ -13,7 +13,8 @@
             "mocha",
             "chai",
             "node"
-        ]
+        ],
+        "noUnusedLocals": true
     },
     "include": [
         "src/**/*"

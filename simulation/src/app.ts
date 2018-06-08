@@ -2,7 +2,7 @@ import {DoodleGenome} from './doodle/DoodleGenome';
 import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
 import {DoodleLocation, RootPoint} from './doodle/DoodleLocation';
 import {DoodlePart} from './doodle/DoodlePart';
-import {DoodleSegment, IDoodleSegment} from './doodle/DoodleSegment';
+import {DoodleSegment} from './doodle/DoodleSegment';
 import {DoodleRoot, DrawableRoot, RootPart, Seed, SeedGenome} from './doodle/SeedGenome';
 import {IDrawingManager, SimpleDrawingManager} from './drawing/SimpleDrawingManager';
 import {Point} from './elements/primitives/Point';
@@ -20,7 +20,7 @@ class Simulation {
 
   update(): void {
     if (totalTicks < 6) {
-      this.roots = this.roots.map(r => r.grow());
+      this.roots = this.roots.map(r => r.grow(null));
     }
     totalTicks += 1;
   }

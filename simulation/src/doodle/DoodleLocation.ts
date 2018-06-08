@@ -1,4 +1,3 @@
-import {Line} from '../elements/primitives/Line';
 import {LineSegment} from '../elements/primitives/LineSegment';
 import {Point} from '../elements/primitives/Point';
 import {cos, sin} from '../geometricmath/Utility';
@@ -33,7 +32,6 @@ export class DoodleLocation {
 export interface LocalPoint {
   getGlobalPosition(): Point;
   getAngularOffset(): number;
-  getParentOffset(): LineSegment;
 }
 export class RootPoint implements LocalPoint {
   private point: Point;
@@ -50,10 +48,6 @@ export class RootPoint implements LocalPoint {
 
   getAngularOffset(): number {
     return this.angularOffset;
-  }
-
-  getParentOffset(): LineSegment {
-    return new LineSegment(this.point, this.point);
   }
 }
 
