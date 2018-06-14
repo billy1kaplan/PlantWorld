@@ -1,4 +1,4 @@
-import {DoodleGenome} from './doodle/DoodleGenome';
+import {Sp} from './doodle/DoodleGenome';
 import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
 import {RootPoint} from './doodle/DoodleLocation';
 import {DrawableRoot} from './doodle/RootDoodle';
@@ -21,7 +21,7 @@ doodle.act(energyBoard);
 energyBoard.distributeEnergy();
 */
 
-const doodleGenome = new DoodleGenome();
+const doodleGenome = new Sp();
 const seedGenome = new SeedGenome(doodleGenome);
 const rootPoint: DoodleLocalSignal =
     DoodleLocalSignal.rootSignal(new RootPoint(new Point(300, 50), 90));

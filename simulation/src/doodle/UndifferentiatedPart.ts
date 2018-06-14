@@ -1,10 +1,7 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {LocalLocation} from './DoodleLocation';
 import {DrawableDoodle} from './DoodlePart';
-import {DoodleSegment} from './DoodleSegment';
-import {SpokePart} from './SpokePart';
 
 export class UndifferentiatedPart implements DrawableDoodle {
   private doodleGenome: IDoodleGenome;
@@ -14,12 +11,15 @@ export class UndifferentiatedPart implements DrawableDoodle {
   }
 
   grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle {
+    /*
     const placeholder = new UndifferentiatedPart(this.doodleGenome);
     const angles = [-20, 20];
     const locations = angles.map(
         a => new LocalLocation(doodleLocalSignal.doodleLocation, a, 20));
     const nextParts = locations.map(n => new DoodleSegment(placeholder, n));
     return new SpokePart(this.doodleGenome, nextParts, 10, 10);
+    */
+    return this.doodleGenome.differentiatePart(doodleLocalSignal);
   }
 
   log(): void {

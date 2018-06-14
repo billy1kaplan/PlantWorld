@@ -1,18 +1,18 @@
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {DoodlePart} from './DoodlePart';
+import {DrawableDoodle} from './DoodlePart';
 import {DoodleSegment} from './DoodleSegment';
 import {SpokePart} from './SpokePart';
 
 export interface IDoodleGenome {
-  differentiatePart: (localSignal: DoodleLocalSignal) => DoodlePart;
+  differentiatePart: (localSignal: DoodleLocalSignal) => DrawableDoodle;
 }
 
 export class DoodleGenome implements IDoodleGenome {
-  differentiatePart: (localSignal: DoodleLocalSignal) => DoodlePart;
+  differentiatePart: (localSignal: DoodleLocalSignal) => DrawableDoodle;
 }
 
 export class Sp implements IDoodleGenome {
-  differentiatePart(localSignal: DoodleLocalSignal): DoodlePart {
+  differentiatePart(localSignal: DoodleLocalSignal): DrawableDoodle {
     // New factor
     const location = localSignal.doodleLocation;
     const differentialFactor = 0;
