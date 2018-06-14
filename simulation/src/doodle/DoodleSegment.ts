@@ -1,45 +1,36 @@
 import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-import {LineSegment} from '../elements/primitives/LineSegment';
-import {Sun} from '../world/Sun';
 
+import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {LocalLocation} from './DoodleLocation';
+import {LocalLocation, LocalPoint} from './DoodleLocation';
 import {DrawableDoodle} from './DoodlePart';
 import {PressedDoodle} from './PressedDoodle';
+import {UndifferentiatedPart} from './UndifferentiatedPart';
 
 export class DoodleSegment implements DrawableDoodle {
-  private visible: LineSegment[];
   private nextPart: DrawableDoodle;
 
   // Wire up
   private localPoint: LocalLocation;
   private localCharacteristics: DoodleLocalSignal;
 
+  static bud(length: number, startingPoint: LocalPoint, genome: IDoodleGenome):
+      DoodleSegment {
+    return new DoodleSegment(
+        new UndifferentiatedPart(genome),
+        new LocalLocation(startingPoint, 0, length));
+  }
 
-  constructor(
-      nextPart: DrawableDoodle, localPoint: LocalLocation,
-      visible: LineSegment[]) {
+  constructor(nextPart: DrawableDoodle, localPoint: LocalLocation) {
     this.nextPart = nextPart;
     this.localPoint = localPoint;
-    this.visible = visible;
-  }
-
-  update(visible: LineSegment[]) {
-    this.visible = visible;
-  }
-
-  collectEnergy(sun: Sun): void {
-    const energy = this.visible.map(a => sun.energyFunctionFromLineSegment(a))
-                       .reduce((a, b) => a + b, 0);
-    console.log(energy);
   }
 
   grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle {
     const nextLocal =
         this.localPoint.scale(doodleLocalSignal.doodleLocation, 1.15);
     return new DoodleSegment(
-        this.nextPart.grow(new DoodleLocalSignal(nextLocal, 0, 0)), nextLocal,
-        []);
+        this.nextPart.grow(new DoodleLocalSignal(nextLocal, 0, 0)), nextLocal);
   }
 
   log(): void {
@@ -57,8 +48,7 @@ export class DoodleSegment implements DrawableDoodle {
   // on the energy usage
   lightParts(): PressedDoodle[] {
     const lineSegment = this.localPoint.getParentOffset();
-    const flattened =
-        new PressedDoodle([lineSegment], this.localCharacteristics.freeEnergy);
+    const flattened = new PressedDoodle([lineSegment], 0);
     return [flattened, ...this.nextPart.lightParts()];
   }
 }

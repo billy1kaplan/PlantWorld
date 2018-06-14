@@ -17,11 +17,12 @@ export class SeedGenome implements ISeedGenome {
   }
 
   grow(rootCharacteristics: DoodleLocalSignal): DrawableRoot {
+    console.log(rootCharacteristics);
     const placeholder = new UndifferentiatedPart(this.doodleGenome);
     const angles = [0];
     const rootLocation = rootCharacteristics.doodleLocation;
     const locations = angles.map(a => new LocalLocation(rootLocation, a, 50));
-    const nextParts = locations.map(n => new DoodleSegment(placeholder, n, []));
+    const nextParts = locations.map(n => new DoodleSegment(placeholder, n));
     return new DoodleRoot(rootCharacteristics, this.doodleGenome, nextParts);
   }
 

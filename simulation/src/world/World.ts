@@ -1,13 +1,8 @@
-import {Doodle} from '../doodle/Doodle';
 import {DoodleLocalSignal} from '../doodle/DoodleLocalSignal';
-import {RootPoint} from '../doodle/DoodleLocation';
-import {DoodleSegment} from '../doodle/DoodleSegment';
-import {DrawableRoot} from '../doodle/SeedGenome';
+import {DrawableRoot} from '../doodle/RootDoodle';
 import {LineSegment} from '../elements/primitives/LineSegment';
-import {Point} from '../elements/primitives/Point';
 import {flatMap} from '../geometricmath/Utility';
 
-import {EnergyBoard} from './Board';
 import {Sun} from './Sun';
 
 interface PlantSegment {
@@ -33,23 +28,43 @@ export class World {
     const energyPerRoot = new Map<DrawableRoot, number>();
     lightParts.forEach(e => {
       const existingEnergy = energyPerRoot.get(e.plant);
-      const newEnergy = e.lineSegment.magnitude();
+      const newEnergy = e.lineSegment.getEnergy();
       if (existingEnergy !== undefined) {
         energyPerRoot.set(e.plant, existingEnergy + newEnergy);
       } else {
         energyPerRoot.set(e.plant, newEnergy);
       }
     });
-    const grownPlants = this.plants.map(
-        p => p.grow(this.energyUpdateRoot(energyPerRoot.get(p))));
+    console.log('BEFORE');
+    this.plants.forEach(p => p.log());
+    const grownPlants = this.plants.map(p => {
+      const energyDiff = this.getOrDefault(energyPerRoot, p, 0);
+      console.log('DIFF' + energyDiff);
+      return p.grow(this.energyUpdateRoot(energyDiff));
+    });
+    console.log('AFTER');
+    grownPlants.forEach(p => p.log());
     return new World(this.sun, grownPlants);
   }
 
+  getOrDefault(map, key, d) {
+    const res = map.get(key);
+    if (res) {
+      return res;
+    } else {
+      return d;
+    }
+  }
+
   energyUpdateRoot(energy: number) {
+    console.log('HERE');
     return (local: DoodleLocalSignal) => {
-      console.log(local);
-      return new DoodleLocalSignal(
-          local.doodleLocation, local.hopLength, local.freeEnergy + energy);
+      if (energy !== NaN) {
+        return new DoodleLocalSignal(
+            local.doodleLocation, local.hopLength, local.freeEnergy + energy);
+      } else {
+        return local;
+      }
     }
   }
 }

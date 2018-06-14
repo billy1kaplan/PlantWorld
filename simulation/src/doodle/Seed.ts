@@ -15,8 +15,9 @@ export class Seed implements DrawableRoot {
     this.rootCharacteristics = rootCharacteristics;
   }
 
-  grow(): DrawableRoot {
-    return this.seedGenome.grow(this.rootCharacteristics);
+  grow(updateRootCharacteristics): DrawableRoot {
+    const updated = updateRootCharacteristics(this.rootCharacteristics);
+    return this.seedGenome.grow(updated);
   }
 
   log(): void {

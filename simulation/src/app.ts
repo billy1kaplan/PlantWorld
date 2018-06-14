@@ -1,9 +1,7 @@
 import {DoodleGenome} from './doodle/DoodleGenome';
 import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
-import {DoodleLocation, RootPoint} from './doodle/DoodleLocation';
-import {DoodlePart} from './doodle/DoodlePart';
-import {DoodleSegment} from './doodle/DoodleSegment';
-import {DoodleRoot, DrawableRoot, RootPart, Seed, SeedGenome} from './doodle/SeedGenome';
+import {RootPoint} from './doodle/DoodleLocation';
+import {SeedGenome} from './doodle/SeedGenome';
 import {IDrawingManager, SimpleDrawingManager} from './drawing/SimpleDrawingManager';
 import {Point} from './elements/primitives/Point';
 

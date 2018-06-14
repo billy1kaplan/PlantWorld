@@ -18,12 +18,8 @@ export class UndifferentiatedPart implements DrawableDoodle {
     const angles = [-20, 20];
     const locations = angles.map(
         a => new LocalLocation(doodleLocalSignal.doodleLocation, a, 20));
-    const nextParts = locations.map(n => new DoodleSegment(placeholder, n, []));
-    return new SpokePart(this.doodleGenome, nextParts);
-  }
-
-  children() {
-    return [];
+    const nextParts = locations.map(n => new DoodleSegment(placeholder, n));
+    return new SpokePart(this.doodleGenome, nextParts, 10, 10);
   }
 
   log(): void {

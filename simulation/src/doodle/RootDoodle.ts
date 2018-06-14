@@ -28,6 +28,8 @@ export class DoodleRoot implements DrawableRoot {
   }
 
   grow(updateRootCharacteristics): DrawableRoot {
+    console.log('UPDATE');
+    console.log(updateRootCharacteristics);
     const newChildren =
         this.children.map(c => c.grow(this.rootCharacteristics));
     return new DoodleRoot(
@@ -45,6 +47,7 @@ export class DoodleRoot implements DrawableRoot {
   }
 
   lightParts(): PressedDoodle[] {
+    console.log(this.children);
     return flatMap(this.children, c => c.lightParts());
   }
 }

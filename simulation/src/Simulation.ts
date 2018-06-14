@@ -1,13 +1,10 @@
-import {Doodle} from './doodle/Doodle';
 import {DoodleGenome} from './doodle/DoodleGenome';
 import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
-import {DoodleLocation, RootPoint} from './doodle/DoodleLocation';
-import {DoodleSegment} from './doodle/DoodleSegment';
-import {DrawableRoot, Seed, SeedGenome} from './doodle/SeedGenome';
-import {SimpleDrawingManager} from './drawing/SimpleDrawingManager';
-import {LineSegment} from './elements/primitives/LineSegment';
+import {RootPoint} from './doodle/DoodleLocation';
+import {DrawableRoot} from './doodle/RootDoodle';
+import {Seed} from './doodle/Seed';
+import {SeedGenome} from './doodle/SeedGenome';
 import {Point} from './elements/primitives/Point';
-import {EnergyBoard} from './world/Board';
 import {Sun} from './world/Sun';
 import {World} from './world/World';
 
@@ -24,15 +21,11 @@ doodle.act(energyBoard);
 energyBoard.distributeEnergy();
 */
 
-interface Pair {
-  root: DrawableRoot;
-  lineSegment: LineSegment;
-}
-
 const doodleGenome = new DoodleGenome();
 const seedGenome = new SeedGenome(doodleGenome);
-const rootPoint =
+const rootPoint: DoodleLocalSignal =
     DoodleLocalSignal.rootSignal(new RootPoint(new Point(300, 50), 90));
+console.log(rootPoint.doodleLocation);
 var plant: DrawableRoot = new Seed(seedGenome, rootPoint);
 
 const sun = new Sun(10, 10);
@@ -40,7 +33,6 @@ var world = new World(sun, [plant]);
 
 var i = 0
 for (i; i < 3; i++) {
-  // plant.log();
   // plant = plant.grow();
   world = world.step();
 }
