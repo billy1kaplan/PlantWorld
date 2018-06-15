@@ -1,12 +1,10 @@
-import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {PressedDoodle} from './PressedDoodle';
-import {DrawableRoot} from './RootDoodle';
+import {RootPart} from './RootDoodle';
 import {ISeedGenome} from './SeedGenome';
+import {Visitor} from './Visitor';
 
 
-export class Seed implements DrawableRoot {
+export class Seed implements RootPart {
   private seedGenome: ISeedGenome;
   private rootCharacteristics: DoodleLocalSignal;
 
@@ -15,18 +13,12 @@ export class Seed implements DrawableRoot {
     this.rootCharacteristics = rootCharacteristics;
   }
 
-  grow(updateRootCharacteristics): DrawableRoot {
+  grow(updateRootCharacteristics): RootPart {
     const updated = updateRootCharacteristics(this.rootCharacteristics);
     return this.seedGenome.grow(updated);
   }
 
-  log(): void {
-    console.log(this);
-  }
-
-  draw(drawingManager: IDrawingManager): void {}
-
-  lightParts(): PressedDoodle[] {
-    return [];
+  visit<T>(visitor: Visitor<T>) {
+    visitor.visitSeed(this);
   }
 }

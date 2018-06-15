@@ -1,9 +1,9 @@
-import {Sp} from './doodle/DoodleGenome';
 import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
 import {RootPoint} from './doodle/DoodleLocation';
-import {DrawableRoot} from './doodle/RootDoodle';
+import {RootPart} from './doodle/RootDoodle';
 import {Seed} from './doodle/Seed';
 import {SeedGenome} from './doodle/SeedGenome';
+import {SimpleBranchingTree} from './doodle/SimpleBranchingTree';
 import {Point} from './elements/primitives/Point';
 import {Sun} from './world/Sun';
 import {World} from './world/World';
@@ -21,12 +21,11 @@ doodle.act(energyBoard);
 energyBoard.distributeEnergy();
 */
 
-const doodleGenome = new Sp();
+const doodleGenome = new SimpleBranchingTree();
 const seedGenome = new SeedGenome(doodleGenome);
 const rootPoint: DoodleLocalSignal =
     DoodleLocalSignal.rootSignal(new RootPoint(new Point(300, 50), 90));
-console.log(rootPoint.doodleLocation);
-var plant: DrawableRoot = new Seed(seedGenome, rootPoint);
+var plant: RootPart = new Seed(seedGenome, rootPoint);
 
 const sun = new Sun(10, 10);
 var world = new World(sun, [plant]);
@@ -34,6 +33,7 @@ var world = new World(sun, [plant]);
 var i = 0
 for (i; i < 3; i++) {
   // plant = plant.grow();
+  world.log();
   world = world.step();
 }
 

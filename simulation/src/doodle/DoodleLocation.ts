@@ -53,16 +53,6 @@ export class LocalLocation implements LocalPoint {
         this.parent.getGlobalPosition(), this.getGlobalPosition());
   }
 
-  getOffset(localPoint: LocalPoint) {
-    const totalAngleOffset = this.parent.getAngularOffset() + this.angularShift;
-    const deltaX = cos(totalAngleOffset) * this.length;
-    const deltaY = sin(totalAngleOffset) * this.length;
-    const rootPoint = localPoint.getGlobalPosition();
-    const shifted =
-        new Point(rootPoint.getX() + deltaX, rootPoint.getY() + deltaY);
-    return new LineSegment(rootPoint, shifted);
-  }
-
   scale(parent: LocalPoint, scaleFactor: number) {
     return new LocalLocation(
         parent, this.angularShift, this.length * scaleFactor);

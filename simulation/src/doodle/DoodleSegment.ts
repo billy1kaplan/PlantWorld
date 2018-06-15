@@ -1,14 +1,14 @@
-import {IDrawingManager} from '../drawing/SimpleDrawingManager';
+import {LineSegment} from '../elements/primitives/LineSegment';
 
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
 import {LocalLocation, LocalPoint} from './DoodleLocation';
-import {DrawableDoodle} from './DoodlePart';
-import {PressedDoodle} from './PressedDoodle';
+import {DoodlePart} from './DoodlePart';
 import {UndifferentiatedPart} from './UndifferentiatedPart';
+import {Visitor} from './Visitor';
 
-export class DoodleSegment implements DrawableDoodle {
-  private nextPart: DrawableDoodle;
+export class DoodleSegment implements DoodlePart {
+  private nextPart: DoodlePart;
 
   // Wire up
   private localPoint: LocalLocation;
@@ -21,34 +21,24 @@ export class DoodleSegment implements DrawableDoodle {
         new LocalLocation(startingPoint, 0, length));
   }
 
-  constructor(nextPart: DrawableDoodle, localPoint: LocalLocation) {
+  constructor(nextPart: DoodlePart, localPoint: LocalLocation) {
     this.nextPart = nextPart;
     this.localPoint = localPoint;
   }
 
-  grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle {
+  grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
     const nextLocal =
         this.localPoint.scale(doodleLocalSignal.doodleLocation, 1.15);
     return new DoodleSegment(
         this.nextPart.grow(new DoodleLocalSignal(nextLocal, 0, 0)), nextLocal);
   }
 
-  log(): void {
-    console.log(this);
-    this.nextPart.log();
+  visit<T>(visitor: Visitor<T>) {
+    visitor.visitSegment(this);
+    this.nextPart.visit(visitor);
   }
 
-  draw(drawingManager: IDrawingManager): void {
-    const lineSegment = this.localPoint.getParentOffset();
-    drawingManager.drawLine(lineSegment.getP1(), lineSegment.getP2());
-    this.nextPart.draw(drawingManager);
-  }
-
-  // Return more than just the segments? Feedback into the root, i.e. feedback
-  // on the energy usage
-  lightParts(): PressedDoodle[] {
-    const lineSegment = this.localPoint.getParentOffset();
-    const flattened = new PressedDoodle([lineSegment], 0);
-    return [flattened, ...this.nextPart.lightParts()];
+  getLineSegment(): LineSegment {
+    return this.localPoint.getParentOffset();
   }
 }

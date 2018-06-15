@@ -1,10 +1,8 @@
-import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {DrawableDoodle} from './DoodlePart';
-import {PressedDoodle} from './PressedDoodle';
+import {DoodlePart} from './DoodlePart';
+import {Visitor} from './Visitor';
 
-export class EnergyStorageDoodle implements DrawableDoodle {
+export class EnergyStorageDoodle implements DoodlePart {
   // I.e. capacity, discharge
   private localCharacteristics: DoodleLocalSignal;
   private storedEnergy: number;
@@ -14,22 +12,11 @@ export class EnergyStorageDoodle implements DrawableDoodle {
     this.storedEnergy = storedEnergy;
   }
 
-  grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle {
+  grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
     return new EnergyStorageDoodle(
         this.localCharacteristics,
         this.storedEnergy + doodleLocalSignal.freeEnergy);
   }
 
-  log(): void {
-    console.log(this);
-  }
-
-  draw(drawingManager: IDrawingManager): void {}
-
-  // Return more than just the segments? Feedback into the root, i.e. feedback
-  // on the energy usage
-  lightParts(): PressedDoodle[] {
-    const flattened = new PressedDoodle([], this.storedEnergy);
-    return [flattened];
-  }
+  visit<T>(visitor: Visitor<T>) {}
 }

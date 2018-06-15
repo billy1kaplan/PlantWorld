@@ -1,16 +1,16 @@
-import {IDrawingManager} from '../drawing/SimpleDrawingManager';
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {DrawableDoodle} from './DoodlePart';
+import {DoodlePart} from './DoodlePart';
+import {Visitor} from './Visitor';
 
-export class UndifferentiatedPart implements DrawableDoodle {
+export class UndifferentiatedPart implements DoodlePart {
   private doodleGenome: IDoodleGenome;
 
   constructor(doodleGenome: IDoodleGenome) {
     this.doodleGenome = doodleGenome;
   }
 
-  grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle {
+  grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
     /*
     const placeholder = new UndifferentiatedPart(this.doodleGenome);
     const angles = [-20, 20];
@@ -22,13 +22,7 @@ export class UndifferentiatedPart implements DrawableDoodle {
     return this.doodleGenome.differentiatePart(doodleLocalSignal);
   }
 
-  log(): void {
-    console.log(this);
+  visit<T>(visitor: Visitor<T>) {
+    visitor.visitUndifferentiated(this);
   }
-
-  lightParts() {
-    return [];
-  }
-
-  draw(drawingManager: IDrawingManager): void {}
 }

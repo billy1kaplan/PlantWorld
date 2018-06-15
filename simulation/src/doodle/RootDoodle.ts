@@ -1,35 +1,30 @@
-import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-import {flatMap} from '../geometricmath/Utility';
 
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {Drawable, DrawableDoodle, Loggable} from './DoodlePart';
-import {PressedDoodle} from './PressedDoodle';
+import {DoodlePart} from './DoodlePart';
+import {Visitor} from './Visitor';
 
 export interface RootPart {
   grow(
       updateRootCharacteristics:
           (rootCharacteristics: DoodleLocalSignal) => DoodleLocalSignal):
-      DrawableRoot;
-  lightParts(): PressedDoodle[];
+      RootPart;
+  visit<T>(visitor: Visitor<T>): void;
 }
-export type DrawableRoot = RootPart&Drawable&Loggable;
 
-export class DoodleRoot implements DrawableRoot {
+export class DoodleRoot implements RootPart {
   private rootCharacteristics: DoodleLocalSignal;
   private doodleGenome: IDoodleGenome;
-  private children: DrawableDoodle[];
+  private children: DoodlePart[];
   constructor(
       rootCharacteristics: DoodleLocalSignal, doodleGenome: IDoodleGenome,
-      children: DrawableDoodle[]) {
+      children: DoodlePart[]) {
     this.rootCharacteristics = rootCharacteristics;
     this.doodleGenome = doodleGenome;
     this.children = children;
   }
 
-  grow(updateRootCharacteristics): DrawableRoot {
-    console.log('UPDATE');
-    console.log(updateRootCharacteristics);
+  grow(updateRootCharacteristics): RootPart {
     const newChildren =
         this.children.map(c => c.grow(this.rootCharacteristics));
     return new DoodleRoot(
@@ -37,17 +32,8 @@ export class DoodleRoot implements DrawableRoot {
         newChildren);
   }
 
-  draw(drawingManager: IDrawingManager) {
-    this.children.forEach(child => child.draw(drawingManager));
-  }
-
-  log() {
-    console.log(this);
-    this.children.forEach(child => child.log());
-  }
-
-  lightParts(): PressedDoodle[] {
-    console.log(this.children);
-    return flatMap(this.children, c => c.lightParts());
+  visit<T>(visitor: Visitor<T>) {
+    visitor.visitRoot(this);
+    this.children.forEach(child => child.visit(visitor));
   }
 }

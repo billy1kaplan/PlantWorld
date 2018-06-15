@@ -29,8 +29,6 @@ export class DoodleLocalSignal {
   freeEnergy: number;
 
   static rootSignal(rootPoint: RootPoint) {
-    console.log('CONS');
-    console.log(rootPoint);
     return new DoodleLocalSignal(rootPoint, 0, 0);
   }
 

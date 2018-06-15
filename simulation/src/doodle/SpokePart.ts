@@ -1,16 +1,13 @@
-import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-import {flatMap} from '../geometricmath/Utility';
-
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
 import {LocalLocation, LocalPoint} from './DoodleLocation';
-import {DrawableDoodle} from './DoodlePart';
-import {PressedDoodle} from './PressedDoodle';
+import {DoodlePart} from './DoodlePart';
 import {UndifferentiatedPart} from './UndifferentiatedPart';
+import {Visitor} from './Visitor';
 
-export class SpokePart implements DrawableDoodle {
+export class SpokePart implements DoodlePart {
   private genome: IDoodleGenome;
-  private doodleParts: DrawableDoodle[];
+  private doodleParts: DoodlePart[];
   private offset: number;
   private sweepRange: number;
 
@@ -23,7 +20,7 @@ export class SpokePart implements DrawableDoodle {
   }
 
   constructor(
-      genome: IDoodleGenome, doodleParts: DrawableDoodle[], offset: number,
+      genome: IDoodleGenome, doodleParts: DoodlePart[], offset: number,
       sweepRange: number) {
     this.genome = genome;
     this.doodleParts = doodleParts;
@@ -43,23 +40,15 @@ export class SpokePart implements DrawableDoodle {
         original.hopLength + 1, original.freeEnergy);
   }
 
-  grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle {
+  grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
     const parts = this.doodleParts.map((p, i) => {
       return p.grow(this.shiftSignal(i, doodleLocalSignal));
     });
     return new SpokePart(this.genome, parts, this.sweepRange, this.offset);
   }
 
-  log(): void {
-    console.log(this);
-    this.doodleParts.forEach(e => e.log());
-  }
-
-  draw(drawingManager: IDrawingManager): void {
-    this.doodleParts.forEach(segment => segment.draw(drawingManager));
-  }
-
-  lightParts(): PressedDoodle[] {
-    return flatMap(this.doodleParts, c => c.lightParts());
+  visit<T>(visitor: Visitor<T>) {
+    visitor.vistSpoke(this);
+    this.doodleParts.forEach(child => child.visit(visitor));
   }
 }

@@ -1,15 +1,7 @@
-import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {PressedDoodle} from './PressedDoodle';
+import {Visitor} from './Visitor';
 
 export interface DoodlePart {
-  grow(doodleLocalSignal: DoodleLocalSignal): DrawableDoodle;
-  lightParts(): PressedDoodle[];
+  grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart;
+  visit<T>(visitor: Visitor<T>): void;
 }
-
-export interface Drawable { draw(drawingManager: IDrawingManager): void; }
-
-export interface Loggable { log(): void }
-
-export type DrawableDoodle = DoodlePart&Drawable&Loggable;
