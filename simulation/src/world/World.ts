@@ -1,6 +1,6 @@
 import {DoodleLocalSignal} from '../doodle/DoodleLocalSignal';
 import {RootPart} from '../doodle/RootDoodle';
-import {LoggingVisitor} from '../doodle/Visitor';
+import {LoggingVisitor, SegmentVisitor} from '../doodle/Visitor';
 
 import {Sun} from './Sun';
 
@@ -43,6 +43,8 @@ export class World {
 
   log(): void {
     console.log('VISITOR LOGGER');
-    this.plants.forEach(p => p.visit(new LoggingVisitor()));
+    const segmentVisitor = new SegmentVisitor();
+    this.plants.forEach(p => p.visit(segmentVisitor));
+    console.log(segmentVisitor.done());
   }
 }
