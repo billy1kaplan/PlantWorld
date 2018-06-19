@@ -4,7 +4,6 @@ import {Optional} from 'Optional';
 
 import {AnderssonTree} from '../AnderssonTree';
 import {BalancableNode} from '../BST';
-import {EmptyTree} from '../BSTNode';
 
 class SimpleNode implements BalancableNode {
   n: number;

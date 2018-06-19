@@ -1,7 +1,5 @@
 import {Optional} from 'Optional';
 
-import {BSTNode} from './BSTNode';
-
 export interface BST<T extends BalancableNode> {
   insert(node: T): void;
   delete(node: T): void;
