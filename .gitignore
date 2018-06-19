@@ -10,3 +10,5 @@ application.macosx
 **/build
 **/.fusebox
 **/npm-debug.log
+**/.clang-format
+**/package-lock.json
