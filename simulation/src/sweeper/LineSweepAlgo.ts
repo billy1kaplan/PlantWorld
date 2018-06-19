@@ -1,17 +1,10 @@
 import {Heap} from 'Heap';
 import {Optional} from 'Optional';
 
+import {AnderssonTree} from '../bst/AnderssonTree';
+import {BST} from '../bst/BST';
 import {LineSegment} from '../elements/primitives/LineSegment';
 import {Point} from '../elements/primitives/Point';
-
-interface AVLTree<T> {
-  insert(node: T): void;
-  delete(node: T): void;
-  peek(): T;
-  aboveSegment(node: T);
-  belowSegment(node: T);
-  swapPositions(node1: T, node2: T): void;
-}
 
 class IntersectionNode {
   kind: 'Intersection';
@@ -77,13 +70,29 @@ class LineEntity {
       public energySegment: LineSegment) {}
 }
 
+class SegmentNode {
+  lineSegment: LineSegment;
+  getPriority(): number {
+    return 0;
+  }
+
+  equals() {
+    return false;
+  }
+}
+
 class LineSweeper {
   private priority: Heap<TNode>;
 
   // Sorted by y-coordinate
-  private lines: AVLTree<LineSegment>;
+  private lines: BST<SegmentNode>;
 
   private bonusEnergy: LineEntity[];
+
+  constructor() {
+    this.priority = new Heap();
+    this.lines = new AnderssonTree();
+  }
 
   sweep() {
     var previousEvent: TNode;
@@ -120,7 +129,7 @@ class LineSweeper {
           segmentAbove.intersection(segmentBelow)
               .ifPresent(intersectionPoint => {
                 const intersectionNode = new IntersectionNode(
-                    intersectionPoint, segmentBelow, segmentAbove);
+                    intersectionPoint, belowSegment, aboveSegment);
                 this.priority.insert(intersectionNode);
               });
           break;

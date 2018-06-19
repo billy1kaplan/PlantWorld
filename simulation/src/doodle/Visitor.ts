@@ -3,10 +3,11 @@ import {LineSegment} from '../elements/primitives/LineSegment';
 
 import {DoodleSegment} from './DoodleSegment';
 import {EnergyStorageDoodle} from './EnergyStorageDoodle';
-import {DoodleRoot} from './RootDoodle';
+import {DoodleRoot, RootPart} from './RootDoodle';
 import {Seed} from './Seed';
 import {SpokePart} from './SpokePart';
 import {UndifferentiatedPart} from './UndifferentiatedPart';
+import { Sun } from '../world/Sun';
 
 export interface Visitor<T> {
   visitSegment(value: DoodleSegment): void;
@@ -67,19 +68,57 @@ export class DrawingVisitor extends SegmentsOnly<void> {
   done() {}
 }
 
-export class SegmentVisitor extends SegmentsOnly<LineSegment[]> {
-  segments: LineSegment[];
+export interface TaggedSegment {
+  rootPart: RootPart;
+  lineSegment: LineSegment;
+}
 
-  constructor() {
+export class SegmentVisitor extends SegmentsOnly<TaggedSegment[]> {
+  private rootPart: RootPart;
+  private segments: TaggedSegment[];
+
+  constructor(rootPart: RootPart) {
     super();
+    this.rootPart = rootPart;
     this.segments = [];
   }
 
   visitSegment(value: DoodleSegment) {
-    this.segments = [value.getLineSegment(), ...this.segments];
+    const taggedSegment = {
+      rootPart: this.rootPart,
+      lineSegment: value.getLineSegment()
+    };
+    this.segments = [taggedSegment, ...this.segments];
   }
 
   done() {
     return this.segments;
+  }
+}
+
+export class EnergyCollector implements Visitor<number> {
+  private sun: Sun;
+  private energy: number;
+  constructor(sun: Sun) {
+    this.sun = sun;
+    this.energy = 0;
+  }
+
+  visitSegment(value: DoodleSegment) {
+    const energyFromSegment = this.sun.energyFunctionFromLineSegment(value.getLineSegment())
+    this.energy += energyFromSegment;
+  }
+
+  visitEnergyStorage(value: EnergyStorageDoodle) {
+    this.energy += value.getStoredEnergy();
+  }
+
+  vistSpoke(value: SpokePart) {}
+  visitSeed(value: Seed) {}
+  visitRoot(value: DoodleRoot) {}
+  visitUndifferentiated(value: UndifferentiatedPart) {}
+
+  done(): number {
+    return this.energy;
   }
 }

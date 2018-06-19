@@ -13,9 +13,9 @@ export class Seed implements RootPart {
     this.rootCharacteristics = rootCharacteristics;
   }
 
-  grow(updateRootCharacteristics): RootPart {
-    const updated = updateRootCharacteristics(this.rootCharacteristics);
-    return this.seedGenome.grow(updated);
+  grow(energy: number): RootPart {
+    const updatedRootCharacteristics = this.rootCharacteristics.feed(energy);
+    return this.seedGenome.grow(updatedRootCharacteristics);
   }
 
   visit<T>(visitor: Visitor<T>) {

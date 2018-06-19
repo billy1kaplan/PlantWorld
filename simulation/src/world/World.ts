@@ -1,8 +1,7 @@
-import {DoodleLocalSignal} from '../doodle/DoodleLocalSignal';
-import {RootPart} from '../doodle/RootDoodle';
-import {LoggingVisitor, SegmentVisitor} from '../doodle/Visitor';
+import { RootPart } from '../doodle/RootDoodle';
+import { LoggingVisitor, EnergyCollector } from '../doodle/Visitor';
 
-import {Sun} from './Sun';
+import { Sun } from './Sun';
 
 export class World {
   private sun: Sun;
@@ -15,36 +14,16 @@ export class World {
 
   step(): World {
     const grownPlants = this.plants.map(p => {
-      const energyDiff = 0;
-      return p.grow(this.energyUpdateRoot(energyDiff));
+      const energyCollector = new EnergyCollector(this.sun);
+      p.visit(energyCollector);
+      const energy = energyCollector.done();
+      return p.grow(energy);
     });
     return new World(this.sun, grownPlants);
   }
 
-  getOrDefault(map, key, d) {
-    const res = map.get(key);
-    if (res) {
-      return res;
-    } else {
-      return d;
-    }
-  }
-
-  energyUpdateRoot(energy: number) {
-    return (local: DoodleLocalSignal) => {
-      if (energy !== NaN) {
-        return new DoodleLocalSignal(
-            local.doodleLocation, local.hopLength, local.freeEnergy + energy);
-      } else {
-        return local;
-      }
-    }
-  }
-
   log(): void {
     console.log('VISITOR LOGGER');
-    const segmentVisitor = new SegmentVisitor();
-    this.plants.forEach(p => p.visit(segmentVisitor));
-    console.log(segmentVisitor.done());
+    this.plants.forEach(p => p.visit(new LoggingVisitor()));
   }
 }

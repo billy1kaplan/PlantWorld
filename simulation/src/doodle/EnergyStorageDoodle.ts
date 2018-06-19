@@ -18,5 +18,11 @@ export class EnergyStorageDoodle implements DoodlePart {
         this.storedEnergy + doodleLocalSignal.freeEnergy);
   }
 
-  visit<T>(visitor: Visitor<T>) {}
+  visit<T>(visitor: Visitor<T>) {
+    visitor.visitEnergyStorage(this);
+  }
+
+  getStoredEnergy() {
+    return this.storedEnergy;
+  }
 }

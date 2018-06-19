@@ -12,7 +12,8 @@ export class Sun {
   }
 
   energyFunctionFromLineSegment(lineSegment: LineSegment) {
-    return this.energyFunction(lineSegment.p1, lineSegment.p2);
+    const mag = lineSegment.magnitude();
+    return mag * this.intensity;
   }
 
   energyFunction(p1: Point, p2: Point) {
