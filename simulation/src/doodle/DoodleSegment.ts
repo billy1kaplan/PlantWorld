@@ -1,11 +1,11 @@
-import {LineSegment} from '../elements/primitives/LineSegment';
+import { LineSegment } from '../elements/primitives/LineSegment';
 
-import {IDoodleGenome} from './DoodleGenome';
-import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {LocalLocation, LocalPoint} from './DoodleLocation';
-import {DoodlePart} from './DoodlePart';
-import {UndifferentiatedPart} from './UndifferentiatedPart';
-import {Visitor} from './Visitor';
+import { IDoodleGenome } from './DoodleGenome';
+import { DoodleLocalSignal } from './DoodleLocalSignal';
+import { LocalLocation, LocalPoint } from './DoodleLocation';
+import { DoodlePart } from './DoodlePart';
+import { UndifferentiatedPart } from './UndifferentiatedPart';
+import { Visitor } from './Visitor';
 
 export class DoodleSegment implements DoodlePart {
   private nextPart: DoodlePart;
@@ -15,10 +15,10 @@ export class DoodleSegment implements DoodlePart {
   private localCharacteristics: DoodleLocalSignal;
 
   static bud(length: number, startingPoint: LocalPoint, genome: IDoodleGenome):
-      DoodleSegment {
+    DoodleSegment {
     return new DoodleSegment(
-        new UndifferentiatedPart(genome),
-        new LocalLocation(startingPoint, 0, length));
+      new UndifferentiatedPart(genome),
+      new LocalLocation(startingPoint, 0, length));
   }
 
   constructor(nextPart: DoodlePart, localPoint: LocalLocation) {
@@ -28,9 +28,9 @@ export class DoodleSegment implements DoodlePart {
 
   grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
     const nextLocal =
-        this.localPoint.scale(doodleLocalSignal.doodleLocation, 1.15);
+      this.localPoint.scale(doodleLocalSignal.doodleLocation, 1.15);
     return new DoodleSegment(
-        this.nextPart.grow(new DoodleLocalSignal(nextLocal, 0, 0)), nextLocal);
+      this.nextPart.grow(doodleLocalSignal.updateLocation(nextLocal)), nextLocal);
   }
 
   visit<T>(visitor: Visitor<T>) {

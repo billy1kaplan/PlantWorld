@@ -1,47 +1,33 @@
 import { LocalPoint, RootPoint } from './DoodleLocation';
 
-// (Local Characteristics =>  Genome => NextPart)
-// Growth function: (???) => Doodle
-// ??? = Characteristics
-
-// Contstraints:
-// Light; "Material"
-
-/*
-interface Characteristics {
-  growthFactor: number;
-  storedEnergy: number;
-  storedMaterial: number;
-  hopLength: number;
-  growthCycles: number;
-}
-
-interface GenomeCharacteristics {
-  taper: number;
-  age: number;
-  angularity: number;
-}
-*/
-
-export class DoodleCharacteristics { }
-
 export class DoodleLocalSignal {
   doodleLocation: LocalPoint;
   hopLength: number;
   freeEnergy: number;
+  age: number;
 
   static rootSignal(rootPoint: RootPoint) {
-    return new DoodleLocalSignal(rootPoint, 0, 0);
+    return new DoodleLocalSignal(rootPoint, 0, 0, 0);
   }
 
-  constructor(doodleLocation: LocalPoint, hopLength: number, freeEnergy: number) {
+  constructor(doodleLocation: LocalPoint,
+              hopLength: number,
+              freeEnergy: number,
+              age: number) {
     this.doodleLocation = doodleLocation;
     this.hopLength = hopLength;
     this.freeEnergy = freeEnergy;
+    this.age = age;
   };
+
+  updateLocation(location: LocalPoint) {
+    return new DoodleLocalSignal(
+      location, this.hopLength + 1, this.freeEnergy, this.age);
+  }
 
   feed(energy: number): DoodleLocalSignal {
     const energyLevel = this.freeEnergy + energy;
-    return new DoodleLocalSignal(this.doodleLocation, this.hopLength, energyLevel);
+    return new DoodleLocalSignal(
+      this.doodleLocation, this.hopLength, energyLevel, this.age + 1);
   }
 }

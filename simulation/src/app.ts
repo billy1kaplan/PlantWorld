@@ -4,6 +4,10 @@ import {RootPoint} from './doodle/DoodleLocation';
 import {SeedGenome} from './doodle/SeedGenome';
 import {IDrawingManager, SimpleDrawingManager} from './drawing/SimpleDrawingManager';
 import {Point} from './elements/primitives/Point';
+import { Seed } from './doodle/Seed';
+import { RootPart } from './doodle/RootDoodle';
+import { DrawingVisitor } from './doodle/Visitor';
+import { SimpleBranchingTree } from './doodle/SimpleBranchingTree';
 
 var canvas: HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D;
@@ -14,11 +18,11 @@ class Simulation {
   public tickLength: number;
   public lastRender: number;
   public drawingManager: IDrawingManager;
-  public roots: DrawableRoot[];
+  public roots: RootPart[];
 
   update(): void {
     if (totalTicks < 6) {
-      this.roots = this.roots.map(r => r.grow(null));
+      this.roots = this.roots.map(r => r.grow(0));
     }
     totalTicks += 1;
   }
@@ -26,11 +30,11 @@ class Simulation {
   render(tFrame: number): void {
     // this.drawingManager.drawBlankScreen();
     this.drawingManager.clearCanvas();
-    this.roots.forEach(r => r.draw(this.drawingManager));
+    this.roots.forEach(r => r.visit(new DrawingVisitor(this.drawingManager)));
   }
 }
 
-const doodleGenome = new DoodleGenome();
+const doodleGenome = new SimpleBranchingTree();
 const seedGenome = new SeedGenome(doodleGenome);
 
 const starting = [300];
