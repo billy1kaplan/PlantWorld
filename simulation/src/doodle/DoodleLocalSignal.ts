@@ -1,9 +1,25 @@
 import { LocalPoint, RootPoint } from './DoodleLocation';
 
+export class DoodleCharacteristics {
+  storedEnergy: number;
+  maintainenceCost: number;
+  differentialFactor: number;
+
+  constructor(storedEnergy: number, maintainenceCost: number, differentialFactor: number) {
+    this.storedEnergy = storedEnergy;
+    this.maintainenceCost = maintainenceCost;
+    this.differentialFactor = differentialFactor;
+  }
+
+  feed(energy: number): DoodleCharacteristics {
+    return new DoodleCharacteristics(this.storedEnergy + energy, this.maintainenceCost, this.differentialFactor);
+  }
+}
+
 export class DoodleLocalSignal {
   doodleLocation: LocalPoint;
-  hopLength: number;
   freeEnergy: number;
+  hopLength: number;
   age: number;
 
   static rootSignal(rootPoint: RootPoint) {
@@ -11,23 +27,50 @@ export class DoodleLocalSignal {
   }
 
   constructor(doodleLocation: LocalPoint,
-              hopLength: number,
-              freeEnergy: number,
-              age: number) {
+    freeEnergy: number,
+    hopLength: number,
+    age: number) {
     this.doodleLocation = doodleLocation;
-    this.hopLength = hopLength;
     this.freeEnergy = freeEnergy;
+    this.hopLength = hopLength;
     this.age = age;
   };
 
-  updateLocation(location: LocalPoint) {
+  updateLocation(location: LocalPoint): DoodleLocalSignal {
     return new DoodleLocalSignal(
-      location, this.hopLength + 1, this.freeEnergy, this.age);
+      location, this.freeEnergy, this.hopLength, this.age);
   }
 
   feed(energy: number): DoodleLocalSignal {
-    const energyLevel = this.freeEnergy + energy;
+    const newEnergy = this.freeEnergy + energy;
     return new DoodleLocalSignal(
-      this.doodleLocation, this.hopLength, energyLevel, this.age + 1);
+      this.doodleLocation, newEnergy, this.hopLength, this.age);
+  }
+
+  hop(): DoodleLocalSignal {
+    return new DoodleLocalSignal(
+      this.doodleLocation,
+      this.freeEnergy,
+      this.hopLength + 1,
+      this.age);
+  }
+
+  increaseAge(): DoodleLocalSignal {
+    return new DoodleLocalSignal(
+      this.doodleLocation, this.freeEnergy, this.hopLength, this.age + 1);
+  }
+
+  consume(doodleCharacteristics: DoodleCharacteristics): DoodleLocalSignal {
+    return new DoodleLocalSignal(
+      this.doodleLocation, Math.max(0.0, this.freeEnergy - doodleCharacteristics.maintainenceCost), this.hopLength, this.age);
+  }
+
+  growthFactor(doodleCharacteristics: DoodleCharacteristics): number {
+    if (this.age > 10) {
+      return 1.0;
+    } else {
+      const energyRequired = doodleCharacteristics.maintainenceCost
+      return Math.min(0.0, this.freeEnergy / energyRequired);
+    }
   }
 }

@@ -1,4 +1,3 @@
-import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
 import {RootPoint} from './doodle/DoodleLocation';
 import {RootPart} from './doodle/RootDoodle';
 import {Seed} from './doodle/Seed';
@@ -23,9 +22,8 @@ energyBoard.distributeEnergy();
 
 const doodleGenome = new SimpleBranchingTree();
 const seedGenome = new SeedGenome(doodleGenome);
-const rootPoint: DoodleLocalSignal =
-    DoodleLocalSignal.rootSignal(new RootPoint(new Point(300, 50), 90));
-var plant: RootPart = new Seed(seedGenome, rootPoint);
+const rootPoint: RootPoint = new RootPoint(new Point(300, 50), 90);
+var plant: RootPart = new Seed(seedGenome, rootPoint, 0);
 
 const sun = new Sun(10, 10);
 var world = new World(sun, [plant]);

@@ -1,31 +1,28 @@
 import {IDoodleGenome} from './DoodleGenome';
-import {DoodleLocalSignal} from './DoodleLocalSignal';
+import {DoodleCharacteristics, DoodleLocalSignal} from './DoodleLocalSignal';
 import {LocalLocation} from './DoodleLocation';
 import {DoodleSegment} from './DoodleSegment';
 import {DoodleRoot, RootPart} from './RootDoodle';
-import {UndifferentiatedPart} from './UndifferentiatedPart';
 
 export interface ISeedGenome {
-  grow(rootCharacteristics: DoodleLocalSignal): RootPart;
+  grow(doodleLocalSignal: DoodleLocalSignal): RootPart;
   getDoodleGenome: () => IDoodleGenome;
 }
 
 export class SeedGenome implements ISeedGenome {
   private doodleGenome: IDoodleGenome;
-  constructor(doodleGenome: IDoodleGenome) {
-    this.doodleGenome = doodleGenome;
-  }
+  constructor(doodleGenome: IDoodleGenome) { this.doodleGenome = doodleGenome; }
 
-  grow(rootCharacteristics: DoodleLocalSignal): RootPart {
-    const placeholder = new UndifferentiatedPart(this.doodleGenome);
-    const angles = [0];
-    const rootLocation = rootCharacteristics.doodleLocation;
+  grow(doodleLocalSignal: DoodleLocalSignal): RootPart {
+    const angles = [ 0 ];
+    const rootLocation = doodleLocalSignal.doodleLocation;
     const locations = angles.map(a => new LocalLocation(rootLocation, a, 50));
-    const nextParts = locations.map(n => new DoodleSegment(placeholder, n));
-    return new DoodleRoot(rootCharacteristics, this.doodleGenome, nextParts);
+    const characteristics =
+      new DoodleCharacteristics(doodleLocalSignal.freeEnergy, 0, 0);
+    const nextParts = locations.map(n => DoodleSegment.bud(10, rootLocation, this.doodleGenome));
+    return new DoodleRoot(
+      rootLocation, characteristics, 0, this.doodleGenome, nextParts);
   }
 
-  getDoodleGenome() {
-    return this.doodleGenome;
-  }
+  getDoodleGenome() { return this.doodleGenome; }
 }

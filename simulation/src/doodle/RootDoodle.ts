@@ -1,6 +1,7 @@
 
 import {IDoodleGenome} from './DoodleGenome';
-import {DoodleLocalSignal} from './DoodleLocalSignal';
+import {DoodleCharacteristics, DoodleLocalSignal} from './DoodleLocalSignal';
+import {LocalPoint} from './DoodleLocation';
 import {DoodlePart} from './DoodlePart';
 import {Visitor} from './Visitor';
 
@@ -10,22 +11,32 @@ export interface RootPart {
 }
 
 export class DoodleRoot implements RootPart {
-  private rootCharacteristics: DoodleLocalSignal;
+  private rootPoint: LocalPoint;
+  private rootCharacteristics: DoodleCharacteristics; 
+  private age: number;
   private doodleGenome: IDoodleGenome;
   private children: DoodlePart[];
-  constructor(rootCharacteristics: DoodleLocalSignal,
+  constructor(rootPoint: LocalPoint,
+              rootCharacteristics: DoodleCharacteristics,
+              age: number,
               doodleGenome: IDoodleGenome,
               children: DoodlePart[]) {
+    this.rootPoint = rootPoint;
     this.rootCharacteristics = rootCharacteristics;
+    this.age = age;
     this.doodleGenome = doodleGenome;
     this.children = children;
   }
 
   grow(energy: number): RootPart {
-    const updatedRoot = this.rootCharacteristics.feed(energy);
-    const newChildren = this.children.map(c => c.grow(updatedRoot));
-    return new DoodleRoot(
-      this.rootCharacteristics, this.doodleGenome, newChildren);
+    const propagateSignal =
+      new DoodleLocalSignal(this.rootPoint, energy, 1, this.age + 1);
+    const newChildren = this.children.map(c => c.grow(propagateSignal));
+    return new DoodleRoot(this.rootPoint,
+                          this.rootCharacteristics,
+                          this.age + 1,
+                          this.doodleGenome,
+                          newChildren);
   }
 
   visit<T>(visitor: Visitor<T>) {

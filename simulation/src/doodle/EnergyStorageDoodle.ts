@@ -1,21 +1,22 @@
-import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {DoodlePart} from './DoodlePart';
-import {Visitor} from './Visitor';
+import { DoodleLocalSignal, DoodleCharacteristics } from './DoodleLocalSignal';
+import { DoodlePart } from './DoodlePart';
+import { Visitor } from './Visitor';
 
 export class EnergyStorageDoodle implements DoodlePart {
   // I.e. capacity, discharge
-  private localCharacteristics: DoodleLocalSignal;
-  private storedEnergy: number;
+  private localCharacteristics: DoodleCharacteristics;
+  private storageEfficiency: number;
 
-  constructor(localCharacteristics: DoodleLocalSignal, storedEnergy: number) {
+  constructor(localCharacteristics: DoodleCharacteristics, storageEfficiency: number) {
     this.localCharacteristics = localCharacteristics;
-    this.storedEnergy = storedEnergy;
+    this.storageEfficiency = storageEfficiency;
   }
 
   grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
+    const nextCharacteristics = this.localCharacteristics.feed(doodleLocalSignal.freeEnergy * this.storageEfficiency);
     return new EnergyStorageDoodle(
-        this.localCharacteristics,
-        this.storedEnergy + doodleLocalSignal.freeEnergy);
+      nextCharacteristics,
+      this.storageEfficiency);
   }
 
   visit<T>(visitor: Visitor<T>) {
@@ -23,6 +24,6 @@ export class EnergyStorageDoodle implements DoodlePart {
   }
 
   getStoredEnergy() {
-    return this.storedEnergy;
+    return this.localCharacteristics.storedEnergy;
   }
 }
