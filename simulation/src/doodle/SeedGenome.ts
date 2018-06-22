@@ -18,7 +18,7 @@ export class SeedGenome implements ISeedGenome {
     const rootLocation = doodleLocalSignal.doodleLocation;
     const locations = angles.map(a => new LocalLocation(rootLocation, a, 50));
     const characteristics =
-      new DoodleCharacteristics(doodleLocalSignal.freeEnergy, 0, 0);
+      new DoodleCharacteristics(doodleLocalSignal.freeEnergy, 0);
     const nextParts = locations.map(n => DoodleSegment.bud(10, rootLocation, this.doodleGenome));
     return new DoodleRoot(
       rootLocation, characteristics, 0, this.doodleGenome, nextParts);

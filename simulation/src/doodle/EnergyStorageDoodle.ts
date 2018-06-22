@@ -13,7 +13,8 @@ export class EnergyStorageDoodle implements DoodlePart {
   }
 
   grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
-    const nextCharacteristics = this.localCharacteristics.feed(doodleLocalSignal.freeEnergy * this.storageEfficiency);
+    const nextCharacteristics = this.localCharacteristics.feed(
+      doodleLocalSignal.freeEnergy * this.storageEfficiency);
     return new EnergyStorageDoodle(
       nextCharacteristics,
       this.storageEfficiency);

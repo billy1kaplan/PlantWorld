@@ -29,8 +29,7 @@ export class DoodleRoot implements RootPart {
   }
 
   grow(energy: number): RootPart {
-    const propagateSignal =
-      new DoodleLocalSignal(this.rootPoint, energy, 1, this.age + 1);
+    const propagateSignal = DoodleLocalSignal.rootSignal(this.rootPoint);
     const newChildren = this.children.map(c => c.grow(propagateSignal));
     return new DoodleRoot(this.rootPoint,
                           this.rootCharacteristics,

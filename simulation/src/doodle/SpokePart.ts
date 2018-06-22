@@ -41,9 +41,10 @@ export class SpokePart implements DoodlePart {
   }
 
   grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
-    const parts = this.doodleParts.map(
-      (p, i) => { return p.grow(this.shiftSignal(i, doodleLocalSignal)); });
-    return new SpokePart(this.genome, parts, this.sweepRange, this.offset);
+    const parts = this.doodleParts.map((p, i) => {
+      return p.grow(this.shiftSignal(i, doodleLocalSignal).adjustFactor((_) => 10));
+    });
+    return new SpokePart(this.genome, parts, this.offset, this.sweepRange);
   }
 
   visit<T>(visitor: Visitor<T>) {

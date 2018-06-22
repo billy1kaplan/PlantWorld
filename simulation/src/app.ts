@@ -1,5 +1,3 @@
-import {DoodleGenome} from './doodle/DoodleGenome';
-import {DoodleLocalSignal} from './doodle/DoodleLocalSignal';
 import {RootPoint} from './doodle/DoodleLocation';
 import {SeedGenome} from './doodle/SeedGenome';
 import {IDrawingManager, SimpleDrawingManager} from './drawing/SimpleDrawingManager';
@@ -21,7 +19,7 @@ class Simulation {
   public roots: RootPart[];
 
   update(): void {
-    if (totalTicks < 6) {
+    if (totalTicks < 12) {
       this.roots = this.roots.map(r => r.grow(0));
     }
     totalTicks += 1;
@@ -38,9 +36,8 @@ const doodleGenome = new SimpleBranchingTree();
 const seedGenome = new SeedGenome(doodleGenome);
 
 const starting = [300];
-const rootCharacteristics = starting.map(
-    s => DoodleLocalSignal.rootSignal(new RootPoint(new Point(s, 50), 90)));
-const seeds = rootCharacteristics.map(r => new Seed(seedGenome, r));
+const rootCharacteristics = starting.map(s => (new RootPoint(new Point(s, 200), 90)));
+const seeds = rootCharacteristics.map(r => new Seed(seedGenome, r, 0));
 const simulation = new Simulation();
 
 window.onload = function() {

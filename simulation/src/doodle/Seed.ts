@@ -19,7 +19,7 @@ export class Seed implements RootPart {
 
   grow(energy: number): RootPart {
     const localSignal =
-      new DoodleLocalSignal(this.seedLocation, this.energy + energy, 0, 0);
+      DoodleLocalSignal.rootSignal(this.seedLocation);
     return this.seedGenome.grow(localSignal);
   }
 
