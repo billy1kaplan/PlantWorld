@@ -1,17 +1,27 @@
 export class Optional<T> {
-  static of <T>(value: T) {
-    return new Optional(value);
+  static of<T>(value: T) {
+    if (Optional.isUndefined(value)) {
+      return this.EMPTY;
+    } else {
+      return new Optional(value);
+    }
   }
 
   static empty(): Optional<any> {
-    return new Optional(undefined);
+    return this.EMPTY;
   }
 
-  private constructor(public value: T) {}
+  private static EMPTY = new Optional(undefined);
+
+  private constructor(public value: T) { }
 
 
   isPresent(): boolean {
-    return this.value != undefined;
+    return !Optional.isUndefined(this.value);
+  }
+
+  private static isUndefined(val: any) {
+    return val === undefined;
   }
 
   map<S>(f: (value: T) => S): Optional<S> {
@@ -35,7 +45,9 @@ export class Optional<T> {
   }
 
   ifPresent(f: (value: T) => void): void {
-    f(this.value);
+    if (this.isPresent) {
+      f(this.value);
+    }
   }
 
   getOrError(): T {

@@ -23,7 +23,6 @@ export class World {
   }
 
   log(): void {
-    console.log('VISITOR LOGGER');
     this.plants.forEach(p => p.visit(new LoggingVisitor()));
   }
 }

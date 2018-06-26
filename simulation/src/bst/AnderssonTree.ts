@@ -68,8 +68,13 @@ export class AnderssonTree<T extends BalancableNode> implements BST<T> {
   belowSegment(node: T): Optional<T> {
     const nodeLoc = this.find(node, this.root);
 
+    console.log("NODE", nodeLoc);
+
     return nodeLoc.flatMap(loc => {
+      console.log("LOC", loc);
       var curLoc = loc.walkLeft();
+
+      console.log('cur', curLoc);
 
       if (curLoc.kind == 'empty') {
         var loc = this.root;
@@ -80,6 +85,8 @@ export class AnderssonTree<T extends BalancableNode> implements BST<T> {
                pred.getOrError().getPriority() < loc.getPriority())) {
             pred = Optional.of(loc.nodeInfo);
           }
+
+          console.log('HERE');
 
           if (node.getPriority() < loc.nodeInfo.getPriority()) {
             loc = loc.walkLeft();
@@ -92,6 +99,8 @@ export class AnderssonTree<T extends BalancableNode> implements BST<T> {
         while (curLoc.walkRight().kind != 'empty') {
           curLoc = curLoc.walkRight();
         }
+
+        console.log('HERE');
 
         if (curLoc.kind == 'node') {
           return Optional.of(curLoc.nodeInfo);

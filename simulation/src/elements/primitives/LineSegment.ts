@@ -201,4 +201,8 @@ export class LineSegment implements Drawable, Primitive {
   magnitude() {
     return this.p1.distanceToPoint(this.p2);
   }
+
+  getPriority() {
+    return Math.max(this.p1.y, this.p2.y);
+  }
 }

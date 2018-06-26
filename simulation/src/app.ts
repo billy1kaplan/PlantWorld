@@ -19,7 +19,7 @@ class Simulation {
   public roots: RootPart[];
 
   update(): void {
-    if (totalTicks < 12) {
+    if (totalTicks < 10) {
       this.roots = this.roots.map(r => r.grow(0));
     }
     totalTicks += 1;
@@ -35,8 +35,8 @@ class Simulation {
 const doodleGenome = new SimpleBranchingTree();
 const seedGenome = new SeedGenome(doodleGenome);
 
-const starting = [300];
-const rootCharacteristics = starting.map(s => (new RootPoint(new Point(s, 200), 90)));
+const starting = [540];
+const rootCharacteristics = starting.map(s => (new RootPoint(new Point(s, 360), 90)));
 const seeds = rootCharacteristics.map(r => new Seed(seedGenome, r, 0));
 const simulation = new Simulation();
 

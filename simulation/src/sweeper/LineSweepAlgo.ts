@@ -1,22 +1,24 @@
-import {Heap} from 'Heap';
-import {Optional} from 'Optional';
+import { Heap } from 'Heap';
+import { Optional } from 'Optional';
 
-import {AnderssonTree} from '../bst/AnderssonTree';
-import {BST} from '../bst/BST';
-import {LineSegment} from '../elements/primitives/LineSegment';
-import {Point} from '../elements/primitives/Point';
+import { AnderssonTree } from '../bst/AnderssonTree';
+import { BST } from '../bst/BST';
+import { LineSegment } from '../elements/primitives/LineSegment';
+import { Point } from '../elements/primitives/Point';
 
 class IntersectionNode {
   kind: 'Intersection';
 
   constructor(
-      public point: Point, public lowerSegment: LineSegment,
-      public upperSegment: LineSegment) {}
+    public point: Point, public lowerSegment: LineSegment,
+    public upperSegment: LineSegment) {
+    this.kind = 'Intersection';
+    }
 
   equals(other: TNode) {
     return this.kind == other.kind && this.point.equals(other.point) &&
-        this.lowerSegment.equals(other.lowerSegment) &&
-        this.upperSegment.equals(other.upperSegment);
+      this.lowerSegment.equals(other.lowerSegment) &&
+      this.upperSegment.equals(other.upperSegment);
   }
 
   compareTo(other: TNode) {
@@ -29,9 +31,15 @@ class LeftNode {
   point: Point;
   segment: LineSegment;
 
+  constructor(point: Point, segment: LineSegment) {
+    this.point = point;
+    this.segment = segment;
+    this.kind = 'Left';
+  }
+
   equals(other: TNode) {
     return this.kind == other.kind && this.point.equals(other.point) &&
-        this.segment.equals(other.segment);
+      this.segment.equals(other.segment);
   }
 
   compareTo(other: TNode) {
@@ -44,9 +52,15 @@ class RightNode {
   point: Point;
   segment: LineSegment;
 
+  constructor(point: Point, segment: LineSegment) {
+    this.point = point;
+    this.segment = segment;
+    this.kind = 'Right';
+  }
+
   equals(other: TNode) {
     return this.kind == other.kind && this.point.equals(other.point) &&
-        this.segment.equals(other.segment);
+      this.segment.equals(other.segment);
   }
 
   compareTo(other: TNode) {
@@ -54,113 +68,127 @@ class RightNode {
   }
 }
 
-type TNode = LeftNode|IntersectionNode|RightNode;
+type TNode = LeftNode | IntersectionNode | RightNode;
 
-class Node {
-  isLeft: boolean;
-  isRight: boolean;
-  isIntersection: boolean;
-  lineSegment: LineSegment;
-  entity: number;
-}
 
 class LineEntity {
   constructor(
-      public point1: Point, public point2: Point,
-      public energySegment: LineSegment) {}
+    public point1: Point, public point2: Point,
+    public energySegment: LineSegment) { }
 }
 
-class SegmentNode {
-  lineSegment: LineSegment;
-  getPriority(): number {
-    return 0;
-  }
-
-  equals() {
-    return false;
-  }
-}
-
-class LineSweeper {
+export class LineSweeper {
   private priority: Heap<TNode>;
 
   // Sorted by y-coordinate
-  private lines: BST<SegmentNode>;
+  private lines: BST<LineSegment>;
 
-  private bonusEnergy: LineEntity[];
 
   constructor() {
     this.priority = new Heap();
     this.lines = new AnderssonTree();
   }
 
+  add(line: LineSegment) {
+    const leftNode = new LeftNode(line.p1, line);
+    const rightNode = new RightNode(line.p2, line);
+    this.priority.insert(leftNode);
+    this.priority.insert(rightNode);
+  }
+
+  addAll(lines: LineSegment[]) {
+    lines.forEach(line => this.add(line));
+  }
+
   sweep() {
+    const bonusEnergy: LineEntity[] = [];
     var previousEvent: TNode;
+    console.log(this.priority);
     while (!this.priority.isEmpty()) {
+      console.log(this.priority.peekMin());
       const event = this.priority.deleteMin();
 
+      console.log('EVENT', event, event.kind);
       switch (event.kind) {
         case 'Left':
+          console.log('LEFT');
           const segment = event.segment;
           this.lines.insert(segment);
+          console.log('LL', this.lines);
           const segmentAbove = this.lines.aboveSegment(segment);
+          console.log(segmentAbove, segmentAbove.isPresent());
           const segmentBelow = this.lines.belowSegment(segment);
-          segment.intersection(segmentAbove).ifPresent(intersectionPoint => {
-            const intersectionNode =
-                new IntersectionNode(intersectionPoint, segment, segmentAbove);
-            this.priority.insert(intersectionNode);
-          });
-          segment.intersection(segmentBelow).ifPresent(intersectionPoint => {
-            const intersectionNode =
-                new IntersectionNode(intersectionPoint, segment, segmentBelow);
-            this.priority.insert(intersectionNode);
-          });
+          console.log(segmentBelow, segmentBelow.isPresent());
+          console.log("DONE");
+          /*
+          segmentAbove.ifPresent(segA =>
+            segment.intersection(segA).ifPresent(intersectionPoint => {
+              console.log("INT1");
+              const intersectionNode =
+                new IntersectionNode(intersectionPoint, segment, segA);
+              this.priority.insert(intersectionNode);
+            }));
+          segmentBelow.ifPresent(segB =>
+            segment.intersection(segB).ifPresent(intersectionPoint => {
+              console.log("INT2");
+              const intersectionNode =
+                new IntersectionNode(intersectionPoint, segment, segB);
+              this.priority.insert(intersectionNode);
+            }));
+            */
           break;
         case 'Right':
+          console.log('RIGHT');
           const endingSegment = event.segment;
           const aboveSegment = this.lines.aboveSegment(endingSegment);
           const belowSegment = this.lines.belowSegment(endingSegment);
 
           const bonusEnergySegment = new LineEntity(
-              previousEvent.point, event.point, this.lines.peek());
-          this.bonusEnergy.unshift(bonusEnergySegment);
+            previousEvent.point, event.point, this.lines.peek());
+          bonusEnergy.unshift(bonusEnergySegment);
 
           this.lines.delete(endingSegment);
-          segmentAbove.intersection(segmentBelow)
-              .ifPresent(intersectionPoint => {
-                const intersectionNode = new IntersectionNode(
-                    intersectionPoint, belowSegment, aboveSegment);
-                this.priority.insert(intersectionNode);
-              });
+          /*
+          aboveSegment.ifPresent(segA =>
+            belowSegment.ifPresent(segB =>
+              segA.intersection(segB)
+                .ifPresent(intersectionPoint => {
+                  const intersectionNode = new IntersectionNode(
+                    intersectionPoint, segB, segA);
+                  this.priority.insert(intersectionNode);
+                })));
+                */
           break;
         case 'Intersection':
           const intersectionBonus = new LineEntity(
-              previousEvent.point, event.point, this.lines.peek());
-          this.bonusEnergy.unshift(bonusEnergySegment);
+            previousEvent.point, event.point, this.lines.peek());
+          bonusEnergy.unshift(bonusEnergySegment);
 
           const lowerSegment = event.lowerSegment;
           const upperSegment = event.upperSegment;
           this.lines.swapPositions(lowerSegment, upperSegment);
           const aboveUpperSegment = this.lines.aboveSegment(upperSegment);
           const belowLowerSegment = this.lines.belowSegment(lowerSegment);
-          lowerSegment.intersection(aboveUpperSegment)
+          aboveUpperSegment.ifPresent(above =>
+            lowerSegment.intersection(above)
               .ifPresent(intersectionPoint => {
                 const intersectionNode = new IntersectionNode(
-                    intersectionPoint, lowerSegment, aboveUpperSegment);
+                  intersectionPoint, lowerSegment, above);
                 this.priority.insert(intersectionNode);
-              });
-          upperSegment.intersection(belowLowerSegment)
+              }));
+          belowLowerSegment.ifPresent(below =>
+            upperSegment.intersection(below)
               .ifPresent(intersectionPoint => {
                 const intersectionNode = new IntersectionNode(
-                    intersectionPoint, belowLowerSegment, upperSegment);
+                  intersectionPoint, below, upperSegment);
                 this.priority.insert(intersectionNode);
-              });
+              }));
           break;
       }
 
       previousEvent = event;
     }
 
-    return this.bonusEnergy;
+    return bonusEnergy;
   }
 }
