@@ -21,7 +21,7 @@ export class Optional<T> {
   }
 
   private static isUndefined(val: any) {
-    return val === undefined;
+    return val === undefined || val === null;
   }
 
   map<S>(f: (value: T) => S): Optional<S> {
@@ -41,7 +41,7 @@ export class Optional<T> {
   }
 
   getOrElse(fallback: T): T {
-    return this.isPresent ? this.value : fallback;
+    return this.isPresent() ? this.value : fallback;
   }
 
   ifPresent(f: (value: T) => void): void {
