@@ -66,13 +66,4 @@ describe('Distance function - Horizontal Line Test 1', () => {
                new LineSegment(new Point(0.5, 0), new Point(1, 0))))
         .to.equal(true);
   });
-
-  it('should find correct overlap', () => {
-    const line = new LineSegment(new Point(0, 0), new Point(2, 2));
-    const otherLine = new LineSegment(new Point(0, 1), new Point(1, 1));
-    const onLine = line.overlap(otherLine);
-    expect(onLine.getOrError().equals(
-               new LineSegment(new Point(0, 0), new Point(1, 1))))
-        .to.equal(true);
-  });
 });

@@ -15,7 +15,6 @@ export class Optional<T> {
 
   private constructor(public value: T) { }
 
-
   isPresent(): boolean {
     return !Optional.isUndefined(this.value);
   }
@@ -45,13 +44,13 @@ export class Optional<T> {
   }
 
   ifPresent(f: (value: T) => void): void {
-    if (this.isPresent) {
+    if (this.isPresent()) {
       f(this.value);
     }
   }
 
   getOrError(): T {
-    if (!this.isPresent) {
+    if (!this.isPresent()) {
       throw new Error('Attempting to access null value');
     } else {
       return this.value;

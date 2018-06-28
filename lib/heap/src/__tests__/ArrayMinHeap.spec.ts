@@ -15,6 +15,7 @@ class Number {
 const one = new Number(1);
 const two = new Number(2);
 const three = new Number(3);
+const four = new Number(4);
 
 describe('Heap', () => {
   it('correctly reports when empty', () => {
@@ -73,5 +74,19 @@ describe('Heap', () => {
     expect(h.deleteMin()).toEqual(two);
     expect(() => h.deleteMin())
         .toThrow(new Error('Empty heap has no minimum element!'));
+  });
+
+  it('Handles four values', () => {
+    const h = new Heap();
+
+    h.insert(one)
+    h.insert(four)
+    h.insert(two)
+    h.insert(three)
+
+    expect(h.deleteMin()).toEqual(one);
+    expect(h.deleteMin()).toEqual(two);
+    expect(h.deleteMin()).toEqual(three);
+    expect(h.deleteMin()).toEqual(four);
   });
 });

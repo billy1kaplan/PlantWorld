@@ -49,9 +49,10 @@ export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
   insert(element: T): void {
     if (this.size == 0) {
       this.elements[0] = element;
-      this.size += 1;
+      this.size++;
     } else {
-      this.sift(element)
+      this.sift(element);
+      this.size++;
     }
   }
 
@@ -64,12 +65,11 @@ export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
     var index = this.size;
 
     while (index > 0 &&
-           element.compareTo(this.elements[this.getParent(index)]) < 0) {
+      element.compareTo(this.elements[this.getParent(index)]) < 0) {
       const parentIndex = this.getParent(index);
       this.swap(parentIndex, index);
       index = parentIndex;
     }
-    this.size++;
   }
 
   private swap(i: number, j: number) {
@@ -81,8 +81,10 @@ export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
   private siftDown(): void {
     var index = 0;
     while (this.greaterThanEitherParent(index)) {
-      const element = this.elements[index];
-      if (element > this.elements[this.getFirstChild(index)]) {
+      const leftChild = this.elements[this.getFirstChild(index)];
+      const rightChild = this.elements[this.getSecondChild(index)];
+
+      if (leftChild.compareTo(rightChild) < 0) {
         this.swap(index, this.getFirstChild(index));
         index = this.getFirstChild(index);
       } else {
@@ -102,8 +104,8 @@ export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
     const firstChildIndex = this.getFirstChild(index);
     const secondChildIndex = this.getSecondChild(index);
     return (firstChildIndex < this.size &&
-            this.elements[index] > this.elements[firstChildIndex]) ||
+            this.elements[index].compareTo(this.elements[firstChildIndex]) > 0) ||
         (secondChildIndex < this.size &&
-         this.elements[index] > this.elements[secondChildIndex]);
+         this.elements[index].compareTo(this.elements[secondChildIndex]) > 0);
   }
 }

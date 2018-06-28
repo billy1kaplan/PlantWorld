@@ -103,52 +103,42 @@ export class LineSweeper {
   sweep() {
     const bonusEnergy: LineEntity[] = [];
     var previousEvent: TNode;
-    console.log(this.priority);
     while (!this.priority.isEmpty()) {
-      console.log(this.priority.peekMin());
+      console.log("Q", this.priority);
       const event = this.priority.deleteMin();
+      console.log("EVENT", event);
 
-      console.log('EVENT', event, event.kind);
       switch (event.kind) {
         case 'Left':
-          console.log('LEFT');
           const segment = event.segment;
           this.lines.insert(segment);
-          console.log('LL', this.lines);
           const segmentAbove = this.lines.aboveSegment(segment);
-          console.log(segmentAbove, segmentAbove.isPresent());
           const segmentBelow = this.lines.belowSegment(segment);
-          console.log(segmentBelow, segmentBelow.isPresent());
-          console.log("DONE");
-          /*
           segmentAbove.ifPresent(segA =>
             segment.intersection(segA).ifPresent(intersectionPoint => {
-              console.log("INT1");
               const intersectionNode =
                 new IntersectionNode(intersectionPoint, segment, segA);
               this.priority.insert(intersectionNode);
             }));
           segmentBelow.ifPresent(segB =>
             segment.intersection(segB).ifPresent(intersectionPoint => {
-              console.log("INT2");
               const intersectionNode =
                 new IntersectionNode(intersectionPoint, segment, segB);
               this.priority.insert(intersectionNode);
             }));
-            */
           break;
         case 'Right':
-          console.log('RIGHT');
           const endingSegment = event.segment;
           const aboveSegment = this.lines.aboveSegment(endingSegment);
           const belowSegment = this.lines.belowSegment(endingSegment);
 
+          console.log('RIGHT', endingSegment);
           const bonusEnergySegment = new LineEntity(
             previousEvent.point, event.point, this.lines.peek());
+            console.log('BONUS', bonusEnergySegment);
           bonusEnergy.unshift(bonusEnergySegment);
 
           this.lines.delete(endingSegment);
-          /*
           aboveSegment.ifPresent(segA =>
             belowSegment.ifPresent(segB =>
               segA.intersection(segB)
@@ -157,12 +147,11 @@ export class LineSweeper {
                     intersectionPoint, segB, segA);
                   this.priority.insert(intersectionNode);
                 })));
-                */
           break;
         case 'Intersection':
           const intersectionBonus = new LineEntity(
             previousEvent.point, event.point, this.lines.peek());
-          bonusEnergy.unshift(bonusEnergySegment);
+          bonusEnergy.unshift(intersectionBonus);
 
           const lowerSegment = event.lowerSegment;
           const upperSegment = event.upperSegment;

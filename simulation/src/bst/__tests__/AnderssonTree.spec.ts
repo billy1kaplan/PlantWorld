@@ -81,8 +81,6 @@ describe('Tree', () => {
     tree.insert(three);
     tree.insert(four);
 
-    console.log(tree);
-
     expect(tree.belowSegment(three).getOrError()).toEqual(two);
     expect(tree.belowSegment(one)).toEqual(Optional.empty());
     expect(tree.belowSegment(four).getOrError()).toEqual(three);
