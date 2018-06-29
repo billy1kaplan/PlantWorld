@@ -6,7 +6,7 @@ import {Drawable} from '../Drawable';
 import {Line} from './Line';
 import {Point} from './Point';
 import {Primitive} from './Primitive';
-import {VerticalLine} from './VerticalLine';
+import {VerticalLine} from './VerticalLine';;
 
 export class LineSegment implements Drawable, Primitive {
   constructor(public p1: Point, public p2: Point) {
@@ -122,8 +122,39 @@ export class LineSegment implements Drawable, Primitive {
     return 0;
   }
 
-  intersection(lineSegment: LineSegment): Optional<Point> {
-    return Optional.of(new Point(1, 1));
+  // https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+  intersection(other: LineSegment): Optional<Point> {
+    const p = this.p1;
+    const p1 = this.p2;
+    const q = other.p1;
+    const q1 = other.p2;
+
+    const r = LineSegment.subtractPoints(p1, p);
+    const s = LineSegment.subtractPoints(q1, q);
+
+    const uNumerator = LineSegment.crossProduct(LineSegment.subtractPoints(q, p), r);
+    const denominator = LineSegment.crossProduct(r, s);
+
+    if (denominator === 0) {
+      return Optional.empty();
+    }
+    const u = uNumerator / denominator;
+    const t = LineSegment.crossProduct(LineSegment.subtractPoints(q, p), s) / denominator;
+
+    if ((u >= 0) && (u <= 1) && (t >= 0) && (t <= 1)) {
+      const intersectionPoint = new Point(q.x + u * s.x, q.y + u * s.y);
+      return Optional.of(intersectionPoint);
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  private static crossProduct(point1: Point, point2: Point) {
+    return point1.x * point2.y - point2.x * point1.y;
+  }
+
+  private static subtractPoints(point1: Point, point2) {
+    return new Point(point1.x - point2.x, point1.y - point2.y);
   }
 
   atPoint(x: number): Optional<number> {

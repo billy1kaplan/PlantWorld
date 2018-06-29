@@ -3,6 +3,7 @@ import {Point} from './Point';
 import {Primitive} from './Primitive';
 import {PrimitiveLine} from './PrimitiveLine';
 import {VerticalLine} from './VerticalLine';
+import { Optional } from 'Optional';
 
 export class Line implements PrimitiveLine {
   private constructor(public slope: number, public intercept: number) {}
