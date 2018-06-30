@@ -1,7 +1,9 @@
-import {HeapElement} from './HeapElement';
-import {MinHeap} from './MinHeap';
+import {Optional} from 'optional';
 
-export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
+import {IHeapElement} from './IHeapElement';
+import {IMinHeap} from './IMinHeap';
+
+export class ArrayMinHeap<T extends IHeapElement> implements IMinHeap<T> {
   private elements: T[];
   private size: number;
   constructor() {
@@ -9,67 +11,57 @@ export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
     this.size = 0;
   }
 
-  private getFirstChild(n: number) {
-    return 2 * n + 1;
+  public isEmpty(): boolean {
+    return this.size === 0;
   }
 
-  private getSecondChild(n: number) {
-    return 2 * n + 2;
-  }
-
-  private getParent(n: number) {
-    return Math.floor((n - 1) / 2);
-  }
-
-  peekMin(): T {
-    if (this.size == 0) {
-      throw new Error('Empty heap has no minimum element!');
+  public insert(element: T): void {
+    if (this.size === 0) {
+      this.elements[0] = element;
+    } else {
+      this.sift(element);
     }
-    return this.elements[0];
+    this.size++;
   }
 
-  deleteMin(): T {
-    const element = this.peekMin();
-    this.deleteMinElement();
+  public peekMin(): Optional<T> {
+    if (this.size === 0) {
+      return Optional.empty();
+    } else {
+      return Optional.of(this.elements[0]);
+    }
+  }
 
-    // Ensure that the heap does not return duplicates
-    while (this.size > 0 && element.equals(this.peekMin())) {
+  /**
+   * Typically O(Log(n)) complexity.
+   * Will degenerate to O(n * Log(n)) when number of duplicate heap
+   * elements approaches the size of the heap.
+   */
+  public deleteMin(): Optional<T> {
+    const previousMinElement = this.peekMin();
+
+    while (this.size > 0 && this.presentAndEqual(previousMinElement, this.peekMin())) {
       this.deleteMinElement();
     }
 
-    return element;
-  }
-
-  private deleteMinElement(): void {
-    this.elements[0] = this.elements[this.size - 1];
-    this.size--;
-    this.siftDown();
-  }
-
-  insert(element: T): void {
-    if (this.size == 0) {
-      this.elements[0] = element;
-      this.size++;
-    } else {
-      this.sift(element);
-      this.size++;
-    }
-  }
-
-  isEmpty(): boolean {
-    return this.size == 0;
+    return previousMinElement;
   }
 
   private sift(element: T): void {
     this.elements[this.size] = element;
-    var index = this.size;
+    let index = this.size;
 
-    while (index > 0 &&
-      element.compareTo(this.elements[this.getParent(index)]) < 0) {
+    while (index > 0 && this.lessThanParent(index)) {
       const parentIndex = this.getParent(index);
       this.swap(parentIndex, index);
       index = parentIndex;
     }
+  }
+
+  private lessThanParent(index) {
+    const element = this.elements[index];
+    const parent = this.elements[this.getParent(index)];
+    return element.compareTo(parent) < 0;
   }
 
   private swap(i: number, j: number) {
@@ -78,9 +70,15 @@ export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
     this.elements[j] = tmp;
   }
 
+  private deleteMinElement(): void {
+    this.elements[0] = this.elements[this.size - 1];
+    this.size--;
+    this.siftDown();
+  }
+
   private siftDown(): void {
-    var index = 0;
-    while (this.greaterThanEitherParent(index)) {
+    let index = 0;
+    while (this.greaterThanEitherChild(index)) {
       const leftChild = this.elements[this.getFirstChild(index)];
       const rightChild = this.elements[this.getSecondChild(index)];
 
@@ -94,18 +92,29 @@ export class ArrayMinHeap<T extends HeapElement> implements MinHeap<T> {
     }
   }
 
-  private swapIfGreater(i: number, j: number) {
-    if (this.elements[i] > this.elements[j]) {
-      this.swap(i, j);
-    }
-  }
-
-  private greaterThanEitherParent(index: number) {
+  private greaterThanEitherChild(index: number) {
     const firstChildIndex = this.getFirstChild(index);
     const secondChildIndex = this.getSecondChild(index);
-    return (firstChildIndex < this.size &&
-            this.elements[index].compareTo(this.elements[firstChildIndex]) > 0) ||
-        (secondChildIndex < this.size &&
-         this.elements[index].compareTo(this.elements[secondChildIndex]) > 0);
+    const greaterThanFirstChild = firstChildIndex < this.size &&
+      this.elements[index].compareTo(this.elements[firstChildIndex]) > 0;
+    const greaterThanSecondChild = firstChildIndex < this.size &&
+      this.elements[index].compareTo(this.elements[secondChildIndex]) > 0;
+    return greaterThanFirstChild || greaterThanSecondChild;
+  }
+
+  private getParent(n: number) {
+    return Math.floor((n - 1) / 2);
+  }
+
+  private getFirstChild(n: number) {
+    return 2 * n + 1;
+  }
+
+  private getSecondChild(n: number) {
+    return 2 * n + 2;
+  }
+
+  private presentAndEqual(val1: Optional<T>, val2: Optional<T>): boolean {
+    return (val1.isPresent() && val2.isPresent() && val1.getOrError().equals(val2.getOrError()));
   }
 }

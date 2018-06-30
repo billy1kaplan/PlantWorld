@@ -1,1 +1,1 @@
-export {ArrayMinHeap as Heap} from './ArrayMinHeap'
+export {ArrayMinHeap as Heap} from './ArrayMinHeap';

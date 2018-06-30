@@ -5,7 +5,11 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "ts-node node_modules/jasmine/bin/jasmine **/*.spec.ts",
-    "compile": "tsc"
+    "compile": "tsc",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "optional": "file:../optional"
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.7",

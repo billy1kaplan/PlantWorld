@@ -1,92 +1,170 @@
 import 'jasmine';
-import {Heap} from '..';
+import { Heap } from '..';
+import { Optional } from '../../../optional/dist';
+import { IHeapElement } from '../IHeapElement';
 
-class Number {
-  constructor(public n: number) {}
-  equals(other: Number) {
-    return this.n == other.n;
+/**
+ * Simple implementation of Heap Element for testing.
+ */
+class ComparableNumber implements IHeapElement {
+  constructor(public n: number) { }
+  public equals(other: ComparableNumber) {
+    return this.n === other.n;
   }
 
-  compareTo(other: Number) {
+  public compareTo(other: ComparableNumber) {
     return this.n - other.n;
   }
 }
 
-const one = new Number(1);
-const two = new Number(2);
-const three = new Number(3);
-const four = new Number(4);
-
 describe('Heap', () => {
-  it('correctly reports when empty', () => {
-    const h = new Heap();
+  let one;
+  let two;
+  let three;
+  let four;
 
-    expect(h.isEmpty()).toBe(true);
+  beforeAll(() => {
+    one = new ComparableNumber(1);
+    two = new ComparableNumber(2);
+    three = new ComparableNumber(3);
+    four = new ComparableNumber(4);
   });
 
-  it('correctly reports when not empty', () => {
-    const h = new Heap();
+  describe('isEmpty function', () => {
+    it('correctly reports when empty', () => {
+      const h = new Heap();
 
-    h.insert(one);
+      expect(h.isEmpty()).toBe(true);
+    });
 
-    expect(h.isEmpty()).toBe(false);
+    it('correctly reports when not empty', () => {
+      const h = new Heap();
+
+      h.insert(one);
+
+      expect(h.isEmpty()).toBe(false);
+    });
   });
 
-  it('inserts an element', () => {
-    const h = new Heap();
+  describe('insert', () => {
+    it('inserts an element', () => {
+      const h = new Heap();
 
-    h.insert(one)
+      h.insert(one);
 
-    expect(h.peekMin()).toEqual(one);
+      expect(h.peekMin().getOrError()).toEqual(one);
+    });
   });
 
-  it('deletes an element', () => {
-    const h = new Heap();
+  describe('delete', () => {
+    it('deletes an element', () => {
+      const h = new Heap();
 
-    h.insert(one)
-    h.deleteMin();
+      h.insert(one);
+      const element = h.deleteMin();
 
-    expect(h.isEmpty()).toBe(true);
+      expect(element.getOrError()).toBe(one);
+      expect(h.isEmpty()).toBe(true);
+      h.deleteMin();
+
+      const elementAfterDeleting = h.deleteMin();
+      expect(elementAfterDeleting).toEqual(Optional.empty());
+      expect(h.isEmpty()).toBe(true);
+    });
   });
 
-  it('maintains min heap property', () => {
-    const h = new Heap();
+  describe('functional testing', () => {
+    it('deletes an element', () => {
+      const h = new Heap();
 
-    h.insert(two)
-    h.insert(three)
-    h.insert(one)
+      h.insert(one);
+      h.deleteMin();
 
-    expect(h.deleteMin()).toEqual(one);
-    expect(h.deleteMin()).toEqual(two);
-    expect(h.deleteMin()).toEqual(three);
-    expect(() => h.deleteMin())
-        .toThrow(new Error('Empty heap has no minimum element!'));
-  });
+      expect(h.isEmpty()).toBe(true);
+    });
 
-  it('contains no duplicates', () => {
-    const h = new Heap();
+    it('maintains min heap property', () => {
+      const h = new Heap();
 
-    h.insert(one)
-    h.insert(two)
-    h.insert(one)
+      h.insert(two);
+      h.insert(three);
+      h.insert(one);
 
-    expect(h.deleteMin()).toEqual(one);
-    expect(h.deleteMin()).toEqual(two);
-    expect(() => h.deleteMin())
-        .toThrow(new Error('Empty heap has no minimum element!'));
-  });
+      expect(h.deleteMin().getOrError()).toEqual(one);
+      expect(h.deleteMin().getOrError()).toEqual(two);
+      expect(h.deleteMin().getOrError()).toEqual(three);
+      expect(h.deleteMin()).toEqual(Optional.empty());
+    });
 
-  it('Handles four values', () => {
-    const h = new Heap();
+    it('contains no duplicates', () => {
+      const h = new Heap();
 
-    h.insert(one)
-    h.insert(four)
-    h.insert(two)
-    h.insert(three)
+      h.insert(one);
+      h.insert(two);
+      h.insert(one);
 
-    expect(h.deleteMin()).toEqual(one);
-    expect(h.deleteMin()).toEqual(two);
-    expect(h.deleteMin()).toEqual(three);
-    expect(h.deleteMin()).toEqual(four);
+      expect(h.deleteMin().getOrError()).toEqual(one);
+      expect(h.deleteMin().getOrError()).toEqual(two);
+      expect(h.deleteMin()).toEqual(Optional.empty());
+    });
+
+    it('Handles four values with duplicates', () => {
+      const h = new Heap();
+
+      h.insert(one);
+      h.insert(four);
+      h.insert(four);
+      h.insert(four);
+      h.insert(two);
+      h.insert(three);
+      h.insert(three);
+      h.insert(three);
+
+      expect(h.deleteMin().getOrError()).toEqual(one);
+      expect(h.deleteMin().getOrError()).toEqual(two);
+      expect(h.deleteMin().getOrError()).toEqual(three);
+      expect(h.deleteMin().getOrError()).toEqual(four);
+    });
+
+    it('Handles four values with duplicates', () => {
+      const h = new Heap();
+
+      h.insert(one);
+      h.insert(four);
+      h.insert(four);
+      h.insert(four);
+      h.insert(two);
+      h.insert(three);
+      h.insert(three);
+      h.insert(three);
+
+      expect(h.deleteMin().getOrError()).toEqual(one);
+      expect(h.deleteMin().getOrError()).toEqual(two);
+      expect(h.deleteMin().getOrError()).toEqual(three);
+      expect(h.deleteMin().getOrError()).toEqual(four);
+    });
+
+    it('Handles multiple inserts and deletions', () => {
+      const h = new Heap();
+
+      h.insert(three);
+      h.insert(one);
+      h.insert(four);
+      h.insert(four);
+      h.insert(three);
+
+      expect(h.deleteMin().getOrError()).toEqual(one);
+      expect(h.deleteMin().getOrError()).toEqual(three);
+
+      h.insert(two);
+      h.insert(three);
+      h.insert(two);
+
+      expect(h.deleteMin().getOrError()).toEqual(two);
+      expect(h.deleteMin().getOrError()).toEqual(three);
+      expect(h.deleteMin().getOrError()).toEqual(four);
+      expect(h.isEmpty()).toEqual(true);
+      expect(h.deleteMin()).toEqual(Optional.empty());
+    });
   });
 });
