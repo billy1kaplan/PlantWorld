@@ -12,3 +12,4 @@ application.macosx
 **/npm-debug.log
 **/.clang-format
 **/package-lock.json
+**/.vscode
