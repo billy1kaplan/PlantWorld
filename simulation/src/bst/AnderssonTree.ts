@@ -30,8 +30,6 @@ export class AnderssonTree<T extends BalancableNode> implements BST<T> {
     }
   }
 
-  private findPredecessor(node: T, root) {}
-
   private find(node: T, root: BSTTree<T>): Optional<BSTTree<T>> {
     switch (root.kind) {
       case 'empty':

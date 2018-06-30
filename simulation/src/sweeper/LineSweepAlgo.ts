@@ -144,6 +144,7 @@ export class LineSweeper {
           console.log("ABOVE", endingSegment, aboveSegment);
           console.log("BELOW", endingSegment, belowSegment);
 
+          // Check if bounded by the line on the BST
           const bonusEnergySegment = new LineEntity(
             previousEvent.point, event.point, this.lines.peek());
           console.log("RIGHT BONUS", bonusEnergySegment);
