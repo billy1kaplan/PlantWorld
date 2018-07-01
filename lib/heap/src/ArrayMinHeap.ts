@@ -21,6 +21,7 @@ export class ArrayMinHeap<T extends IHeapElement> implements IMinHeap<T> {
     } else {
       this.sift(element);
     }
+
     this.size++;
   }
 
@@ -96,9 +97,9 @@ export class ArrayMinHeap<T extends IHeapElement> implements IMinHeap<T> {
     const firstChildIndex = this.getFirstChild(index);
     const secondChildIndex = this.getSecondChild(index);
     const greaterThanFirstChild = firstChildIndex < this.size &&
-      this.elements[index].compareTo(this.elements[firstChildIndex]) > 0;
-    const greaterThanSecondChild = firstChildIndex < this.size &&
-      this.elements[index].compareTo(this.elements[secondChildIndex]) > 0;
+      this.lessThanParent(firstChildIndex);
+    const greaterThanSecondChild = secondChildIndex < this.size &&
+      this.lessThanParent(secondChildIndex);
     return greaterThanFirstChild || greaterThanSecondChild;
   }
 
