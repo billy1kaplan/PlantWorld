@@ -1,5 +1,5 @@
 export class EmptyTree {
-  public static getInstance(): EmptyTree {
+  public static instance(): EmptyTree {
     return this.emptyTree;
   }
 

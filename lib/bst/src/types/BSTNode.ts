@@ -6,7 +6,7 @@ import {BSTTree} from './TreeType';
 export class BSTNode<T extends IBalancableNode> {
   public static leafNodeOf<U extends IBalancableNode>(nodeInfo: U, level: number) {
     return new BSTNode(
-        nodeInfo, EmptyTree.getInstance(), EmptyTree.getInstance(), level);
+        nodeInfo, EmptyTree.instance(), EmptyTree.instance(), level);
   }
 
   public kind: 'node';

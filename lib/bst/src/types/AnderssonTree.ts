@@ -11,13 +11,19 @@ import {BSTTree} from './TreeType';
 // http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_andersson.aspx
 export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
   private root: BSTTree<T>;
+  private numElements: number;
 
   public constructor() {
-    this.root = EmptyTree.getInstance();
+    this.root = EmptyTree.instance();
+    this.numElements = 0;
   }
 
   public isEmpty(): boolean {
-    return this.root === EmptyTree.getInstance();
+    return this.numElements === 0;
+  }
+
+  public size(): number {
+    return this.numElements;
   }
 
   public insert(node: T): void {
@@ -28,7 +34,7 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     return this.findMaxInternal(this.root);
   }
 
-  public find(node: T): boolean {
+  public contains(node: T): boolean {
     return this.findInternal(node, this.root).isPresent();
   }
 
@@ -36,25 +42,7 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     this.root = this.deleteInternal(node, this.root);
   }
 
-  public aboveSegment(node: T): Optional<T> {
-    const nodeLoc = this.findInternal(node, this.root);
-
-    return nodeLoc.flatMap((loc) => {
-      let curLoc = loc.walkRight();
-
-      while (curLoc.walkLeft().kind !== 'empty') {
-        curLoc = curLoc.walkLeft();
-      }
-
-      if (curLoc.kind === 'node') {
-        return Optional.of(curLoc.nodeInfo);
-      } else {
-        return Optional.empty();
-      }
-    });
-  }
-
-  public belowSegment(node: T): Optional<T> {
+  public predecessor(node: T): Optional<T> {
     const nodeLoc = this.findInternal(node, this.root);
 
     return nodeLoc.flatMap((loc) => {
@@ -91,6 +79,25 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     });
   }
 
+  public successor(node: T): Optional<T> {
+    const nodeLoc = this.findInternal(node, this.root);
+
+    return nodeLoc.flatMap((loc) => {
+      let curLoc = loc.walkRight();
+
+      while (curLoc.walkLeft().kind !== 'empty') {
+        curLoc = curLoc.walkLeft();
+      }
+
+      if (curLoc.kind === 'node') {
+        return Optional.of(curLoc.nodeInfo);
+      } else {
+        return Optional.empty();
+      }
+    });
+  }
+
+
   public swapPositions(node1: T, node2: T): void {
     if (!(node1.getPriority() === node2.getPriority())) {
       return;
@@ -106,6 +113,7 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
 
   private internalInsert(node: T, root: BSTTree<T>): BSTTree<T> {
     if (root.kind === 'empty') {
+      this.numElements += 1;
       return BSTNode.leafNodeOf(node, 1);
     } else {
       if (node.getPriority() < root.getPriority()) {
@@ -124,6 +132,7 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
   private deleteInternal(node: T, root: BSTTree<T>): BSTTree<T> {
     if (root.kind === 'node') {
       if (node.equals(root.nodeInfo)) {
+        this.numElements--;
         if (root.walkLeft().kind !== 'empty' &&
             root.walkRight().kind !== 'empty') {
           let heir = root.walkLeft();
