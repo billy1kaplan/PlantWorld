@@ -2,13 +2,13 @@ import 'jasmine';
 
 import { Optional } from 'Optional';
 
-import { IBalancableNode } from '../BalancableNode';
+import { IBalanceableNode } from '../IBalanceableNode';
 import { AnderssonTree } from '../types/AnderssonTree';
 
 /**
  * Simple Node that implements
  */
-class SimpleNode implements IBalancableNode {
+class SimpleNode implements IBalanceableNode<SimpleNode> {
   private n: number;
 
   constructor(n: number) {
@@ -19,12 +19,8 @@ class SimpleNode implements IBalancableNode {
     return this.n;
   }
 
-  public equals(other: IBalancableNode): boolean {
-    if (!(other instanceof SimpleNode)) {
-      return false;
-    } else {
-      return this.n === other.n;
-    }
+  public equals(other: SimpleNode): boolean {
+    return this.n === other.n;
   }
 }
 

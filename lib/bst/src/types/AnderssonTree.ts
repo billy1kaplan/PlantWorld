@@ -1,15 +1,24 @@
-import {Optional} from 'Optional';
+import { Optional } from 'Optional';
 
-import {IBalancableNode} from '../BalancableNode';
-import {IBST} from '../IBST';
+import { IBST } from '../IBST';
 
-import {BSTNode} from './BSTNode';
-import {EmptyTree} from './EmptyTree';
-import {BSTTree} from './TreeType';
+import { BSTNode } from './BSTNode';
+import { EmptyTree } from './EmptyTree';
+import { BSTTree } from './BSTTree';
+import { IBalanceableNode } from '../IBalanceableNode';
+import { TreeDirection } from '../TreeDirection';
+
+class BreadCrumb<T extends IBalanceableNode<T>> {
+  constructor(public direction: TreeDirection, public root: BSTTree<T>, public untaken: BSTTree<T>) { }
+}
+
+class Pair<A, B> {
+  constructor(public fst: A, public snd: B) {}
+}
 
 // Reference:
 // http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_andersson.aspx
-export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
+export class AnderssonTree<T extends IBalanceableNode<T>> implements IBST<T> {
   private root: BSTTree<T>;
   private numElements: number;
 
@@ -26,23 +35,23 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     return this.numElements;
   }
 
-  public insert(node: T): void {
+  public insert(node: IBalanceableNode<T>): void {
     this.root = this.internalInsert(node, this.root);
   }
 
-  public findMax(): Optional<T> {
+  public findMax(): Optional<IBalanceableNode<T>> {
     return this.findMaxInternal(this.root);
   }
 
-  public contains(node: T): boolean {
+  public contains(node: IBalanceableNode<T>): boolean {
     return this.findInternal(node, this.root).isPresent();
   }
 
-  public delete(node: T): void {
+  public delete(node: IBalanceableNode<T>): void {
     this.root = this.deleteInternal(node, this.root);
   }
 
-  public predecessor(node: T): Optional<T> {
+  public predecessor(node: IBalanceableNode<T>): Optional<IBalanceableNode<T>> {
     const nodeLoc = this.findInternal(node, this.root);
 
     return nodeLoc.flatMap((loc) => {
@@ -53,8 +62,8 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
         let pred: Optional<T> = Optional.empty();
         while (innerLoc.kind === 'node' && !innerLoc.nodeInfo.equals(node)) {
           if (innerLoc.getPriority() < node.getPriority() &&
-              (!pred.isPresent() ||
-               pred.getOrError().getPriority() < innerLoc.getPriority())) {
+            (!pred.isPresent() ||
+              pred.getOrError().getPriority() < innerLoc.getPriority())) {
             pred = Optional.of(innerLoc.nodeInfo);
           }
 
@@ -79,39 +88,52 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     });
   }
 
-  public successor(node: T): Optional<T> {
-    const nodeLoc = this.findInternal(node, this.root);
+  public successor(node: IBalanceableNode<T>): Optional<IBalanceableNode<T>> {
+    const nodeLocWithContext = this.findWithCrumbs(node, this.root, []);
 
-    return nodeLoc.flatMap((loc) => {
-      let curLoc = loc.walkRight();
+    return nodeLocWithContext.flatMap((loc) => {
+      let curRoot = loc.fst;
 
-      while (curLoc.walkLeft().kind !== 'empty') {
-        curLoc = curLoc.walkLeft();
-      }
-
-      if (curLoc.kind === 'node') {
-        return Optional.of(curLoc.nodeInfo);
+      if (curRoot.walkRight().kind !== 'empty') {
+        let curLoc = curRoot.walkRight();
+        while (curLoc.walkLeft().kind !== 'empty') {
+          curLoc = curLoc.walkLeft();
+        }
+        return Optional.of(curLoc.getNodeInfo());
       } else {
-        return Optional.empty();
+        let crumbs = loc.snd;
+        if (crumbs.length === 0 || crumbs[0].direction === TreeDirection.RIGHT) {
+          return Optional.empty();
+        } else {
+          return Optional.of(crumbs[0].root.getNodeInfo());
+        }
       }
     });
   }
 
-
-  public swapPositions(node1: T, node2: T): void {
+  public swapPositions(node1: IBalanceableNode<T>, node2: IBalanceableNode<T>): void {
     if (!(node1.getPriority() === node2.getPriority())) {
       return;
     }
 
     const bstNode1 = this.findInternal(node1, this.root);
     const bstNode2 = this.findInternal(node2, this.root);
+
+    bstNode1.ifPresent(foundNode1 => {
+      bstNode2.ifPresent(foundNode2 => {
+        if (foundNode1.kind === 'node' && foundNode2.kind === 'node') {
+          foundNode1.setNodeInfo(node2);
+          foundNode2.setNodeInfo(node1);
+        }
+      })
+    })
   }
 
   public print(): void {
     this.printInternal(this.root);
   }
 
-  private internalInsert(node: T, root: BSTTree<T>): BSTTree<T> {
+  private internalInsert(node: IBalanceableNode<T>, root: BSTTree<T>): BSTTree<T> {
     if (root.kind === 'empty') {
       this.numElements += 1;
       return BSTNode.leafNodeOf(node, 1);
@@ -129,23 +151,21 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     return root;
   }
 
-  private deleteInternal(node: T, root: BSTTree<T>): BSTTree<T> {
+  private deleteInternal(node: IBalanceableNode<T>, root: BSTTree<T>): BSTTree<T> {
     if (root.kind === 'node') {
-      if (node.equals(root.nodeInfo)) {
+      if (node.equals(root.getNodeInfo())) {
         this.numElements--;
         if (root.walkLeft().kind !== 'empty' &&
-            root.walkRight().kind !== 'empty') {
+          root.walkRight().kind !== 'empty') {
           let heir = root.walkLeft();
 
           while (heir.walkRight().kind !== 'empty') {
             heir = heir.walkRight();
           }
 
-          if (heir.kind === 'node') {
-            root.nodeInfo = heir.nodeInfo;
-          }
+          root.setNodeInfo(heir.getNodeInfo());
 
-          root.setLeft(this.deleteInternal(root.nodeInfo, root.walkLeft()));
+          root.setLeft(this.deleteInternal(root.getNodeInfo(), root.walkLeft()));
         } else {
           if (root.walkLeft().kind === 'empty') {
             root = root.walkRight();
@@ -154,7 +174,7 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
           }
         }
       } else {
-        if (node.getPriority() < root.nodeInfo.getPriority()) {
+        if (node.getPriority() < root.getNodeInfo().getPriority()) {
           root.setLeft(this.deleteInternal(node, root.walkLeft()));
         } else {
           root.setRight(this.deleteInternal(node, root.walkRight()));
@@ -163,14 +183,12 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     }
 
     if (root.walkLeft().getLevel() < root.getLevel() - 1 ||
-        root.walkRight().getLevel() < root.getLevel() - 1) {
+      root.walkRight().getLevel() < root.getLevel() - 1) {
       if (root.kind === 'node') {
         root.decrementLevel();
         if (root.walkRight().getLevel() > root.getLevel()) {
           const right = root.walkRight();
-          if (right.kind === 'node') {
-            right.setLevel(root.getLevel());
-          }
+          right.setLevel(root.getLevel());
         }
 
         root = this.skew(root);
@@ -180,9 +198,9 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     return root;
   }
 
-  private split(root: BSTNode<T>): BSTNode<T> {
+  private split(root: BSTTree<T>): BSTTree<T> {
     if (root.walkRight().walkRight().getLevel() === root.getLevel() &&
-        root.getLevel() !== 0) {
+      root.getLevel() !== 0) {
       const temp = root.walkRight();
 
       root.setRight(temp.walkLeft());
@@ -205,12 +223,29 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
       if (root.walkRight().kind === 'node') {
         return this.findMaxInternal(root.walkRight());
       } else {
-        return Optional.of(root.nodeInfo);
+        return Optional.of(root.getNodeInfo());
       }
     }
   }
 
-  private findInternal(node: T, root: BSTTree<T>): Optional<BSTTree<T>> {
+  private findWithCrumbs(node: IBalanceableNode<T>, root: BSTTree<T>, breadcrumbs: BreadCrumb<T>[]): Optional<Pair<BSTTree<T>, BreadCrumb<T>[]>> {
+    switch (root.kind) {
+      case 'empty':
+        return Optional.empty();
+      case 'node':
+        if (node.equals(root.nodeInfo)) {
+          return Optional.of(new Pair(root, breadcrumbs));
+        } else if (node.getPriority() < root.getPriority()) {
+          return this.findWithCrumbs(node, root.walkLeft(),
+            [new BreadCrumb(TreeDirection.LEFT, root, root.walkRight()), ...breadcrumbs]);
+        } else {
+          return this.findWithCrumbs(node, root.walkRight(),
+            [new BreadCrumb(TreeDirection.RIGHT, root, root.walkLeft()), ...breadcrumbs]);
+        }
+    }
+  }
+
+  private findInternal(node: IBalanceableNode<T>, root: BSTTree<T>): Optional<BSTTree<T>> {
     switch (root.kind) {
       case 'empty':
         return Optional.empty();
@@ -225,28 +260,27 @@ export class AnderssonTree<T extends IBalancableNode> implements IBST<T> {
     }
   }
 
-  private skew(root: BSTNode<T>): BSTNode<T> {
+  private skew(root: BSTTree<T>): BSTTree<T> {
     if (root.getLevel() !== 0 && root.walkLeft().getLevel() === root.getLevel()) {
       const temp = root.walkLeft();
 
       root.setLeft(temp.walkRight());
 
-      // Must be true based on the if statment, 'empty' has level == 0
-      if (temp.kind === 'node') {
-        temp.setRight(root);
-        root = temp;
-      }
+      temp.setRight(root);
+      root = temp;
     }
 
     return root;
   }
 
+  // In-order traversal of tree
   private printInternal(root: BSTTree<T>): void {
     switch (root.kind) {
       case 'empty':
         return;
       case 'node':
         this.printInternal(root.walkLeft());
+        console.log(root.nodeInfo);
         this.printInternal(root.walkRight());
         return;
     }
