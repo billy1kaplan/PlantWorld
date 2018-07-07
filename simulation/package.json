@@ -10,7 +10,8 @@
   "dependencies": {
     "@types/node": "^9.6.17",
     "heap": "file:../lib/heap",
-    "optional": "file:../lib/optional"
+    "optional": "file:../lib/optional",
+    "bst": "file:../lib/bst"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",

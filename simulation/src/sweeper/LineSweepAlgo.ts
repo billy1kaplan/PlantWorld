@@ -1,8 +1,7 @@
 import { Heap } from 'Heap';
 import { Optional } from 'Optional';
+import {BST} from 'bst';
 
-import { AnderssonTree } from '../bst/AnderssonTree';
-import { BST } from '../bst/BST';
 import { LineSegment } from '../elements/primitives/LineSegment';
 import { Point } from '../elements/primitives/Point';
 
@@ -86,7 +85,7 @@ export class LineSweeper {
 
   constructor() {
     this.priority = new Heap();
-    this.lines = new AnderssonTree();
+    this.lines = new BST();
   }
 
   add(line: LineSegment) {
@@ -104,29 +103,26 @@ export class LineSweeper {
     const bonusEnergy: LineEntity[] = [];
     var previousEvent: TNode;
     while (!this.priority.isEmpty()) {
-      const event = this.priority.deleteMin();
+      const event = this.priority.deleteMin().getOrError();
+
+      const maxSegment = this.lines.findMax();
+      maxSegment.ifPresent((seg) => {
+        const bonusEnergySegment = new LineEntity(
+          previousEvent.point, event.point, seg);
+        bonusEnergy.unshift(bonusEnergySegment);
+      });
 
       switch (event.kind) {
         case 'Left':
           const segment = event.segment;
           this.lines.insert(segment);
-          const segmentAbove = this.lines.aboveSegment(segment);
-          const segmentBelow = this.lines.belowSegment(segment);
-          console.log("ABOVE", segment, segmentAbove);
-          console.log("BELOW", segment, segmentBelow);
-
-          if (previousEvent !== undefined) {
-            const bonusEnergySegment = new LineEntity(
-              previousEvent.point, event.point, this.lines.peek());
-            console.log("RIGHT BONUS", bonusEnergySegment);
-            bonusEnergy.unshift(bonusEnergySegment);
-          }
+          const segmentAbove = this.lines.predecessor(segment);
+          const segmentBelow = this.lines.successor(segment);
 
           segmentAbove.ifPresent(segA =>
             segment.intersection(segA).ifPresent(intersectionPoint => {
               const intersectionNode =
                 new IntersectionNode(intersectionPoint, segment, segA);
-                  console.log("Insert", intersectionPoint);
               this.priority.insert(intersectionNode);
             }));
           segmentBelow.ifPresent(segB =>
@@ -134,44 +130,29 @@ export class LineSweeper {
               const intersectionNode =
                 new IntersectionNode(intersectionPoint, segment, segB);
               this.priority.insert(intersectionNode);
-                  console.log("Insert", intersectionPoint);
             }));
           break;
         case 'Right':
           const endingSegment = event.segment;
-          const aboveSegment = this.lines.aboveSegment(endingSegment);
-          const belowSegment = this.lines.belowSegment(endingSegment);
-          console.log("ABOVE", endingSegment, aboveSegment);
-          console.log("BELOW", endingSegment, belowSegment);
-
-          // Check if bounded by the line on the BST
-          const bonusEnergySegment = new LineEntity(
-            previousEvent.point, event.point, this.lines.peek());
-          console.log("RIGHT BONUS", bonusEnergySegment);
-          bonusEnergy.unshift(bonusEnergySegment);
+          const aboveSegment = this.lines.predecessor(endingSegment);
+          const belowSegment = this.lines.successor(endingSegment);
 
           this.lines.delete(endingSegment);
           aboveSegment.ifPresent(segA =>
             belowSegment.ifPresent(segB =>
               segA.intersection(segB)
                 .ifPresent(intersectionPoint => {
-                  console.log("Insert", intersectionPoint);
                   const intersectionNode = new IntersectionNode(
                     intersectionPoint, segB, segA);
                   this.priority.insert(intersectionNode);
                 })));
           break;
         case 'Intersection':
-          const intersectionBonus = new LineEntity(
-            previousEvent.point, event.point, this.lines.peek());
-          bonusEnergy.unshift(intersectionBonus);
-          console.log("BONUS", intersectionBonus);
-
           const lowerSegment = event.lowerSegment;
           const upperSegment = event.upperSegment;
           this.lines.swapPositions(lowerSegment, upperSegment);
-          const aboveUpperSegment = this.lines.aboveSegment(upperSegment);
-          const belowLowerSegment = this.lines.belowSegment(lowerSegment);
+          const aboveUpperSegment = this.lines.predecessor(upperSegment);
+          const belowLowerSegment = this.lines.successor(lowerSegment);
           aboveUpperSegment.ifPresent(above =>
             lowerSegment.intersection(above)
               .ifPresent(intersectionPoint => {

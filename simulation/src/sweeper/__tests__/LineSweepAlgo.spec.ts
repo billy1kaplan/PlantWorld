@@ -31,6 +31,6 @@ describe('Uses line sweep to determine the highest line segment across the x-axi
     lineSweeper.add(middle);
     lineSweeper.add(higher);
     const res = lineSweeper.sweep();
-    console.log(res);
+    expect(res.length).toEqual(4);
   });
 });
