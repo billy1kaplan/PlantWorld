@@ -1,14 +1,14 @@
 import {Optional} from 'Optional';
 import { IBalanceableNode } from './IBalanceableNode';
 
-export interface IBST<T extends IBalanceableNode<T>> {
+export interface IBST<T extends IBalanceableNode> {
   isEmpty(): boolean;
   size(): number;
-  insert(node: IBalanceableNode<T>): void;
-  findMax(): Optional<IBalanceableNode<T>>;
-  contains(node: IBalanceableNode<T>): boolean;
-  delete(node: IBalanceableNode<T>): void;
-  predecessor(node: IBalanceableNode<T>): Optional<IBalanceableNode<T>>;
-  successor(node: IBalanceableNode<T>): Optional<IBalanceableNode<T>>;
-  swapPositions(node1: IBalanceableNode<T>, node2: IBalanceableNode<T>): void;
+  insert(node: T): void;
+  findMax(): Optional<T>;
+  contains(node: T): boolean;
+  delete(node: T): void;
+  predecessor(node: T): Optional<T>;
+  successor(node: T): Optional<T>;
+  swapPositions(node1: T, node2: T): void;
 }

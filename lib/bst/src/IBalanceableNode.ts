@@ -1,4 +1,4 @@
-export interface IBalanceableNode<T> {
-  equals(other: IBalanceableNode<T>): boolean;
+export interface IBalanceableNode {
+  equals(other: IBalanceableNode): boolean;
   getPriority(): number;
 }

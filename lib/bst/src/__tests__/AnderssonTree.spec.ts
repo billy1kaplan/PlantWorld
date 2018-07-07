@@ -1,14 +1,13 @@
 import 'jasmine';
-
 import { Optional } from 'Optional';
-
 import { IBalanceableNode } from '../IBalanceableNode';
+import { IBST } from '../IBST';
 import { AnderssonTree } from '../types/AnderssonTree';
 
 /**
  * Simple Node that implements
  */
-class SimpleNode implements IBalanceableNode<SimpleNode> {
+class SimpleNode implements IBalanceableNode {
   private n: number;
 
   constructor(n: number) {
@@ -20,7 +19,7 @@ class SimpleNode implements IBalanceableNode<SimpleNode> {
   }
 
   public equals(other: SimpleNode): boolean {
-    return this.n === other.n;
+    return this === other;
   }
 }
 
@@ -178,7 +177,7 @@ describe('Tree', () => {
   });
 
   describe('predecessor', () => {
-    it('finds the predecessor', () => {
+    it('finds the predecessors', () => {
       const tree = new AnderssonTree();
 
       tree.insert(one);
@@ -192,7 +191,7 @@ describe('Tree', () => {
       expect(tree.predecessor(four)).toEqual(Optional.of(three));
     });
 
-    it('finds the predecessor', () => {
+    it('finds the predecessors', () => {
       const tree = new AnderssonTree();
 
       tree.insert(four);
@@ -221,6 +220,23 @@ describe('Tree', () => {
       expect(tree.successor(two)).toEqual(Optional.of(three));
       expect(tree.successor(three)).toEqual(Optional.of(four));
       expect(tree.successor(four)).toEqual(Optional.empty());
+      expect(tree.successor(five)).toEqual(Optional.empty());
+    });
+  });
+
+  describe('swap', () => {
+    it('swaps nodes of equal ranking in the tree', () => {
+      const tree: IBST<SimpleNode> = new AnderssonTree();
+      const firstInstance = new SimpleNode(1);
+      const secondInstance = new SimpleNode(1);
+
+      tree.insert(firstInstance);
+      tree.insert(secondInstance);
+
+      const firstMax = tree.findMax();
+      tree.swapPositions(firstInstance, secondInstance);
+      const secondMax = tree.findMax();
+      expect(firstMax !== secondMax);
     });
   });
 });

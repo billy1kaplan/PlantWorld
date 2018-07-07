@@ -1,5 +1,5 @@
-import {BSTNode} from './BSTNode';
-import {EmptyTree} from './EmptyTree';
 import { IBalanceableNode } from '../IBalanceableNode';
+import { BSTNode } from './BSTNode';
+import { EmptyTree } from './EmptyTree';
 
-export type BSTTree<T extends IBalanceableNode<T>> = EmptyTree<T>|BSTNode<T>;
+export type BSTTree<T extends IBalanceableNode> = EmptyTree<T>|BSTNode<T>;

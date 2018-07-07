@@ -1,17 +1,17 @@
-import { IBalanceableNode } from "./IBalanceableNode";
+import {IBalanceableNode} from './IBalanceableNode';
 
-export class MinimumNode implements IBalanceableNode<MinimumNode> {
+export class MinimumNode implements IBalanceableNode {
     public static getInstance(): MinimumNode {
         return this.instance;
     }
 
     private static instance = new MinimumNode();
 
-    equals(other: MinimumNode): boolean {
+    public equals(other: MinimumNode): boolean {
         return false;
     }
 
-    getPriority(): number {
+    public getPriority(): number {
         return -Infinity;
     }
 }
