@@ -2,41 +2,41 @@ import {LineSegment} from '../elements/primitives/LineSegment';
 import {Point} from '../elements/primitives/Point';
 import {cos, sin} from '../geometricmath/Utility';
 
-export interface LocalPoint {
+export interface ILocalPoint {
   getGlobalPosition(): Point;
   getAngularOffset(): number;
 }
-export class RootPoint implements LocalPoint {
+
+export class RootPoint implements ILocalPoint {
   private point: Point;
   private angularOffset: number;
 
-  constructor(point: Point, angularOffset: number) {
+  public constructor(point: Point, angularOffset: number) {
     this.point = point;
     this.angularOffset = angularOffset;
   }
 
-  getGlobalPosition(): Point {
+  public getGlobalPosition(): Point {
     return this.point;
   }
 
-  getAngularOffset(): number {
+  public getAngularOffset(): number {
     return this.angularOffset;
   }
 }
 
-export class LocalLocation implements LocalPoint {
-  private parent: LocalPoint;
-
+export class LocalLocation implements ILocalPoint {
+  private parent: ILocalPoint;
   private angularShift: number;
   private length: number;
 
-  constructor(parent: LocalPoint, angularShift: number, length: number) {
+  public constructor(parent: ILocalPoint, angularShift: number, length: number) {
     this.parent = parent;
     this.angularShift = angularShift;
     this.length = length;
   }
 
-  getGlobalPosition(): Point {
+  public getGlobalPosition(): Point {
     const totalAngleOffset = this.parent.getAngularOffset() + this.angularShift;
     const deltaX = cos(totalAngleOffset) * this.length;
     const deltaY = sin(totalAngleOffset) * this.length;
@@ -44,16 +44,16 @@ export class LocalLocation implements LocalPoint {
     return new Point(parentPoint.getX() + deltaX, parentPoint.getY() + deltaY);
   }
 
-  getAngularOffset(): number {
+  public getAngularOffset(): number {
     return this.angularShift + this.parent.getAngularOffset();
   }
 
-  getParentOffset(): LineSegment {
+  public getParentOffset(): LineSegment {
     return new LineSegment(
         this.parent.getGlobalPosition(), this.getGlobalPosition());
   }
 
-  scale(parent: LocalPoint, scaleFactor: number) {
+  public scale(parent: ILocalPoint, scaleFactor: number) {
     return new LocalLocation(
         parent, this.angularShift, this.length * scaleFactor);
   }

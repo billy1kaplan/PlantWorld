@@ -1,17 +1,16 @@
-import {IDrawingManager} from '../drawing/SimpleDrawingManager';
-import {LineSegment} from '../elements/primitives/LineSegment';
-
-import {DoodleSegment} from './DoodleSegment';
-import {EnergyStorageDoodle} from './EnergyStorageDoodle';
-import {DoodleRoot, RootPart} from './RootDoodle';
-import {Seed} from './Seed';
-import {SpokePart} from './SpokePart';
-import {UndifferentiatedPart} from './UndifferentiatedPart';
+import { IDrawingManager } from '../drawing/SimpleDrawingManager';
+import { LineSegment } from '../elements/primitives/LineSegment';
 import { Sun } from '../world/Sun';
+import { DoodleSegment } from './DoodleSegment';
+import { EnergyStorageDoodle } from './EnergyStorageDoodle';
+import { DoodleRoot, IRootPart } from './RootDoodle';
+import { Seed } from './Seed';
+import { SpokePart } from './SpokePart';
+import { UndifferentiatedPart } from './UndifferentiatedPart';
 
-export interface Visitor<T> {
+export interface IVisitor<T> {
   visitSegment(value: DoodleSegment): void;
-  vistSpoke(value: SpokePart): void;
+  visitSpoke(value: SpokePart): void;
   visitSeed(value: Seed): void;
   visitRoot(value: DoodleRoot): void;
   visitUndifferentiated(value: UndifferentiatedPart): void;
@@ -19,106 +18,111 @@ export interface Visitor<T> {
   done(): T;
 }
 
-abstract class SegmentsOnly<T> implements Visitor<T> {
-  abstract visitSegment(value: DoodleSegment);
-  vistSpoke(value: SpokePart) {}
-  visitSeed(value: Seed) {}
-  visitRoot(value: DoodleRoot) {}
-  visitUndifferentiated(value: UndifferentiatedPart) {}
-  visitEnergyStorage(value: EnergyStorageDoodle) {}
-  abstract done(): T;
+abstract class SegmentsOnly<T> implements IVisitor<T> {
+  public abstract visitSegment(value: DoodleSegment);
+  public visitSpoke(value: SpokePart) { return undefined; }
+  public visitSeed(value: Seed) { return undefined; }
+  public visitRoot(value: DoodleRoot) { return undefined; }
+  public visitUndifferentiated(value: UndifferentiatedPart) { return undefined; }
+  public visitEnergyStorage(value: EnergyStorageDoodle) { return undefined; }
+  public abstract done(): T;
 }
 
-export class LoggingVisitor implements Visitor<void> {
-  visitSegment(value: DoodleSegment) {
-    console.log(value);
-  }
-  vistSpoke(value: SpokePart) {
-    console.log(value);
-  }
-  visitSeed(value: Seed) {
-    console.log(value);
-  }
-  visitRoot(value: DoodleRoot) {
-    console.log(value);
-  }
-  visitUndifferentiated(value: UndifferentiatedPart) {
-    console.log(value);
-  }
-  visitEnergyStorage(value: EnergyStorageDoodle) {
+export class LoggingVisitor implements IVisitor<void> {
+  public visitSegment(value: DoodleSegment) {
     console.log(value);
   }
 
-  done() {}
+  public visitSpoke(value: SpokePart) {
+    console.log(value);
+  }
+
+  public visitSeed(value: Seed) {
+    console.log(value);
+  }
+
+  public visitRoot(value: DoodleRoot) {
+    console.log(value);
+  }
+
+  public visitUndifferentiated(value: UndifferentiatedPart) {
+    console.log(value);
+  }
+
+  public visitEnergyStorage(value: EnergyStorageDoodle) {
+    console.log(value);
+  }
+
+  public done() { return undefined; }
 }
 
 export class DrawingVisitor extends SegmentsOnly<void> {
   private drawingManager: IDrawingManager;
 
-  constructor(drawingManager: IDrawingManager) {
+  public constructor(drawingManager: IDrawingManager) {
     super();
     this.drawingManager = drawingManager;
   }
 
-  visitSegment(value: DoodleSegment) {
+  public visitSegment(value: DoodleSegment) {
     const lineSegment = value.getLineSegment();
     this.drawingManager.drawLine(lineSegment.getP1(), lineSegment.getP2());
   }
 
-  done() {}
+  public done() { return undefined; }
 }
 
-export interface TaggedSegment {
-  rootPart: RootPart;
+export interface ITaggedSegment {
+  rootPart: IRootPart;
   lineSegment: LineSegment;
 }
 
-export class SegmentVisitor extends SegmentsOnly<TaggedSegment[]> {
-  private rootPart: RootPart;
-  private segments: TaggedSegment[];
+export class SegmentVisitor extends SegmentsOnly<ITaggedSegment[]> {
+  private rootPart: IRootPart;
+  private segments: ITaggedSegment[];
 
-  constructor(rootPart: RootPart) {
+  constructor(rootPart: IRootPart) {
     super();
     this.rootPart = rootPart;
     this.segments = [];
   }
 
-  visitSegment(value: DoodleSegment) {
+  public visitSegment(value: DoodleSegment) {
     const taggedSegment = {
+      lineSegment: value.getLineSegment(),
       rootPart: this.rootPart,
-      lineSegment: value.getLineSegment()
     };
     this.segments = [taggedSegment, ...this.segments];
   }
 
-  done() {
+  public done() {
     return this.segments;
   }
 }
 
-export class EnergyCollector implements Visitor<number> {
+export class EnergyCollector implements IVisitor<number> {
   private sun: Sun;
   private energy: number;
-  constructor(sun: Sun) {
+  public constructor(sun: Sun) {
     this.sun = sun;
     this.energy = 0;
   }
 
-  visitSegment(value: DoodleSegment) {
-    const energyFromSegment = this.sun.energyFunctionFromLineSegment(value.getLineSegment())
+  public visitSegment(value: DoodleSegment) {
+    const energyFromSegment = this.sun.energyFunctionFromLineSegment(value.getLineSegment());
     this.energy += energyFromSegment;
   }
 
-  visitEnergyStorage(value: EnergyStorageDoodle) {
+  public visitEnergyStorage(value: EnergyStorageDoodle) {
     this.energy += value.getStoredEnergy();
   }
 
-  vistSpoke(value: SpokePart) {}
-  visitSeed(value: Seed) {}
-  visitRoot(value: DoodleRoot) {}
-  visitUndifferentiated(value: UndifferentiatedPart) {}
+  public visitSpoke(value: SpokePart) { return undefined; }
+  public visitSeed(value: Seed) { return undefined; }
+  public visitRoot(value: DoodleRoot) { return undefined; }
+  public visitUndifferentiated(value: UndifferentiatedPart) { return undefined; }
 
-  done(): number {
+  public done(): number {
     return this.energy;
   }
 }

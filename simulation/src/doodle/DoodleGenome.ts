@@ -1,10 +1,10 @@
 import { DoodleLocalSignal } from './DoodleLocalSignal';
-import { DoodlePart } from './DoodlePart';
+import { IDoodlePart } from './IDoodlePart';
 
 export interface IDoodleGenome {
-  differentiatePart: (localSignal: DoodleLocalSignal) => DoodlePart;
+  differentiatePart: (localSignal: DoodleLocalSignal) => IDoodlePart;
 }
 
 export class DoodleGenome implements IDoodleGenome {
-  differentiatePart: (localSignal: DoodleLocalSignal) => DoodlePart;
+  public differentiatePart: (localSignal: DoodleLocalSignal) => IDoodlePart;
 }

@@ -1,19 +1,18 @@
-import { RootPart } from '../doodle/RootDoodle';
-import { LoggingVisitor, EnergyCollector } from '../doodle/Visitor';
-
+import { IRootPart } from '../doodle/RootDoodle';
+import { EnergyCollector, LoggingVisitor } from '../doodle/Visitor';
 import { Sun } from './Sun';
 
 export class World {
   private sun: Sun;
-  private plants: RootPart[];
+  private plants: IRootPart[];
 
-  constructor(sun: Sun, plants: RootPart[]) {
+  constructor(sun: Sun, plants: IRootPart[]) {
     this.sun = sun;
     this.plants = plants;
   }
 
-  step(): World {
-    const grownPlants = this.plants.map(p => {
+  public step(): World {
+    const grownPlants = this.plants.map((p) => {
       const energyCollector = new EnergyCollector(this.sun);
       p.visit(energyCollector);
       const energy = energyCollector.done();
@@ -22,7 +21,7 @@ export class World {
     return new World(this.sun, grownPlants);
   }
 
-  log(): void {
-    this.plants.forEach(p => p.visit(new LoggingVisitor()));
+  public log(): void {
+    this.plants.forEach((p) => p.visit(new LoggingVisitor()));
   }
 }

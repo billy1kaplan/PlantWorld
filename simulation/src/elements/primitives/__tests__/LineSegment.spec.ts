@@ -2,10 +2,8 @@ import 'mocha';
 
 import {expect} from 'chai';
 
-import {Optional} from 'Optional';
 import {LineSegment} from '../LineSegment';
 import {Point} from '../Point';
-
 
 describe('Distance function - Horizontal Line Test 1', () => {
   it('correctly finds distance to a point', () => {
@@ -31,7 +29,6 @@ describe('Distance function - Horizontal Line Test 1', () => {
     const result = line.getDistance(new Point(0, 0));
     expect(result).to.equal(0.5 * Math.sqrt(2));
   });
-
 
   it('should find points at a given coordinate', () => {
     const line = new LineSegment(new Point(0, 0), new Point(1, 1));

@@ -1,43 +1,43 @@
-import {Line} from './Line';
-import {LineSegment} from './LineSegment';
-import {Point} from './Point';
-import {Primitive} from './Primitive';
-import {PrimitiveLine} from './PrimitiveLine';
+import { IPrimitive } from './IPrimitive';
+import { IPrimitiveLine } from './IPrimitiveLine';
+import { Line } from './Line';
+import { LineSegment } from './LineSegment';
+import { Point } from './Point';
 
-export class VerticalLine implements PrimitiveLine {
+export class VerticalLine implements IPrimitiveLine {
   constructor(public x: number) {}
 
-  distanceTo(other: Primitive): number {
+  public distanceTo(other: IPrimitive): number {
     return other.distanceToVerticalLine(this);
   }
 
-  distanceToPoint(point: Point): number {
+  public distanceToPoint(point: Point): number {
     return Math.abs(this.x - point.getX());
   }
 
-  distanceToLineSegment(lineSegment: LineSegment): number {
+  public distanceToLineSegment(lineSegment: LineSegment): number {
     return lineSegment.distanceToVerticalLine(this);
   }
 
-  distanceToLine(line: Line): number {
+  public distanceToLine(line: Line): number {
     return line.distanceToVerticalLine(this);
   }
 
-  distanceToVerticalLine(verticalLine: VerticalLine) {
+  public distanceToVerticalLine(verticalLine: VerticalLine) {
     return Math.abs(this.x - verticalLine.getX());
   }
 
-  getX() {
+  public getX() {
     return this.x;
   }
 
-  evaluate(x: number) {
+  public evaluate(x: number) {
     throw new Error('Method not implemented.');
   }
-  getSlope() {
+  public getSlope() {
     throw new Error('Method not implemented.');
   }
-  getIntercept() {
+  public getIntercept() {
     throw new Error('Method not implemented.');
   }
 }

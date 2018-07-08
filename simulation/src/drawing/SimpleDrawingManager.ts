@@ -10,16 +10,13 @@ export class SimpleDrawingManager implements IDrawingManager {
   private width: number;
   private height: number;
   private ctx: CanvasRenderingContext2D;
-  private n: number;
   constructor(width: number, height: number, ctx: CanvasRenderingContext2D) {
     this.width = width;
     this.height = height;
     this.ctx = ctx;
-    this.n = 0;
   }
 
-  drawLine(p1: Point, p2: Point): void {
-    this.n += 1;
+  public drawLine(p1: Point, p2: Point): void {
     const context = this.ctx;
     context.beginPath();
     context.strokeStyle = 'black';
@@ -29,14 +26,14 @@ export class SimpleDrawingManager implements IDrawingManager {
     context.stroke();
   }
 
-  drawBlankScreen() {
+  public drawBlankScreen() {
     this.ctx.beginPath();
     this.ctx.rect(0, 0, this.width, this.height);
     this.ctx.fillStyle = 'black';
     this.ctx.fill();
   }
 
-  clearCanvas() {
+  public clearCanvas() {
     this.ctx.clearRect(0, 0, this.width, this.height);
   }
 

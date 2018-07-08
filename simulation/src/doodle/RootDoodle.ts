@@ -1,26 +1,25 @@
+import { IDoodleGenome } from './DoodleGenome';
+import { DoodleCharacteristics, DoodleLocalSignal } from './DoodleLocalSignal';
+import { ILocalPoint } from './DoodleLocation';
+import { IDoodlePart } from './IDoodlePart';
+import { IVisitor } from './Visitor';
 
-import {IDoodleGenome} from './DoodleGenome';
-import {DoodleCharacteristics, DoodleLocalSignal} from './DoodleLocalSignal';
-import {LocalPoint} from './DoodleLocation';
-import {DoodlePart} from './DoodlePart';
-import {Visitor} from './Visitor';
-
-export interface RootPart {
+export interface IRootPart {
   grow(energy: number);
-  visit<T>(visitor: Visitor<T>): void;
+  visit<T>(visitor: IVisitor<T>): void;
 }
 
-export class DoodleRoot implements RootPart {
-  private rootPoint: LocalPoint;
-  private rootCharacteristics: DoodleCharacteristics; 
+export class DoodleRoot implements IRootPart {
+  private rootPoint: ILocalPoint;
+  private rootCharacteristics: DoodleCharacteristics;
   private age: number;
   private doodleGenome: IDoodleGenome;
-  private children: DoodlePart[];
-  constructor(rootPoint: LocalPoint,
+  private children: IDoodlePart[];
+  constructor(rootPoint: ILocalPoint,
               rootCharacteristics: DoodleCharacteristics,
               age: number,
               doodleGenome: IDoodleGenome,
-              children: DoodlePart[]) {
+              children: IDoodlePart[]) {
     this.rootPoint = rootPoint;
     this.rootCharacteristics = rootCharacteristics;
     this.age = age;
@@ -28,9 +27,9 @@ export class DoodleRoot implements RootPart {
     this.children = children;
   }
 
-  grow(energy: number): RootPart {
+  public grow(energy: number): IRootPart {
     const propagateSignal = DoodleLocalSignal.rootSignal(this.rootPoint);
-    const newChildren = this.children.map(c => c.grow(propagateSignal));
+    const newChildren = this.children.map((child) => child.grow(propagateSignal));
     return new DoodleRoot(this.rootPoint,
                           this.rootCharacteristics,
                           this.age + 1,
@@ -38,8 +37,8 @@ export class DoodleRoot implements RootPart {
                           newChildren);
   }
 
-  visit<T>(visitor: Visitor<T>) {
+  public visit<T>(visitor: IVisitor<T>) {
     visitor.visitRoot(this);
-    this.children.forEach(child => child.visit(visitor));
+    this.children.forEach((child) => child.visit(visitor));
   }
 }

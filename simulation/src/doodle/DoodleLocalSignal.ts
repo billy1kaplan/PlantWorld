@@ -1,44 +1,44 @@
-import { LocalPoint } from './DoodleLocation';
+import { ILocalPoint } from './DoodleLocation';
 
 export class DoodleCharacteristics {
-  storedEnergy: number;
-  maintainenceCost: number;
+  public storedEnergy: number;
+  public maintainenceCost: number;
 
-  constructor(storedEnergy: number, maintainenceCost: number) {
+  public constructor(storedEnergy: number, maintainenceCost: number) {
     this.storedEnergy = storedEnergy;
     this.maintainenceCost = maintainenceCost;
   }
 
-  feed(energy: number): DoodleCharacteristics {
+  public feed(energy: number): DoodleCharacteristics {
     return new DoodleCharacteristics(this.storedEnergy + energy,
                                      this.maintainenceCost);
   }
 }
 
 export class DoodleLocalSignal {
-  doodleLocation: LocalPoint;
-  freeEnergy: number;
-  hopLength: number;
-  age: number;
-  differentialFactor: number;
-
-  static rootSignal(rootPoint: LocalPoint) {
+  public static rootSignal(rootPoint: ILocalPoint) {
     return new DoodleLocalSignal(rootPoint, 0, 0, 0, 0);
   }
 
-  constructor(doodleLocation: LocalPoint,
-              freeEnergy: number,
-              hopLength: number,
-              age: number,
-              differentialFactor: number) {
+  public doodleLocation: ILocalPoint;
+  public freeEnergy: number;
+  public hopLength: number;
+  public age: number;
+  public differentialFactor: number;
+
+  public constructor(doodleLocation: ILocalPoint,
+                     freeEnergy: number,
+                     hopLength: number,
+                     age: number,
+                     differentialFactor: number) {
     this.doodleLocation = doodleLocation;
     this.freeEnergy = freeEnergy;
     this.hopLength = hopLength;
     this.age = age;
     this.differentialFactor = differentialFactor;
-  };
+  }
 
-  updateLocation(location: LocalPoint): DoodleLocalSignal {
+  public updateLocation(location: ILocalPoint): DoodleLocalSignal {
     return new DoodleLocalSignal(location,
                                  this.freeEnergy,
                                  this.hopLength,
@@ -46,7 +46,7 @@ export class DoodleLocalSignal {
                                  this.differentialFactor);
   }
 
-  feed(energy: number): DoodleLocalSignal {
+  public feed(energy: number): DoodleLocalSignal {
     const newEnergy = this.freeEnergy + energy;
     return new DoodleLocalSignal(this.doodleLocation,
                                  newEnergy,
@@ -55,7 +55,7 @@ export class DoodleLocalSignal {
                                  this.differentialFactor);
   }
 
-  hop(): DoodleLocalSignal {
+  public hop(): DoodleLocalSignal {
     return new DoodleLocalSignal(this.doodleLocation,
                                  this.freeEnergy,
                                  this.hopLength + 1,
@@ -63,7 +63,7 @@ export class DoodleLocalSignal {
                                  this.differentialFactor);
   }
 
-  increaseAge(): DoodleLocalSignal {
+  public increaseAge(): DoodleLocalSignal {
     return new DoodleLocalSignal(this.doodleLocation,
                                  this.freeEnergy,
                                  this.hopLength,
@@ -71,7 +71,7 @@ export class DoodleLocalSignal {
                                  this.differentialFactor);
   }
 
-  consume(doodleCharacteristics: DoodleCharacteristics): DoodleLocalSignal {
+  public consume(doodleCharacteristics: DoodleCharacteristics): DoodleLocalSignal {
     return new DoodleLocalSignal(
       this.doodleLocation,
       Math.max(0.0, this.freeEnergy - doodleCharacteristics.maintainenceCost),
@@ -80,17 +80,17 @@ export class DoodleLocalSignal {
       this.differentialFactor);
   }
 
-  growthFactor(doodleCharacteristics: DoodleCharacteristics): number {
+  public growthFactor(doodleCharacteristics: DoodleCharacteristics): number {
     if (this.age > 10) {
       return 1.0;
     } else {
-      const energyRequired = doodleCharacteristics.maintainenceCost
-      //return Math.max(1.0, this.freeEnergy / energyRequired);
+      const energyRequired = doodleCharacteristics.maintainenceCost;
+      // return Math.max(1.0, this.freeEnergy / energyRequired);
       return 1.15;
     }
   }
 
-  adjustFactor(transformer: (original: number) => number): DoodleLocalSignal {
+  public adjustFactor(transformer: (original: number) => number): DoodleLocalSignal {
     return new DoodleLocalSignal(
       this.doodleLocation,
       this.freeEnergy,

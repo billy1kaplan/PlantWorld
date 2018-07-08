@@ -1,11 +1,11 @@
 import { IDoodleGenome } from './DoodleGenome';
 import { DoodleLocalSignal } from './DoodleLocalSignal';
-import { DoodlePart } from './DoodlePart';
 import { DoodleSegment } from './DoodleSegment';
+import { IDoodlePart } from './IDoodlePart';
 import { SpokePart } from './SpokePart';
 
 export class SimpleBranchingTree implements IDoodleGenome {
-  differentiatePart(localSignal: DoodleLocalSignal): DoodlePart {
+  public differentiatePart(localSignal: DoodleLocalSignal): IDoodlePart {
     const differentialFactor = localSignal.differentialFactor;
     if (differentialFactor > 0) {
       const location = localSignal.doodleLocation;

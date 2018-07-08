@@ -1,34 +1,34 @@
-import {RootPoint} from './doodle/DoodleLocation';
-import {SeedGenome} from './doodle/SeedGenome';
-import {IDrawingManager, SimpleDrawingManager} from './drawing/SimpleDrawingManager';
-import {Point} from './elements/primitives/Point';
+import { RootPoint } from './doodle/DoodleLocation';
+import { IRootPart } from './doodle/RootDoodle';
 import { Seed } from './doodle/Seed';
-import { RootPart } from './doodle/RootDoodle';
-import { DrawingVisitor } from './doodle/Visitor';
+import { SeedGenome } from './doodle/SeedGenome';
 import { SimpleBranchingTree } from './doodle/SimpleBranchingTree';
+import { DrawingVisitor } from './doodle/Visitor';
+import { IDrawingManager, SimpleDrawingManager } from './drawing/SimpleDrawingManager';
+import { Point } from './elements/primitives/Point';
 
-var canvas: HTMLCanvasElement;
-var ctx: CanvasRenderingContext2D;
-var totalTicks = 0;
+let canvas: HTMLCanvasElement;
+let ctx: CanvasRenderingContext2D;
+let totalTicks = 0;
 
 class Simulation {
   public lastTick: number;
   public tickLength: number;
   public lastRender: number;
   public drawingManager: IDrawingManager;
-  public roots: RootPart[];
+  public roots: IRootPart[];
 
-  update(): void {
+  public update(): void {
     if (totalTicks < 10) {
-      this.roots = this.roots.map(r => r.grow(0));
+      this.roots = this.roots.map((r) => r.grow(0));
     }
     totalTicks += 1;
   }
 
-  render(tFrame: number): void {
+  public render(tFrame: number): void {
     // this.drawingManager.drawBlankScreen();
     this.drawingManager.clearCanvas();
-    this.roots.forEach(r => r.visit(new DrawingVisitor(this.drawingManager)));
+    this.roots.forEach((r) => r.visit(new DrawingVisitor(this.drawingManager)));
   }
 }
 
@@ -36,18 +36,18 @@ const doodleGenome = new SimpleBranchingTree();
 const seedGenome = new SeedGenome(doodleGenome);
 
 const starting = [540];
-const rootCharacteristics = starting.map(s => (new RootPoint(new Point(s, 360), 90)));
-const seeds = rootCharacteristics.map(r => new Seed(seedGenome, r, 0));
+const rootCharacteristics = starting.map((s) => (new RootPoint(new Point(s, 360), 90)));
+const seeds = rootCharacteristics.map((r) => new Seed(seedGenome, r, 0));
 const simulation = new Simulation();
 
-window.onload = function() {
+window.onload = () => {
   function main(tFrame) {
     window.requestAnimationFrame(main);
-    var nextTick = simulation.lastTick + simulation.tickLength;
-    var numTicks = 0;
+    const nextTick = simulation.lastTick + simulation.tickLength;
+    let numTicks = 0;
 
     if (tFrame > nextTick) {
-      var timeSinceTick = tFrame - simulation.lastTick;
+      const timeSinceTick = tFrame - simulation.lastTick;
       numTicks = Math.floor(timeSinceTick / simulation.tickLength);
     }
 
@@ -55,7 +55,7 @@ window.onload = function() {
   }
 
   function queueUpdates(numTicks, tFrame) {
-    for (var i = 0; i < numTicks; i++) {
+    for (let i = 0; i < numTicks; i++) {
       simulation.lastTick = simulation.lastTick + simulation.tickLength;
       simulation.update();
       simulation.render(tFrame);
@@ -68,11 +68,11 @@ window.onload = function() {
   simulation.tickLength = 100;
 
   // Render
-  canvas = <HTMLCanvasElement>document.getElementById('canvas');
+  canvas = document.getElementById('canvas') as HTMLCanvasElement;
   ctx = canvas.getContext('2d');
 
   simulation.drawingManager = new SimpleDrawingManager(1080, 720, ctx);
   simulation.roots = seeds;
 
   main(performance.now());
-}
+};

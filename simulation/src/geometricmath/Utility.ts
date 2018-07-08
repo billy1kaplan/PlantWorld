@@ -11,5 +11,5 @@ function toRadians(angle: number) {
 }
 
 export function flatMap<T, S>(arr: T[], f: (f: T) => S[]) {
-  return arr.map(el => f(el)).reduce((acc, cur) => [...acc, ...cur], [])
+  return arr.map((el) => f(el)).reduce((acc, cur) => [...acc, ...cur], []);
 }

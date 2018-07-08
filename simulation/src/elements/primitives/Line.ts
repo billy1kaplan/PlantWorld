@@ -1,22 +1,19 @@
-import {LineSegment} from './LineSegment';
-import {Point} from './Point';
-import {Primitive} from './Primitive';
-import {PrimitiveLine} from './PrimitiveLine';
-import {VerticalLine} from './VerticalLine';
-import { Optional } from 'Optional';
+import { IPrimitive } from './IPrimitive';
+import { IPrimitiveLine } from './IPrimitiveLine';
+import { LineSegment } from './LineSegment';
+import { Point } from './Point';
+import { VerticalLine } from './VerticalLine';
 
-export class Line implements PrimitiveLine {
-  private constructor(public slope: number, public intercept: number) {}
-
-  public static fromTwoPoints(p1: Point, p2: Point): PrimitiveLine {
+export class Line implements IPrimitiveLine {
+  public static fromTwoPoints(p1: Point, p2: Point): IPrimitiveLine {
     const slope = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX());
     return this.fromPointSlope(slope, p1);
   }
 
-  public static fromPointSlope(slope: number, point: Point): PrimitiveLine {
+  public static fromPointSlope(slope: number, point: Point): IPrimitiveLine {
     const intercept = -point.getX() * slope + point.getY();
 
-    if (Math.abs(slope) == Infinity) {
+    if (Math.abs(slope) === Infinity) {
       return new VerticalLine(point.getX());
     } else {
       return new Line(slope, intercept);
@@ -24,9 +21,11 @@ export class Line implements PrimitiveLine {
   }
 
   public static fromSlopeIntercept(slope: number, intercept: number):
-      PrimitiveLine {
+      IPrimitiveLine {
     return new Line(slope, intercept);
   }
+
+  private constructor(public slope: number, public intercept: number) {}
 
   public evaluate(x: number) {
     return this.slope * x + this.intercept;
@@ -36,13 +35,13 @@ export class Line implements PrimitiveLine {
     return this.slope * x + this.intercept;
   }
 
-  distanceTo(other: Primitive) {
+  public distanceTo(other: IPrimitive) {
     return other.distanceToLine(this);
   }
 
-  distanceToPoint(point: Point): number {
+  public distanceToPoint(point: Point): number {
     if (point.distanceToPoint(
-            new Point(point.getX(), this.evaluate(point.getX()))) == 0) {
+            new Point(point.getX(), this.evaluate(point.getX()))) === 0) {
       return 0;
     }
 
@@ -54,32 +53,32 @@ export class Line implements PrimitiveLine {
     const A = pointA.distanceTo(point);
     const B = pointB.distanceTo(point);
     const C = pointA.distanceTo(pointB);
-    const square = n => n * n;
+    const square = (n) => n * n;
 
     return (square(A) + square(C) - square(B)) / (2 * C);
   }
 
-  distanceToLine(line: Line): number {
-    if (this.slope == line.slope) {
+  public distanceToLine(line: Line): number {
+    if (this.slope === line.slope) {
       return this.distanceToPoint(new Point(0, line.evaluate(0)));
     } else {
       return 0;
     }
   }
 
-  distanceToLineSegment(lineSegment: LineSegment) {
+  public distanceToLineSegment(lineSegment: LineSegment) {
     return lineSegment.distanceToLine(this);
   }
 
-  distanceToVerticalLine(verticalLine: VerticalLine) {
+  public distanceToVerticalLine(verticalLine: VerticalLine) {
     return 0;
   }
 
-  getSlope() {
+  public getSlope() {
     return this.slope;
   }
 
-  getIntercept() {
+  public getIntercept() {
     return this.intercept;
   }
 }

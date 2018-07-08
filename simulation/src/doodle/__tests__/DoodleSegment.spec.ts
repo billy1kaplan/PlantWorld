@@ -1,12 +1,5 @@
 import 'mocha';
 
-import {expect} from 'chai';
-
-import {LineSegment} from '../../elements/primitives/LineSegment';
-import {Point} from '../../elements/primitives/Point';
-import {DoodleSegment} from '../DoodleSegment';
-
-
 /*
 describe('Visible segments test', () => {
   it('Should construct the segment of appropriate visibility', () => {

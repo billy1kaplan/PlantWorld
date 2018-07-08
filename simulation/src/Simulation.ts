@@ -1,5 +1,5 @@
 import {RootPoint} from './doodle/DoodleLocation';
-import {RootPart} from './doodle/RootDoodle';
+import {IRootPart} from './doodle/RootDoodle';
 import {Seed} from './doodle/Seed';
 import {SeedGenome} from './doodle/SeedGenome';
 import {SimpleBranchingTree} from './doodle/SimpleBranchingTree';
@@ -23,12 +23,12 @@ energyBoard.distributeEnergy();
 const doodleGenome = new SimpleBranchingTree();
 const seedGenome = new SeedGenome(doodleGenome);
 const rootPoint: RootPoint = new RootPoint(new Point(300, 50), 90);
-var plant: RootPart = new Seed(seedGenome, rootPoint, 0);
+const plant: IRootPart = new Seed(seedGenome, rootPoint, 0);
 
 const sun = new Sun(10, 10);
-var world = new World(sun, [plant]);
+let world = new World(sun, [plant]);
 
-var i = 0
+let i = 0;
 for (i; i < 10; i++) {
   // plant = plant.grow();
   world.log();

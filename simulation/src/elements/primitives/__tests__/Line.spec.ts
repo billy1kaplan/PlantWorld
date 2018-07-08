@@ -5,7 +5,6 @@ import {expect} from 'chai';
 import {Line} from '../Line';
 import {Point} from '../Point';
 
-
 describe('Distance function - Boring Line Test 1', () => {
   it('should return 1', () => {
     const line = Line.fromSlopeIntercept(0, 0);

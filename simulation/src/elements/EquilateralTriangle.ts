@@ -1,14 +1,14 @@
-import {DrawingCanvas} from '../drawing/DrawingCanvas';
-import {Drawable} from './Drawable';
+import {IDrawingCanvas} from '../drawing/IDrawingCanvas';
+import {IDrawable} from './IDrawable';
 import {Point} from './primitives/Point';
 
-export class Triangle implements Drawable {
-  drawingManager: DrawingCanvas;
-  x1: number;
-  y1: number;
-  sideLength: number;
+export class Triangle implements IDrawable {
+  private drawingManager: IDrawingCanvas;
+  private x1: number;
+  private y1: number;
+  private sideLength: number;
   constructor(
-      drawingManager: DrawingCanvas, x1: number, y1: number,
+      drawingManager: IDrawingCanvas, x1: number, y1: number,
       sideLength: number) {
     this.drawingManager = drawingManager;
     this.x1 = x1;
@@ -16,11 +16,11 @@ export class Triangle implements Drawable {
     this.sideLength = sideLength;
   }
 
-  draw() {
+  public draw() {
     this.drawTriangle((p1, p2) => this.drawingManager.drawLine(p1, p2));
   }
 
-  erase() {
+  public erase() {
     this.drawTriangle((p1, p2) => this.drawingManager.eraseLine(p1, p2));
   }
 

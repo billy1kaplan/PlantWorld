@@ -2,7 +2,6 @@ import 'mocha';
 
 import {expect} from 'chai';
 
-import {LineSegment} from '../LineSegment';
 import {Point} from '../Point';
 
 describe('Point distance function - 1', () => {

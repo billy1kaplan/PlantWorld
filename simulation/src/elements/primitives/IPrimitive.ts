@@ -3,8 +3,8 @@ import {LineSegment} from './LineSegment';
 import {Point} from './Point';
 import {VerticalLine} from './VerticalLine';
 
-export interface Primitive {
-  distanceTo(other: Primitive): number;
+export interface IPrimitive {
+  distanceTo(other: IPrimitive): number;
   distanceToPoint(point: Point): number;
   distanceToLineSegment(lineSegment: LineSegment): number;
   distanceToLine(line: Line): number;

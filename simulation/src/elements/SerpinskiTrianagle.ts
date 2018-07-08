@@ -1,41 +1,38 @@
-import {DrawingCanvas} from '../drawing/DrawingCanvas';
+import { IDrawingCanvas } from '../drawing/IDrawingCanvas';
+import { Triangle } from './EquilateralTriangle';
+import { IDrawable } from './IDrawable';
 
-import {Drawable} from './Drawable';
-import {Triangle} from './EquilateralTriangle';
-
-export class SerpinskiTriangle implements Drawable {
-  x_start: number;
-  y_start: number;
-  sideLength: number;
-  constructor(x_start, y_start, sideLength) {
-    this.x_start = x_start;
-    this.y_start = y_start;
+export class SerpinskiTriangle implements IDrawable {
+  private xStart: number;
+  private yStart: number;
+  private sideLength: number;
+  public constructor(xStart, yStart, sideLength) {
+    this.xStart = xStart;
+    this.yStart = yStart;
     this.sideLength = sideLength;
   }
 
-  draw(drawingManager: DrawingCanvas) {
+  public draw(drawingManager: IDrawingCanvas) {
     const min = 5;
-    function generate(
-        drawingManager: DrawingCanvas, x_start: number, y_start: number,
-        sideLength: number) {
+    function generate(xStart: number, yStart: number, sideLength: number) {
       if (sideLength < min / 2) {
         return;
       }
-      const next_side = sideLength / 2;
+      const nextSide = sideLength / 2;
 
-      new Triangle(drawingManager, x_start, y_start, sideLength).draw();
+      new Triangle(drawingManager, xStart, yStart, sideLength).draw();
 
-      generate(drawingManager, x_start, y_start, sideLength / 2);
+      generate(xStart, yStart, sideLength / 2);
       generate(
-          drawingManager, x_start + next_side / 2, y_start - next_side / 2,
-          sideLength / 2);
-      generate(drawingManager, x_start + next_side, y_start, sideLength / 2);
-    };
+        xStart + nextSide / 2, yStart - nextSide / 2,
+        sideLength / 2);
+      generate(xStart + nextSide, yStart, sideLength / 2);
+    }
 
-    generate(drawingManager, this.x_start, this.y_start, this.sideLength);
+    generate(this.xStart, this.yStart, this.sideLength);
   }
 
-  erase(drawingManager: DrawingCanvas) {
+  public erase(drawingManager: IDrawingCanvas) {
     throw new Error('Method not implemented.');
   }
 }

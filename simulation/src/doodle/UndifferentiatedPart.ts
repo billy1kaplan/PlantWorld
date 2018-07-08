@@ -1,20 +1,20 @@
 import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {DoodlePart} from './DoodlePart';
-import {Visitor} from './Visitor';
+import {IDoodlePart} from './IDoodlePart';
+import {IVisitor} from './Visitor';
 
-export class UndifferentiatedPart implements DoodlePart {
+export class UndifferentiatedPart implements IDoodlePart {
   private doodleGenome: IDoodleGenome;
 
-  constructor(doodleGenome: IDoodleGenome) {
+  public constructor(doodleGenome: IDoodleGenome) {
     this.doodleGenome = doodleGenome;
   }
 
-  grow(doodleLocalSignal: DoodleLocalSignal): DoodlePart {
+  public grow(doodleLocalSignal: DoodleLocalSignal): IDoodlePart {
     return this.doodleGenome.differentiatePart(doodleLocalSignal);
   }
 
-  visit<T>(visitor: Visitor<T>) {
+  public visit<T>(visitor: IVisitor<T>) {
     visitor.visitUndifferentiated(this);
   }
 }

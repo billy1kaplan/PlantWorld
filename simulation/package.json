@@ -37,6 +37,7 @@
     "sketch": "node fuse.js",
     "sim": "ts-node src/Simulation.ts",
     "server": "ts-node src/Server.ts",
-    "test": "ts-node node_modules/jasmine/bin/jasmine **/*.spec.ts"
+    "test": "ts-node node_modules/jasmine/bin/jasmine **/*.spec.ts",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   }
 }

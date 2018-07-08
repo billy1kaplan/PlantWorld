@@ -1,27 +1,27 @@
 import {DoodleLocalSignal} from './DoodleLocalSignal';
 import {RootPoint} from './DoodleLocation';
-import {RootPart} from './RootDoodle';
+import {IRootPart} from './RootDoodle';
 import {ISeedGenome} from './SeedGenome';
-import {Visitor} from './Visitor';
+import {IVisitor} from './Visitor';
 
-export class Seed implements RootPart {
+export class Seed implements IRootPart {
   private seedGenome: ISeedGenome;
   private seedLocation: RootPoint;
   private energy: number;
 
-  constructor(seedGenome: ISeedGenome,
-              seedLocation: RootPoint,
-              energy: number) {
+  public constructor(seedGenome: ISeedGenome,
+                     seedLocation: RootPoint,
+                     energy: number) {
     this.seedGenome = seedGenome;
     this.seedLocation = seedLocation;
     this.energy = this.energy;
   }
 
-  grow(energy: number): RootPart {
+  public grow(energy: number): IRootPart {
     const localSignal =
       DoodleLocalSignal.rootSignal(this.seedLocation);
     return this.seedGenome.grow(localSignal);
   }
 
-  visit<T>(visitor: Visitor<T>) { visitor.visitSeed(this); }
+  public visit<T>(visitor: IVisitor<T>) { visitor.visitSeed(this); }
 }

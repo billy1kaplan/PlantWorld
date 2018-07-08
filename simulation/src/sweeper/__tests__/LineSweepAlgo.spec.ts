@@ -1,7 +1,7 @@
 import 'jasmine';
-import { LineSweeper } from '../LineSweepAlgo';
 import { LineSegment } from '../../elements/primitives/LineSegment';
 import { Point } from '../../elements/primitives/Point';
+import { LineSweeper } from '../LineSweepAlgo';
 
 describe('Uses line sweep to determine the highest line segment across the x-axis', () => {
   it('inserts a node', () => {
@@ -21,7 +21,7 @@ describe('Uses line sweep to determine the highest line segment across the x-axi
     const res = lineSweeper.sweep();
     expect(res.length).toBe(3);
   });
-  
+
   it('handles diagonals', () => {
     const lineSweeper = new LineSweeper();
     const lower = new LineSegment(new Point(1, 0), new Point(4, 0));

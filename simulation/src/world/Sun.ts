@@ -11,17 +11,17 @@ export class Sun {
     this.height = height;
   }
 
-  energyFunctionFromLineSegment(lineSegment: LineSegment) {
+  public energyFunctionFromLineSegment(lineSegment: LineSegment) {
     const mag = lineSegment.magnitude();
     return mag * this.intensity;
   }
 
-  energyFunction(p1: Point, p2: Point) {
+  public energyFunction(p1: Point, p2: Point) {
     const line = Line.fromTwoPoints(p1, p2);
     const slope = -line.getSlope();
     const intercept = this.height - line.getIntercept();
     const integrate = (x: number) => -1 / (slope * (intercept + slope * x));
-    if (slope == 0) {
+    if (slope === 0) {
       return this.intensity *
           Math.abs((p2.getX() - p1.getX()) / (intercept * intercept));
     } else {
