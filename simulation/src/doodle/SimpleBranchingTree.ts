@@ -9,9 +9,11 @@ export class SimpleBranchingTree implements IDoodleGenome {
     const differentialFactor = localSignal.differentialFactor;
     if (differentialFactor > 0) {
       const location = localSignal.doodleLocation;
-      return DoodleSegment.bud(50, location, this);
+      const hops = localSignal.hopLength;
+      const budLength = Math.sqrt(hops) * 30;
+      return DoodleSegment.bud(budLength, location, this);
     } else if (differentialFactor <= 0) {
-      return SpokePart.bud(3, this, 30, 180);
+      return SpokePart.bud(6, this, 16, 360);
     }
   }
 }

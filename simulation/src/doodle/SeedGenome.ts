@@ -16,10 +16,10 @@ export class SeedGenome implements ISeedGenome {
   public grow(doodleLocalSignal: DoodleLocalSignal): IRootPart {
     const angles = [ 0 ];
     const rootLocation = doodleLocalSignal.doodleLocation;
-    const locations = angles.map((a) => new LocalLocation(rootLocation, a, 50));
+    const locations = angles.map((a) => new LocalLocation(rootLocation, a, 10));
     const characteristics =
       new DoodleCharacteristics(doodleLocalSignal.freeEnergy, 0);
-    const nextParts = locations.map((n) => DoodleSegment.bud(10, rootLocation, this.doodleGenome));
+    const nextParts = locations.map((n) => DoodleSegment.bud(5, rootLocation, this.doodleGenome));
     return new DoodleRoot(
       rootLocation, characteristics, 0, this.doodleGenome, nextParts);
   }

@@ -84,9 +84,9 @@ export class DoodleLocalSignal {
     if (this.age > 10) {
       return 1.0;
     } else {
-      const energyRequired = doodleCharacteristics.maintainenceCost;
+      // const energyRequired = doodleCharacteristics.maintainenceCost;
       // return Math.max(1.0, this.freeEnergy / energyRequired);
-      return 1.15;
+      return 1 + 0.01 / Math.pow(1 + this.age, 2);
     }
   }
 

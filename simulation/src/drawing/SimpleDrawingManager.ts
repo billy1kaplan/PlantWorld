@@ -21,7 +21,7 @@ export class SimpleDrawingManager implements IDrawingManager {
     context.beginPath();
     context.strokeStyle = 'black';
     context.moveTo(p1.x, this.correctY(p1.y));
-    context.lineWidth = 5;
+    context.lineWidth = 2;
     context.lineTo(p2.x, this.correctY(p2.y));
     context.stroke();
   }
