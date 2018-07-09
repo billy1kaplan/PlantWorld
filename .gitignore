@@ -13,3 +13,4 @@ application.macosx
 **/.clang-format
 **/package-lock.json
 **/.vscode
+vim.*
