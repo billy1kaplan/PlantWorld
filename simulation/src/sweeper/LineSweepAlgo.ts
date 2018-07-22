@@ -3,8 +3,9 @@ import { Heap } from 'Heap';
 import { LineSegment } from '../elements/primitives/LineSegment';
 import { Point } from '../elements/primitives/Point';
 import { IBalanceableNode } from '../../../lib/bst/dist/IBalanceableNode';
+import { IHeapElement } from '../../../lib/heap/dist/IHeapElement';
 
-class IntersectionNode {
+class IntersectionNode implements IHeapElement {
   public kind: 'INTERSECTION';
 
   constructor(
@@ -26,7 +27,7 @@ class IntersectionNode {
   }
 }
 
-class EndNode {
+class EndNode implements IHeapElement {
   public kind: 'LEFT' | 'RIGHT';
   public point: Point;
   public segment: LineSegment;
@@ -121,6 +122,7 @@ export class LineSweeper {
   /*
     By the invariant of the add and add-all methods and immutability of segments & points, 
     there are no vertical lines.
+    TODO Ignore "touching lines" (don't count these as intersection events)
   */
   public sweep() {
     const bonusEnergy: LineEntity[] = [];

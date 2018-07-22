@@ -199,6 +199,7 @@ describe('Tree', () => {
     });
   });
 
+  /*
   describe('find max with adjustment', () => {
     let tree;
     let adjusterFactory;
@@ -247,8 +248,8 @@ describe('Tree', () => {
       expect(max.length).toEqual(2);
     });
   });
+  */
 
-  /*
   describe('contains', () => {
     it('returns true if the node is in the tree', () => {
       const tree = new AnderssonTree();
@@ -383,5 +384,4 @@ describe('Tree', () => {
       expect(tree.findMax()).toEqual(Optional.of(three));
     });
   });
-  */
 });

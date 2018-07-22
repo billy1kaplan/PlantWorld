@@ -79,6 +79,10 @@ export class BSTNode<T extends IBalanceableNode> {
     }
   }
 
+  public setNodeInfo(nodeInfo: T): void {
+    this.nodeInfo = nodeInfo;
+  }
+
   public set(node: BSTTree<T>, direction: TreeDirection): void {
     if (direction === TreeDirection.LEFT) {
       this.left = node;
