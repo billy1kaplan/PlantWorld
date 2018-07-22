@@ -1,15 +1,17 @@
 import { IBalanceableNode } from '../IBalanceableNode';
-import { MinimumNode } from '../MinimumNode';
 import { TreeDirection } from '../TreeDirection';
 
 import { BSTTree } from './BSTTree';
 
-export class EmptyTree<T extends IBalanceableNode> {
-  public static instance(): EmptyTree<any> {
+/**
+ * An empty tree node.
+ */
+export class EmptyNode<T extends IBalanceableNode> {
+  public static instance(): EmptyNode<any> {
     return this.emptyTree;
   }
 
-  private static emptyTree: EmptyTree<any> = new EmptyTree();
+  private static emptyTree: EmptyNode<any> = new EmptyNode();
 
   public kind: 'empty';
 
@@ -17,11 +19,11 @@ export class EmptyTree<T extends IBalanceableNode> {
     this.kind = 'empty';
   }
 
-  public walkLeft(): EmptyTree<T> {
+  public walkLeft(): EmptyNode<T> {
     return this;
   }
 
-  public walkRight(): EmptyTree<T> {
+  public walkRight(): EmptyNode<T> {
     return this;
   }
 
@@ -29,23 +31,21 @@ export class EmptyTree<T extends IBalanceableNode> {
     return 0;
   }
 
-  public walk() {
-    return EmptyTree.emptyTree;
+  public walk(direction: TreeDirection) {
+    return EmptyNode.emptyTree;
   }
 
+  /*
   public setLeft(node: BSTTree<T>): void { return undefined; }
 
   public setRight(node: BSTTree<T>): void { return undefined; }
 
   public set(node: BSTTree<T>, direction: TreeDirection) { return undefined; }
 
-  public getNodeInfo(): T {
-    return undefined;
-  }
-
   public setNodeInfo(nodeInfo: IBalanceableNode): void { return undefined; }
 
   public setLevel(n: number) { return undefined; }
 
   public incrementLevel() { return undefined; }
+  */
 }

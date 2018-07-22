@@ -12,6 +12,6 @@ export class MinimumNode implements IBalanceableNode {
     }
 
     public getPriority(): number {
-        return -Infinity;
+        return NaN;
     }
 }
