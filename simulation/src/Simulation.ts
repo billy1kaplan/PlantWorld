@@ -29,9 +29,9 @@ const sun = new Sun(10, 10);
 let world = new World(sun, [plant]);
 
 let i = 0;
-for (i; i < 10; i++) {
+for (i; i < 5; i++) {
   // plant = plant.grow();
-  world.log();
+  // world.log();
   world = world.step();
 }
 

@@ -2,11 +2,13 @@ import { RootPoint } from './doodle/DoodleLocation';
 import { IRootPart } from './doodle/RootDoodle';
 import { Seed } from './doodle/Seed';
 import { SeedGenome } from './doodle/SeedGenome';
-import { SimpleBranchingTree } from './doodle/SimpleBranchingTree';
 import { DrawingVisitor } from './doodle/Visitor';
 import { IDrawingManager, SimpleDrawingManager } from './drawing/SimpleDrawingManager';
 import { Point } from './elements/primitives/Point';
 import { Fern } from './doodle/Fern';
+import { SimpleBranchingTree } from './doodle/SimpleBranchingTree';
+import { World } from './world/World';
+import { Sun } from './world/Sun';
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
@@ -17,11 +19,11 @@ class Simulation {
   public tickLength: number;
   public lastRender: number;
   public drawingManager: IDrawingManager;
-  public roots: IRootPart[];
+  public world: World;
 
   public update(): void {
-    if (totalTicks < 32) {
-      this.roots = this.roots.map((r) => r.grow(0));
+    if (totalTicks < 4) {
+      this.world = this.world.step();
     }
     totalTicks += 1;
   }
@@ -29,16 +31,16 @@ class Simulation {
   public render(tFrame: number): void {
     // this.drawingManager.drawBlankScreen();
     this.drawingManager.clearCanvas();
-    this.roots.forEach((r) => r.visit(new DrawingVisitor(this.drawingManager)));
+    this.world.draw(this.drawingManager);
   }
 }
 
-//const doodleGenome = new SimpleBranchingTree();
-const doodleGenome = new Fern(20, 100);
+const doodleGenome = new SimpleBranchingTree();
+//const doodleGenome = new Fern(20, 100);
 const seedGenome = new SeedGenome(doodleGenome);
 
 const starting = [540];
-const rootCharacteristics = starting.map((s) => (new RootPoint(new Point(s, 0), 90)));
+const rootCharacteristics = starting.map((s) => (new RootPoint(new Point(s, 50), 90)));
 const seeds = rootCharacteristics.map((r) => new Seed(seedGenome, r, 0));
 const simulation = new Simulation();
 
@@ -74,7 +76,8 @@ window.onload = () => {
   ctx = canvas.getContext('2d');
 
   simulation.drawingManager = new SimpleDrawingManager(1080, 720, ctx);
-  simulation.roots = seeds;
+  const sun = new Sun(10, 10);
+  simulation.world = new World(sun, seeds);
 
   main(performance.now());
 };

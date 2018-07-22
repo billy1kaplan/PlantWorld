@@ -13,7 +13,7 @@ export class SimpleBranchingTree implements IDoodleGenome {
       const budLength = Math.sqrt(hops) * 30;
       return DoodleSegment.bud(budLength, location, this);
     } else if (differentialFactor <= 0) {
-      return SpokePart.bud(6, this, 16, 360);
+      return SpokePart.bud(3, this, -20, 60);
     }
   }
 }

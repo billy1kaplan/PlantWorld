@@ -7,6 +7,7 @@ import { DoodleRoot, IRootPart } from './RootDoodle';
 import { Seed } from './Seed';
 import { SpokePart } from './SpokePart';
 import { UndifferentiatedPart } from './UndifferentiatedPart';
+import { LineSweeper } from '../sweeper/LineSweepAlgo';
 
 export interface IVisitor<T> {
   visitSegment(value: DoodleSegment): void;
@@ -103,13 +104,16 @@ export class SegmentVisitor extends SegmentsOnly<ITaggedSegment[]> {
 export class EnergyCollector implements IVisitor<number> {
   private sun: Sun;
   private energy: number;
+  private segments: LineSegment[];
   public constructor(sun: Sun) {
     this.sun = sun;
     this.energy = 0;
+    this.segments = [];
   }
 
   public visitSegment(value: DoodleSegment) {
     const energyFromSegment = this.sun.energyFunctionFromLineSegment(value.getLineSegment());
+    this.segments = [...this.segments, value.getLineSegment()];
     this.energy += energyFromSegment;
   }
 
@@ -123,6 +127,15 @@ export class EnergyCollector implements IVisitor<number> {
   public visitUndifferentiated(value: UndifferentiatedPart) { return undefined; }
 
   public done(): number {
+    const sweeper = new LineSweeper();
+    sweeper.addAll(this.segments);
+    const bonus = sweeper.sweep();
+    const bonusEnergy = bonus.map((b) => this.sun.energyFunctionFromLineSegment(b.energySegment)).reduce((a, b) => a + b, 0);
+    console.log("SEGMENTS");
+    console.log(this.segments);
+    console.log("______");
+    bonus.forEach(e => console.log(e.point1, e.point2, e.energySegment, e.point1.distanceToPoint(e.point2), e.energySegment.magnitude()));
+    console.log(this.energy, bonusEnergy);
     return this.energy;
   }
 }

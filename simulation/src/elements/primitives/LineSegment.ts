@@ -125,6 +125,13 @@ export class LineSegment implements IDrawable, IPrimitive {
     return this.p1.equals(other.p1) && this.p2.equals(other.p2);
   }
 
+  /**
+   * Returns true if the line segment is perfectly vertical.
+   */
+  public isVertical() {
+    return this.p1.x === this.p2.x;
+  }
+
   public overlapFromAnchor(other: LineSegment): Optional<LineSegment> {
     // key points
     const key1 = other.atPoint(this.p1.getX());
