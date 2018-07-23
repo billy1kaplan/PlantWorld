@@ -89,7 +89,37 @@ class PrioritySegment implements IBalanceableNode {
   getSegment(): LineSegment {
     return this.lineSegment;
   }
+
+  compareTo(other: PrioritySegment): number {
+    const yDiff = this.y - other.y;
+    if (Math.abs(yDiff) < 0.00001) {
+      return this.lineSegment.getSlope() - other.lineSegment.getSlope();
+    } else {
+      return yDiff;
+    }
+  }
 }
+
+class ReverseComparisonNode extends PrioritySegment {
+  private prioritySegment: PrioritySegment;
+  constructor(prioritySegment: PrioritySegment) {
+    super(prioritySegment.getPriority(), prioritySegment.getSegment());
+    this.prioritySegment = prioritySegment;
+  }
+
+  compareTo(other: ReverseComparisonNode): number {
+    const thisY = this.prioritySegment.getPriority();
+    const otherY = other.prioritySegment.getPriority();
+    const yDiff = thisY - otherY;
+    if (Math.abs(yDiff) < 0.00001) {
+      return this.prioritySegment.getSegment().getSlope() -
+             other.prioritySegment.getSegment().getSlope();
+    } else {
+      return yDiff;
+    }
+  }
+}
+
 
 export class LineSweeper {
   private priority: Heap<TNode>;
@@ -129,12 +159,14 @@ export class LineSweeper {
     let previousEvent: TNode;
     while (!this.priority.isEmpty()) {
       const event = this.priority.deleteMin().getOrError();
-      const maxSegment = this.lines.findMax((node: PrioritySegment) => node.getSegment().atPoint(event.point.x).getOrElse(0));
+      const maxSegment = this.lines.findMax();
       maxSegment.ifPresent((prioritySegment) => {
         const bonusEnergySegment = new LineEntity(
           previousEvent.point, event.point, prioritySegment.getSegment());
         bonusEnergy.unshift(bonusEnergySegment);
       });
+
+      console.log(this.lines, this.lines.findMax());
 
       switch (event.kind) {
         case 'LEFT':
@@ -181,7 +213,7 @@ export class LineSweeper {
           const upperSegment = event.upperSegment;
           const upperPrioritySegment = new PrioritySegment(yCoordinate, upperSegment);
 
-          this.lines.swapPositions(lowerPrioritySegment, upperPrioritySegment);
+          this.lines.swapPositions(lowerPrioritySegment, upperPrioritySegment, (node) => new ReverseComparisonNode(node));
           const aboveUpperSegment = this.lines.predecessor(lowerPrioritySegment);
           const belowLowerSegment = this.lines.successor(upperPrioritySegment);
           this.lines.delete(lowerPrioritySegment);

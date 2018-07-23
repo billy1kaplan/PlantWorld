@@ -6,24 +6,6 @@ import {LineSegment} from '../LineSegment';
 import {Point} from '../Point';
 
 describe('Distance function - Horizontal Line Test 1', () => {
-  it('correctly finds distance to a point', () => {
-    const line = new LineSegment(new Point(-1, 1), new Point(1, 1));
-    const result = line.getDistance(new Point(0, 0));
-    expect(result).to.equal(1);
-  });
-
-  it('should return 0', () => {
-    const line = new LineSegment(new Point(-1, 0), new Point(1, 0));
-    const result = line.getDistance(new Point(0, 0));
-    expect(result).to.equal(0);
-  });
-
-  it('should return 1', () => {
-    const line = new LineSegment(new Point(1, -1), new Point(1, 1));
-    const result = line.getDistance(new Point(0, 0));
-    expect(result).to.equal(1);
-  });
-
   it('should return half root 2', () => {
     const line = new LineSegment(new Point(-1, 0), new Point(0, 1));
     const result = line.getDistance(new Point(0, 0));

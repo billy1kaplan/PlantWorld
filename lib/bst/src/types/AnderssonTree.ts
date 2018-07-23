@@ -12,7 +12,7 @@ import { Pair } from './Pair';
 // Reference:
 // http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_andersson.aspx
 export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
-  private root: BSTTree<T>;
+  public root: BSTTree<T>;
   private numElements: number;
 
   public constructor() {
@@ -50,19 +50,10 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
   }
 
   /**
-   * Returns the maximum priority element of the tree. If multiple elements, uses the priority to break ties, returning the first 
-   * value of the highest priority.
-   */
-  public findMaxWithVariableKey(nodeAdjuster: (node: T) => T): T[] {
-    //return this.findMaxInternalWithAdjustments(this.root, nodeAdjuster, []);
-    return null;
-  }
-
-  /**
    * returns true if the node is contained in the tree within the specified range.
    */
   public contains(node: T): boolean {
-    return this.findInternal(node, this.root).isPresent();
+    return this.findInternal(node, this.root, (x) => x).isPresent();
   }
 
   /**
@@ -76,32 +67,30 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
    * Finds the predecessor element within the given range.
    */
   public predecessor(node: T): Optional<T> {
-    //return this.adjacent(node, TreeDirection.LEFT);
-    return null;
+    return this.adjacent(node, TreeDirection.LEFT);
   }
 
   /**
    * Finds the successor element within the given priority range
    */
   public successor(node: T): Optional<T> {
-    //return this.adjacent(node, TreeDirection.RIGHT);
-    return null;
+    return this.adjacent(node, TreeDirection.RIGHT);
   }
 
   /**
    * Swaps the position of two nodes with equal priority
    */
-  public swapPositions(node1: T, node2: T): void {
-    /*
-    if (!(node1.getPriority() === node2.getPriority())) {
-      return;
-    }
-
-    const bstNode1 = this.findInternal(node1, this.root);
+  public swapPositions(node1: T, node2: T, nodeAdjuster: (node: T) => T): void {
+    const bstNode1 = this.findInternal(node1, this.root, nodeAdjuster);
+    console.log(bstNode1);
+    const bstNode2 = this.findInternal(node2, this.root, nodeAdjuster);
+    console.log(bstNode2);
     bstNode1.ifPresent((foundNode1) => {
-      foundNode1.swapNodes(node1, node2);
+      bstNode2.ifPresent((foundNode2) => {
+        foundNode1.setNodeInfo(node2);
+        foundNode2.setNodeInfo(node1);
+      });
     });
-    */
   }
 
   private internalInsert(node: T, root: BSTTree<T>): BSTTree<T> {
@@ -128,7 +117,8 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
   }
 
   public skew(root: BSTNode<T>): BSTTree<T> {
-    if (root.getLevel() !== 0 && root.walkLeft().getLevel() === root.getLevel()) {
+    if (root.getLevel() !== 0
+      && root.walkLeft().getLevel() === root.getLevel()) {
       const temp = root.walkLeft();
 
       root.setLeft(temp.walkRight());
@@ -166,65 +156,26 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
     } else {
       let cur: BSTNode<T> = root;
       while (cur.walkRight().kind === 'node') {
-        // We've just made sure we can walk right, so we can make this assertion safely.
+        // We've just made sure we can walk right, so we can make this assertion
+        // safely.
         cur = cur.walkRight() as BSTNode<T>;
       }
       return Optional.of(cur.nodeInfo);
     }
   }
 
-  private filterTree(root: BSTTree<T>, predicate: (node: T) => boolean): T[] {
-    if (root.kind === 'empty') {
-      return [];
-    } else {
-      if (predicate(root.nodeInfo)) {
-        return [
-          ...this.filterTree(root.walkLeft(), predicate),
-          root.nodeInfo,
-          ...this.filterTree(root.walkRight(), predicate)
-        ];
-      } else {
-        return [
-          ...this.filterTree(root.walkLeft(), predicate),
-          ...this.filterTree(root.walkRight(), predicate)
-        ];
-      }
-    }
-  }
-
-  private reduceTree(root: BSTTree<T>, reduceFn: (acc: T, cur: T) => T): Optional<T> {
-    const reduceInternal = (root: BSTTree<T>, acc: T): T => {
-      if (root.kind === 'empty') {
-        return acc;
-      } else {
-        const left = reduceInternal(root.walkLeft(), acc);
-        const right = reduceInternal(root.walkRight(), acc);
-        return reduceFn(left, right);
-      }
-    };
-
-    if (root.kind === 'empty') {
-      return Optional.empty();
-    } else {
-      return Optional.of(reduceInternal(root, root.nodeInfo));
-    }
-  }
-
-  private findMaxInternalWithAdjustments(root: BSTTree<T>, nodeAdjuster: (node: T) => T): Optional<T> {
-    return this.reduceTree(root, nodeAdjuster)
-  }
-
-  private findInternal(node: T, root: BSTTree<T>): Optional<BSTNode<T>> {
+  public findInternal(node: T, root: BSTTree<T>, nodeAdjuster: (node: T) => T): Optional<BSTNode<T>> {
     switch (root.kind) {
       case 'empty':
         return Optional.empty();
       case 'node':
+        console.log(nodeAdjuster(root.nodeInfo), "::", root.nodeInfo, node.equals(root.nodeInfo));
         if (node.equals(root.nodeInfo)) {
           return Optional.of(root);
-        } else if (node.compareTo(root.nodeInfo) < 0) {
-          return this.findInternal(node, root.walkLeft());
+        } else if (nodeAdjuster(node).compareTo(nodeAdjuster(root.nodeInfo)) < 0) {
+          return this.findInternal(node, root.walkLeft(), nodeAdjuster);
         } else {
-          return this.findInternal(node, root.walkRight());
+          return this.findInternal(node, root.walkRight(), nodeAdjuster);
         }
     }
   }

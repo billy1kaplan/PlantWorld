@@ -24,13 +24,6 @@ export interface IBST<T extends IBalanceableNode> {
   findMax(): Optional<T>;
 
   /**
-   * Returns maximum elements of the tree with the given adjustments.
-   * Empty if the tree has no maximum (i.e. is empty).
-   * @param nodeAdjuster adjusts the node for comparison.
-   */
-  findMaxWithVariableKey(nodeAdjuster: (node: T) => T): T[];
-
-  /**
    * Returns true if the tree contains the given node.
    * @param node a balancable BST node
    * @param nodeAdjuster nodeAdjuster
@@ -62,12 +55,11 @@ export interface IBST<T extends IBalanceableNode> {
    */
   successor(node: T): Optional<T>;
 
-
   /**
    * Swaps the position of two nodes in the tree
    * if they have equivalent priority.
    * @param node1 the first equivalent node.
    * @param node2 the second equivalent node.
    */
-  swapPositions(node1: T, node2: T): void;
+  swapPositions(node1: T, node2: T, adjusterFunction: (node: T) => T): void;
 }

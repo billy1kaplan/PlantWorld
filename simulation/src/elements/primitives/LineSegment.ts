@@ -179,7 +179,7 @@ export class LineSegment implements IDrawable, IPrimitive {
     return Math.max(this.p1.y, this.p2.y);
   }
 
-  private getSlope() {
+  public getSlope() {
     const deltaY = (this.p2.getY() - this.p1.getY());
     const deltaX = (this.p2.getX() - this.p1.getX());
     return deltaY / deltaX;
