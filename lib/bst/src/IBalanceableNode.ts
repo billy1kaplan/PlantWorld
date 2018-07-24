@@ -9,11 +9,6 @@ export interface IBalanceableNode {
   equals(other: IBalanceableNode): boolean;
 
   /**
-   * The priority of the balancable node.
-   */
-  getPriority(): number;
-
-  /**
    * Return < 0 if this node is less than the node being compared to
    * Return 0 if this node is equal to the node being compared to
    * Return > 0 if this node is more than the node being compared to

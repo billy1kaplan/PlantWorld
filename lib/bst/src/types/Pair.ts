@@ -1,5 +1,5 @@
 /**
- * Simple pair of elements.
+ * Stores a pair of elements.
  */
 export class Pair<A, B> {
   /**

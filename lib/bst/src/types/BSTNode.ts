@@ -4,14 +4,19 @@ import { BSTTree } from './BSTTree';
 import { EmptyNode } from './EmptyTree';
 
 /**
- * A tree node with all values of the specified priority. Invariant, contains at least one node.
+ * A BST node with the given node information.
+ *
+ * Contains two child nodes with the BST property that all
+ * left nodes are comparatively less than this node and all
+ * right nodes are comparatively more than this node.
  */
 export class BSTNode<T extends IBalanceableNode> {
   public static leafNodeOf<U extends IBalanceableNode>(nodeInfo: U, level: number) {
     return new BSTNode(nodeInfo, level, EmptyNode.instance(), EmptyNode.instance());
   }
 
-  public static constructBSTNode<U extends IBalanceableNode>(nodeInfo: U, level: number, left: BSTTree<U>, right: BSTTree<U>) {
+  public static constructBSTNode<U extends IBalanceableNode>(
+      nodeInfo: U, level: number, left: BSTTree<U>, right: BSTTree<U>) {
     return new BSTNode(nodeInfo, level, left, right);
   }
 
@@ -59,18 +64,32 @@ export class BSTNode<T extends IBalanceableNode> {
     return this.level;
   }
 
+  /**
+   * Increments this BSTNode's level by 1.
+   */
   public incrementLevel() {
     this.level += 1;
   }
 
+  /**
+   * Decrements this BSTNode's level by 1.
+   */
   public decrementLevel() {
     this.level -= 1;
   }
 
+  /**
+   * Mutates the level of the specified BSTNode.
+   * @param level new value to update to
+   */
   public setLevel(level: number) {
     this.level = level;
   }
 
+  /**
+   * Walks to one of the child nodes in the specified direction.
+   * @param direction to traverse the node in
+   */
   public walk(direction: TreeDirection) {
     if (direction === TreeDirection.LEFT) {
       return this.walkLeft();
@@ -79,10 +98,19 @@ export class BSTNode<T extends IBalanceableNode> {
     }
   }
 
+  /**
+   * Mutates the node information contained by this BSTNode.
+   * @param nodeInfo node information for the BST to contain
+   */
   public setNodeInfo(nodeInfo: T): void {
     this.nodeInfo = nodeInfo;
   }
 
+  /**
+   * Mutates one of the two child BST nodes in the direction specified.
+   * @param node the node to update the tree with
+   * @param direction the direction to update
+   */
   public set(node: BSTTree<T>, direction: TreeDirection): void {
     if (direction === TreeDirection.LEFT) {
       this.left = node;

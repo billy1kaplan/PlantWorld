@@ -1,7 +1,6 @@
 import 'jasmine';
 import { Optional } from 'Optional';
 import { IBalanceableNode } from '../IBalanceableNode';
-import { IBST } from '../IBST';
 import { AnderssonTree } from '../types/AnderssonTree';
 import { BSTNode } from '../types/BSTNode';
 
@@ -9,20 +8,19 @@ import { BSTNode } from '../types/BSTNode';
  * Simple Node that implements
  */
 class SimpleNode implements IBalanceableNode {
-  private n: number;
-  public id: number;
-
-  static fromNumber(n: number) {
+  public static fromNumber(n: number) {
     return new SimpleNode(n, n);
   }
 
-  constructor(n: number,
-    id: number) {
+  public id: number;
+  private n: number;
+
+  constructor(n: number, id: number) {
     this.n = n;
     this.id = id;
   }
 
-  public getPriority() {
+  public getIdentifier() {
     return this.n;
   }
 
@@ -36,13 +34,14 @@ class SimpleNode implements IBalanceableNode {
 }
 
 describe('Tree', () => {
-  let one;
-  let one_two;
-  let one_three;
-  let two;
-  let three;
-  let four;
-  let five;
+  let one: SimpleNode;
+  let oneTwo: SimpleNode;
+  let oneThree: SimpleNode;
+  let two: SimpleNode;
+  let three: SimpleNode;
+  let four: SimpleNode;
+  let five: SimpleNode;
+  let id: <T>(el: T) => T;
   beforeAll(() => {
     one = SimpleNode.fromNumber(1);
     two = SimpleNode.fromNumber(2);
@@ -50,8 +49,9 @@ describe('Tree', () => {
     four = SimpleNode.fromNumber(4);
     five = SimpleNode.fromNumber(5);
 
-    one_two = new SimpleNode(1, 2);
-    one_three = new SimpleNode(1, 3);
+    oneTwo = new SimpleNode(1, 2);
+    oneThree = new SimpleNode(1, 3);
+    id = (x) => x;
   });
 
   describe('skew', () => {
@@ -111,7 +111,7 @@ describe('Tree', () => {
 
     it('detects a non-empty tree', () => {
       const tree = new AnderssonTree();
-      tree.insert(one);
+      tree.insert(one, id);
 
       expect(tree.isEmpty()).toEqual(false);
     });
@@ -120,11 +120,11 @@ describe('Tree', () => {
       const tree = new AnderssonTree();
       expect(tree.isEmpty()).toEqual(true);
 
-      tree.insert(one);
+      tree.insert(one, id);
       expect(tree.isEmpty()).toEqual(false);
 
-      tree.delete(one);
-      //expect(tree.isEmpty()).toEqual(true);
+      tree.delete(one, id);
+      expect(tree.isEmpty()).toEqual(true);
     });
   });
 
@@ -136,17 +136,17 @@ describe('Tree', () => {
 
     it('returns 1 when inserting duplicates', () => {
       const tree = new AnderssonTree();
-      tree.insert(one);
-      tree.insert(one);
-      tree.insert(one);
+      tree.insert(one, id);
+      tree.insert(one, id);
+      tree.insert(one, id);
       expect(tree.size()).toEqual(1);
     });
 
     it('returns 3 when inserting 3 unique elements', () => {
       const tree = new AnderssonTree();
-      tree.insert(one);
-      tree.insert(two);
-      tree.insert(three);
+      tree.insert(one, id);
+      tree.insert(two, id);
+      tree.insert(three, id);
       expect(tree.size()).toEqual(3);
     });
   });
@@ -155,19 +155,19 @@ describe('Tree', () => {
     it('inserts a node', () => {
       const tree = new AnderssonTree();
 
-      tree.insert(one);
+      tree.insert(one, id);
       expect(tree.size()).toEqual(1);
     });
 
     it('inserts multiple nodes', () => {
       const tree = new AnderssonTree();
 
-      tree.insert(one);
-      tree.insert(two);
-      tree.insert(three);
-      tree.insert(four);
-      tree.insert(five);
-      tree.insert(five);
+      tree.insert(one, id);
+      tree.insert(two, id);
+      tree.insert(three, id);
+      tree.insert(four, id);
+      tree.insert(five, id);
+      tree.insert(five, id);
       expect(tree.size()).toEqual(5);
     });
   });
@@ -181,19 +181,19 @@ describe('Tree', () => {
 
     it('returns element value for a single element tree', () => {
       const tree = new AnderssonTree();
-      tree.insert(one);
+      tree.insert(one, id);
       const max = tree.findMax();
       expect(max).toEqual(Optional.of(one));
     });
 
     it('returns max element value for a multi-element tree', () => {
       const tree = new AnderssonTree();
-      tree.insert(one);
-      tree.insert(two);
-      tree.insert(five);
-      tree.insert(three);
-      tree.insert(four);
-      tree.insert(five);
+      tree.insert(one, id);
+      tree.insert(two, id);
+      tree.insert(five, id);
+      tree.insert(three, id);
+      tree.insert(four, id);
+      tree.insert(five, id);
       const max = tree.findMax();
       expect(max).toEqual(Optional.of(five));
     });
@@ -202,16 +202,16 @@ describe('Tree', () => {
   describe('contains', () => {
     it('returns true if the node is in the tree', () => {
       const tree = new AnderssonTree();
-      tree.insert(one);
-      tree.insert(two);
-      expect(tree.contains(one)).toEqual(true);
+      tree.insert(one, id);
+      tree.insert(two, id);
+      expect(tree.contains(one, id)).toEqual(true);
     });
 
     it('returns false if the node is not in the tree', () => {
       const tree = new AnderssonTree();
-      tree.insert(one);
-      tree.insert(two);
-      expect(tree.contains(three)).toEqual(false);
+      tree.insert(one, id);
+      tree.insert(two, id);
+      expect(tree.contains(three, id)).toEqual(false);
     });
   });
 
@@ -219,31 +219,31 @@ describe('Tree', () => {
     it('deletes nodes', () => {
       const tree = new AnderssonTree();
 
-      tree.insert(one);
+      tree.insert(one, id);
       expect(tree.size()).toEqual(1);
 
-      tree.delete(one);
-      expect(tree.contains(one)).toEqual(false);
+      tree.delete(one, id);
+      expect(tree.contains(one, id)).toEqual(false);
       expect(tree.size()).toEqual(0);
     });
 
     it('deletes nodes', () => {
       const tree = new AnderssonTree();
 
-      tree.insert(one);
-      tree.insert(two);
+      tree.insert(one, id);
+      tree.insert(two, id);
 
-      tree.delete(one);
-      expect(tree.contains(two)).toEqual(true);
+      tree.delete(one, id);
+      expect(tree.contains(two, id)).toEqual(true);
 
-      tree.delete(two);
-      expect(tree.contains(two)).toEqual(false);
+      tree.delete(two, id);
+      expect(tree.contains(two, id)).toEqual(false);
     });
 
     it('does nothing when the node is not present', () => {
       const tree = new AnderssonTree();
-      tree.delete(one);
-      tree.delete(two);
+      tree.delete(one, id);
+      tree.delete(two, id);
 
       expect(tree.size()).toEqual(0);
     });
@@ -253,30 +253,30 @@ describe('Tree', () => {
     it('finds the predecessors', () => {
       const tree = new AnderssonTree();
 
-      tree.insert(one);
-      tree.insert(two);
-      tree.insert(three);
-      tree.insert(four);
+      tree.insert(one, id);
+      tree.insert(two, id);
+      tree.insert(three, id);
+      tree.insert(four, id);
 
-      expect(tree.predecessor(one)).toEqual(Optional.empty());
-      expect(tree.predecessor(two)).toEqual(Optional.of(one));
-      expect(tree.predecessor(three)).toEqual(Optional.of(two));
-      expect(tree.predecessor(four)).toEqual(Optional.of(three));
+      expect(tree.predecessor(one, id)).toEqual(Optional.empty());
+      expect(tree.predecessor(two, id)).toEqual(Optional.of(one));
+      expect(tree.predecessor(three, id)).toEqual(Optional.of(two));
+      expect(tree.predecessor(four, id)).toEqual(Optional.of(three));
     });
 
     it('finds the predecessors', () => {
       const tree = new AnderssonTree();
 
-      tree.insert(four);
-      tree.insert(two);
-      tree.insert(one);
-      tree.insert(three);
+      tree.insert(four, id);
+      tree.insert(two, id);
+      tree.insert(one, id);
+      tree.insert(three, id);
 
-      expect(tree.predecessor(one)).toEqual(Optional.empty());
-      expect(tree.predecessor(two)).toEqual(Optional.of(one));
-      expect(tree.predecessor(three)).toEqual(Optional.of(two));
-      expect(tree.predecessor(four)).toEqual(Optional.of(three));
-      expect(tree.predecessor(five)).toEqual(Optional.empty());
+      expect(tree.predecessor(one, id)).toEqual(Optional.empty());
+      expect(tree.predecessor(two, id)).toEqual(Optional.of(one));
+      expect(tree.predecessor(three, id)).toEqual(Optional.of(two));
+      expect(tree.predecessor(four, id)).toEqual(Optional.of(three));
+      expect(tree.predecessor(five, id)).toEqual(Optional.empty());
     });
   });
 
@@ -284,78 +284,77 @@ describe('Tree', () => {
     it('finds the successor', () => {
       const tree = new AnderssonTree();
 
-      tree.insert(one);
-      tree.insert(two);
-      tree.insert(three);
-      tree.insert(four);
+      tree.insert(one, id);
+      tree.insert(two, id);
+      tree.insert(three, id);
+      tree.insert(four, id);
 
-      expect(tree.successor(one)).toEqual(Optional.of(two));
-      expect(tree.successor(two)).toEqual(Optional.of(three));
-      expect(tree.successor(three)).toEqual(Optional.of(four));
-      expect(tree.successor(four)).toEqual(Optional.empty());
-      expect(tree.successor(five)).toEqual(Optional.empty());
+      expect(tree.successor(one, id)).toEqual(Optional.of(two));
+      expect(tree.successor(two, id)).toEqual(Optional.of(three));
+      expect(tree.successor(three, id)).toEqual(Optional.of(four));
+      expect(tree.successor(four, id)).toEqual(Optional.empty());
+      expect(tree.successor(five, id)).toEqual(Optional.empty());
     });
   });
 
   describe('swap', () => {
-    /*
     it('swaps nodes of equal ranking in the tree without adjustment', () => {
       const tree = new AnderssonTree();
       const firstInstance = SimpleNode.fromNumber(1);
-      const secondInstance =  SimpleNode.fromNumber(1);
+      const secondInstance = SimpleNode.fromNumber(1);
 
-      tree.insert(firstInstance);
-      tree.insert(secondInstance);
+      tree.insert(firstInstance, id);
+      tree.insert(secondInstance, id);
 
       const firstMax = tree.findMax();
       tree.swapPositions(firstInstance, secondInstance, (x) => x);
       const secondMax = tree.findMax();
       expect(firstMax !== secondMax);
     });
-    */
 
     it('swaps nodes of equal ranking in the tree with adjustment', () => {
       const tree = new AnderssonTree();
-      tree.insert(one);
-      tree.insert(two);
-      tree.insert(three);
+      tree.insert(one, id);
+      tree.insert(two, id);
+      tree.insert(three, id);
 
       const specialNode1 = new SimpleNode(2, 22);
       const specialNode2 = new SimpleNode(3, 33);
 
       tree.swapPositions(specialNode1, specialNode2, (node) => {
-        switch (node.getPriority()) {
+        const simpleNode = node as SimpleNode;
+        switch (simpleNode.getIdentifier()) {
           case (2):
             return specialNode1;
           case (3):
             return specialNode2;
           default:
             return node;
-        };
+        }
       });
-      expect(tree.findMax()).toEqual(Optional.of(specialNode2));
-      });
+      expect(tree.findMax()).toEqual(Optional.of(specialNode1));
     });
-
-    /*
-    describe('integration test', () => {
-      it('handles complex sequences of insertions and deletions', () => {
-        const tree = new AnderssonTree();
-        tree.insert(two);
-        tree.insert(one);
-        tree.insert(three);
-        tree.insert(one);
-        tree.insert(five);
-        tree.insert(one);
-        tree.insert(three);
-        tree.insert(three);
-        tree.insert(two);
-        tree.delete(two)
-        tree.delete(two)
-        expect(tree.findMax()).toEqual(Optional.of(five));
-        tree.delete(three);
-        expect(tree.findMax()).toEqual(Optional.of(three));
-      });
-    });
-    */
   });
+
+  describe('integration test', () => {
+    it('handles complex sequences of insertions and deletions', () => {
+      const tree = new AnderssonTree();
+      tree.insert(two, id);
+      tree.insert(one, id);
+      tree.insert(three, id);
+      tree.insert(one, id);
+      tree.insert(five, id);
+      tree.insert(one, id);
+      tree.insert(three, id);
+      tree.insert(three, id);
+      tree.insert(two, id);
+      tree.delete(two, id);
+      tree.delete(two, id);
+      expect(tree.findMax()).toEqual(Optional.of(five));
+      tree.delete(five, id);
+      expect(tree.findMax()).toEqual(Optional.of(three));
+      tree.insert(five, id);
+      expect(tree.findMax()).toEqual(Optional.of(five));
+    });
+  });
+});

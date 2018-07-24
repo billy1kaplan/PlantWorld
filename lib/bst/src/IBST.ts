@@ -1,4 +1,4 @@
-import {Optional} from 'Optional';
+import { Optional } from 'Optional';
 import { IBalanceableNode } from './IBalanceableNode';
 
 /**
@@ -6,7 +6,7 @@ import { IBalanceableNode } from './IBalanceableNode';
  */
 export interface IBST<T extends IBalanceableNode> {
   /**
-   * Returns true if the tree contains 0 elements.
+   * Returns true if the tree is size 0.
    */
   isEmpty(): boolean;
 
@@ -18,48 +18,46 @@ export interface IBST<T extends IBalanceableNode> {
   /**
    * Inserts a node into the BST
    * @param node a balancable BST node
+   * @param nodeAdjuster an ajustment function to replace how nodes are viewed in the tree
    */
-  insert(node: T): void;
+  insert(node: T, nodeAdjuster: (node: T) => T): void;
 
   findMax(): Optional<T>;
 
   /**
    * Returns true if the tree contains the given node.
    * @param node a balancable BST node
-   * @param nodeAdjuster nodeAdjuster
+   * @param nodeAdjuster an ajustment function to replace how nodes are viewed in the tree
    */
   contains(node: T, nodeAdjuster: (node: T) => T): boolean;
 
   /**
    * Deletes a given node, if present, from the BST.
    * @param node a balancable BST node
-   */
-  delete(node: T): void;
-  
-  /**
-   * Deletes a given node, if present, from the BST.
-   * @param node a balancable BST node
-   * @param nodeAdjuster adjusts the nodes for deletion
+   * @param nodeAdjuster an ajustment function to replace how nodes are viewed in the tree
    */
   delete(node: T, nodeAdjuster: (node: T) => T): void;
 
   /**
-   * Returns a list of predecessor nodes at given adjustment.
+   * Returns a list of predecessor nodes.
    * @param node a balanacable BST node
+   * @param nodeAdjuster an ajustment function to replace how nodes are viewed in the tree
    */
-  predecessor(node: T): Optional<T>;
+  predecessor(node: T, nodeAdjuster: (node: T) => T): Optional<T>;
 
   /**
-   * Returns a list of successor nodes at given adjustment.
+   * Returns a list of successor nodes.
    * @param node a balanacable BST node
+   * @param nodeAdjuster an ajustment function to replace how nodes are viewed in the tree
    */
-  successor(node: T): Optional<T>;
+  successor(node: T, nodeAdjuster: (node: T) => T): Optional<T>;
 
   /**
    * Swaps the position of two nodes in the tree
    * if they have equivalent priority.
    * @param node1 the first equivalent node.
    * @param node2 the second equivalent node.
+   * @param nodeAdjuster an ajustment function to replace how nodes are viewed in the tree
    */
-  swapPositions(node1: T, node2: T, adjusterFunction: (node: T) => T): void;
+  swapPositions(node1: T, node2: T, nodeAdjuster: (node: T) => T): void;
 }

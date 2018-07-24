@@ -8,9 +8,12 @@ import { BSTTree } from './BSTTree';
 
 import { EmptyNode } from './EmptyTree';
 import { Pair } from './Pair';
-
-// Reference:
-// http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_andersson.aspx
+/**
+ * Reference:
+ * http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_andersson.aspx
+ *
+ * A self-balancing binary search tree with variable range nodes.
+ */
 export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
   public root: BSTTree<T>;
   private numElements: number;
@@ -20,100 +23,47 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
     this.numElements = 0;
   }
 
-  /**
-   * Returns tree if all elements of the tree are empty.
-   */
   public isEmpty(): boolean {
     return this.numElements === 0;
   }
 
-  /**
-   * Returns the number of elements in the tree, including tree elements with multiple nodes
-   * of the same priority.
-   */
   public size(): number {
     return this.numElements;
   }
 
-  /**
-   * Inserts an element into the tree if the tree does not contain a duplicate node.
-   */
-  public insert(node: T): void {
-    this.root = this.internalInsert(node, this.root);
+  public insert(node: T, nodeAdjuster: (node: T) => T): void {
+    this.root = this.internalInsert(node, this.root, nodeAdjuster);
   }
-  
-  /**
-   * Returns the maximum element of the tree. If multiple elements, returns the first one inserted of the maximum priority.
-   */
+
   public findMax(): Optional<T> {
     return this.findMaxInternal(this.root);
   }
 
-  /**
-   * returns true if the node is contained in the tree within the specified range.
-   */
-  public contains(node: T): boolean {
-    return this.findInternal(node, this.root, (x) => x).isPresent();
+  public contains(node: T, nodeAdjuster: (node: T) => T): boolean {
+    return this.findInternal(node, this.root, nodeAdjuster).isPresent();
   }
 
-  /**
-   * Deletes the given node between the specified range.
-   */
-  public delete(node: T): void {
-    this.root = this.deleteInternal(node, this.root);
+  public delete(node: T, nodeAdjuster: (node: T) => T): void {
+    this.root = this.deleteInternal(node, this.root, nodeAdjuster);
   }
 
-  /**
-   * Finds the predecessor element within the given range.
-   */
-  public predecessor(node: T): Optional<T> {
-    return this.adjacent(node, TreeDirection.LEFT);
+  public predecessor(node: T, nodeAdjuster: (node: T) => T): Optional<T> {
+    return this.adjacent(node, TreeDirection.LEFT, nodeAdjuster);
   }
 
-  /**
-   * Finds the successor element within the given priority range
-   */
-  public successor(node: T): Optional<T> {
-    return this.adjacent(node, TreeDirection.RIGHT);
+  public successor(node: T, nodeAdjuster: (node: T) => T): Optional<T> {
+    return this.adjacent(node, TreeDirection.RIGHT, nodeAdjuster);
   }
 
-  /**
-   * Swaps the position of two nodes with equal priority
-   */
   public swapPositions(node1: T, node2: T, nodeAdjuster: (node: T) => T): void {
     const bstNode1 = this.findInternal(node1, this.root, nodeAdjuster);
-    console.log(bstNode1);
     const bstNode2 = this.findInternal(node2, this.root, nodeAdjuster);
-    console.log(bstNode2);
     bstNode1.ifPresent((foundNode1) => {
       bstNode2.ifPresent((foundNode2) => {
         foundNode1.setNodeInfo(node2);
         foundNode2.setNodeInfo(node1);
       });
     });
-  }
-
-  private internalInsert(node: T, root: BSTTree<T>): BSTTree<T> {
-    if (root.kind === 'empty') {
-      this.numElements += 1;
-      return BSTNode.leafNodeOf(node, 1);
-    } else {
-      const nodeInfo = root.nodeInfo;
-      if (node.equals(nodeInfo)) {
-        return root;
-      } else if (node.compareTo(root.nodeInfo) < 0) {
-        root.setLeft(this.internalInsert(node, root.walkLeft()));
-      } else {
-        root.setRight(this.internalInsert(node, root.walkRight()));
-      }
-
-      root = this.skew(root);
-      if (root.kind === 'node') {
-        root = this.split(root);
-      }
-    }
-
-    return root;
   }
 
   public skew(root: BSTNode<T>): BSTTree<T> {
@@ -149,7 +99,30 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
 
     return root;
   }
-  
+
+  private internalInsert(node: T, root: BSTTree<T>, nodeAdjuster: (node: T) => T): BSTTree<T> {
+    if (root.kind === 'empty') {
+      this.numElements += 1;
+      return BSTNode.leafNodeOf(node, 1);
+    } else {
+      const nodeInfo = root.nodeInfo;
+      if (node.equals(nodeInfo)) {
+        return root;
+      } else if (nodeAdjuster(node).compareTo(nodeAdjuster(root.nodeInfo)) < 0) {
+        root.setLeft(this.internalInsert(node, root.walkLeft(), nodeAdjuster));
+      } else {
+        root.setRight(this.internalInsert(node, root.walkRight(), nodeAdjuster));
+      }
+
+      root = this.skew(root);
+      if (root.kind === 'node') {
+        root = this.split(root);
+      }
+    }
+
+    return root;
+  }
+
   private findMaxInternal(root: BSTTree<T>): Optional<T> {
     if (root.kind === 'empty') {
       return Optional.empty();
@@ -164,12 +137,11 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
     }
   }
 
-  public findInternal(node: T, root: BSTTree<T>, nodeAdjuster: (node: T) => T): Optional<BSTNode<T>> {
+  private findInternal(node: T, root: BSTTree<T>, nodeAdjuster: (node: T) => T): Optional<BSTNode<T>> {
     switch (root.kind) {
       case 'empty':
         return Optional.empty();
       case 'node':
-        console.log(nodeAdjuster(root.nodeInfo), "::", root.nodeInfo, node.equals(root.nodeInfo));
         if (node.equals(root.nodeInfo)) {
           return Optional.of(root);
         } else if (nodeAdjuster(node).compareTo(nodeAdjuster(root.nodeInfo)) < 0) {
@@ -180,7 +152,7 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
     }
   }
 
-  private deleteInternal(node: T, root: BSTTree<T>): BSTTree<T> {
+  private deleteInternal(node: T, root: BSTTree<T>, nodeAdjuster: (node: T) => T): BSTTree<T> {
     if (root.kind === 'node') {
       if (node.equals(root.nodeInfo)) {
         this.numElements--;
@@ -193,7 +165,7 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
             heir = heir.walkRight();
           }
           root.setNodeInfo((heir as BSTNode<T>).nodeInfo);
-          root.setLeft(this.deleteInternal(root.nodeInfo, root.walkLeft()));
+          root.setLeft(this.deleteInternal(root.nodeInfo, root.walkLeft(), nodeAdjuster));
         } else {
           if (root.walkLeft().kind === 'empty') {
             root = root.walkRight();
@@ -201,13 +173,12 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
             root = root.walkLeft();
           }
         }
-      } else if (node.compareTo(root.nodeInfo) < 0) {
-        root.setLeft(this.deleteInternal(node, root.walkLeft()));
+      } else if (nodeAdjuster(node).compareTo(nodeAdjuster(root.nodeInfo)) < 0) {
+        root.setLeft(this.deleteInternal(node, root.walkLeft(), nodeAdjuster));
       } else {
-        root.setRight(this.deleteInternal(node, root.walkRight()));
+        root.setRight(this.deleteInternal(node, root.walkRight(), nodeAdjuster));
       }
     }
-  
 
     if (root.walkLeft().getLevel() < root.getLevel() - 1 ||
       root.walkRight().getLevel() < root.getLevel() - 1) {
@@ -226,8 +197,8 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
     return root;
   }
 
-  private adjacent(node: T, adjacentLocation: TreeDirection): Optional<T> {
-    const nodeLocWithContext = this.findWithCrumbs(node, this.root, []);
+  private adjacent(node: T, adjacentLocation: TreeDirection, nodeAdjuster: (node: T) => T): Optional<T> {
+    const nodeLocWithContext = this.findWithCrumbs(node, this.root, [], nodeAdjuster);
 
     return nodeLocWithContext.flatMap((loc) => {
       const curRoot = loc.fst;
@@ -250,8 +221,10 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
     });
   }
 
-  private findWithCrumbs(node: T, root: BSTTree<T>, breadcrumbs: Array<BreadCrumb<T>>):
-    Optional<Pair<BSTTree<T>, Array<BreadCrumb<T>>>> {
+  private findWithCrumbs(
+      node: T, root: BSTTree<T>, breadcrumbs: Array<BreadCrumb<T>>,
+      nodeAdjuster: (nodeAdjuster: T) => T):
+      Optional<Pair<BSTTree<T>, Array<BreadCrumb<T>>>> {
     switch (root.kind) {
       case 'empty':
         return Optional.empty();
@@ -260,10 +233,10 @@ export class AnderssonTree<T extends IBalanceableNode> implements IBST<T> {
           return Optional.of(new Pair(root, breadcrumbs));
         } else if (node.compareTo(root.nodeInfo) < 0) {
           return this.findWithCrumbs(node, root.walkLeft(),
-            [new BreadCrumb(TreeDirection.LEFT, root, root.walkRight()), ...breadcrumbs]);
+            [new BreadCrumb(TreeDirection.LEFT, root, root.walkRight()), ...breadcrumbs], nodeAdjuster);
         } else {
           return this.findWithCrumbs(node, root.walkRight(),
-            [new BreadCrumb(TreeDirection.RIGHT, root, root.walkLeft()), ...breadcrumbs]);
+            [new BreadCrumb(TreeDirection.RIGHT, root, root.walkLeft()), ...breadcrumbs], nodeAdjuster);
         }
     }
   }

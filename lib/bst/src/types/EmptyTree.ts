@@ -1,10 +1,10 @@
 import { IBalanceableNode } from '../IBalanceableNode';
 import { TreeDirection } from '../TreeDirection';
 
-import { BSTTree } from './BSTTree';
-
 /**
- * An empty tree node.
+ * An empty tree node used to terminate a path in the BST.
+ * Attempting to walk past the empty node leads to a land of
+ * infinite other empty nodes.
  */
 export class EmptyNode<T extends IBalanceableNode> {
   public static instance(): EmptyNode<any> {
@@ -19,10 +19,16 @@ export class EmptyNode<T extends IBalanceableNode> {
     this.kind = 'empty';
   }
 
+  /**
+   * Simulates walking left to another empty node.
+   */
   public walkLeft(): EmptyNode<T> {
     return this;
   }
 
+  /**
+   * Simulates walking right to another empty node.
+   */
   public walkRight(): EmptyNode<T> {
     return this;
   }
@@ -31,21 +37,11 @@ export class EmptyNode<T extends IBalanceableNode> {
     return 0;
   }
 
+  /**
+   * Simulates walking in the specified direction.
+   * @param direction to walk in
+   */
   public walk(direction: TreeDirection) {
     return EmptyNode.emptyTree;
   }
-
-  /*
-  public setLeft(node: BSTTree<T>): void { return undefined; }
-
-  public setRight(node: BSTTree<T>): void { return undefined; }
-
-  public set(node: BSTTree<T>, direction: TreeDirection) { return undefined; }
-
-  public setNodeInfo(nodeInfo: IBalanceableNode): void { return undefined; }
-
-  public setLevel(n: number) { return undefined; }
-
-  public incrementLevel() { return undefined; }
-  */
 }
