@@ -1,6 +1,7 @@
 import { LineSegment } from '../elements/primitives/LineSegment';
+import { DoodleCharacteristics } from './DoodleCharacteristics';
 import { IDoodleGenome } from './DoodleGenome';
-import { DoodleCharacteristics, DoodleLocalSignal } from './DoodleLocalSignal';
+import { DoodleLocalSignal } from './DoodleLocalSignal';
 import { ILocalPoint, LocalLocation } from './DoodleLocation';
 import { IDoodlePart } from './IDoodlePart';
 import { UndifferentiatedPart } from './UndifferentiatedPart';

@@ -43,7 +43,9 @@ export class Fern implements IDoodleGenome {
         const finalX = this.w / 2 + tmpX * this.w / 11;
         const finalY = this.h - tmpY * this.h / 11;
 
-        const angle = 5 * Math.sqrt(localSignal.hopLength) * Math.round(Math.atan(finalY / finalX) * 360 / (2 * Math.PI));
+        const angle =
+          5 * Math.sqrt(localSignal.hopLength) *
+          Math.round(Math.atan(finalY / finalX) * 360 / (2 * Math.PI));
         const mag = (1 / localSignal.hopLength) * Math.round(Math.sqrt(finalX * finalX + finalY * finalY));
 
         return DoodleSegment.bud(mag, location, new Alternate(angle, this, splits));

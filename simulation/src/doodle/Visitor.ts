@@ -1,5 +1,6 @@
 import { IDrawingManager } from '../drawing/SimpleDrawingManager';
 import { LineSegment } from '../elements/primitives/LineSegment';
+import { LineSweeper } from '../sweeper/LineSweepAlgo';
 import { Sun } from '../world/Sun';
 import { DoodleSegment } from './DoodleSegment';
 import { EnergyStorageDoodle } from './EnergyStorageDoodle';
@@ -7,7 +8,6 @@ import { DoodleRoot, IRootPart } from './RootDoodle';
 import { Seed } from './Seed';
 import { SpokePart } from './SpokePart';
 import { UndifferentiatedPart } from './UndifferentiatedPart';
-import { LineSweeper } from '../sweeper/LineSweepAlgo';
 
 export interface IVisitor<T> {
   visitSegment(value: DoodleSegment): void;
@@ -19,8 +19,8 @@ export interface IVisitor<T> {
   done(): T;
 }
 
-abstract class SegmentsOnly<T> implements IVisitor<T> {
-  public abstract visitSegment(value: DoodleSegment);
+abstract class NoOpVisitor<T> implements IVisitor<T> {
+  public visitSegment(value: DoodleSegment) { return undefined; }
   public visitSpoke(value: SpokePart) { return undefined; }
   public visitSeed(value: Seed) { return undefined; }
   public visitRoot(value: DoodleRoot) { return undefined; }
@@ -57,7 +57,7 @@ export class LoggingVisitor implements IVisitor<void> {
   public done() { return undefined; }
 }
 
-export class DrawingVisitor extends SegmentsOnly<void> {
+export class DrawingVisitor extends NoOpVisitor<void> {
   private drawingManager: IDrawingManager;
 
   public constructor(drawingManager: IDrawingManager) {
@@ -78,7 +78,7 @@ export interface ITaggedSegment {
   lineSegment: LineSegment;
 }
 
-export class SegmentVisitor extends SegmentsOnly<ITaggedSegment[]> {
+export class SegmentVisitor extends NoOpVisitor<ITaggedSegment[]> {
   private rootPart: IRootPart;
   private segments: ITaggedSegment[];
 
@@ -130,12 +130,9 @@ export class EnergyCollector implements IVisitor<number> {
     const sweeper = new LineSweeper();
     sweeper.addAll(this.segments);
     const bonus = sweeper.sweep();
-    const bonusEnergy = bonus.map((b) => this.sun.energyFunctionFromLineSegment(b.energySegment)).reduce((a, b) => a + b, 0);
-    console.log("SEGMENTS");
-    console.log(this.segments);
-    console.log("______");
-    bonus.forEach(e => console.log(e.point1, e.point2, e.energySegment, e.point1.distanceToPoint(e.point2), e.energySegment.magnitude()));
-    console.log(this.energy, bonusEnergy);
+    const bonusEnergy =
+      bonus.map((b) => this.sun.energyFunctionFromLineSegment(b.lineSegment))
+        .reduce((a, b) => a + b, 0);
     return this.energy;
   }
 }

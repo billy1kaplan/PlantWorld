@@ -230,7 +230,7 @@ export class LineSegment implements IDrawable, IPrimitive {
   private isFlipOrder(p1: Point, p2: Point) {
     const p1x = p1.getX();
     const p2x = p2.getX();
-    return (p2x < p1x) || (p1x === p2x && p1.getY() )
+    return (p2x < p1x) || (p1x === p2x && p1.getY());
   }
 
   private minDistance(point: Point) {

@@ -1,4 +1,5 @@
-import { DoodleCharacteristics, DoodleLocalSignal } from './DoodleLocalSignal';
+import { DoodleCharacteristics } from './DoodleCharacteristics';
+import { DoodleLocalSignal } from './DoodleLocalSignal';
 import { IDoodlePart } from './IDoodlePart';
 import { IVisitor } from './Visitor';
 

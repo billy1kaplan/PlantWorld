@@ -1,19 +1,5 @@
+import { DoodleCharacteristics } from './DoodleCharacteristics';
 import { ILocalPoint } from './DoodleLocation';
-
-export class DoodleCharacteristics {
-  public storedEnergy: number;
-  public maintainenceCost: number;
-
-  public constructor(storedEnergy: number, maintainenceCost: number) {
-    this.storedEnergy = storedEnergy;
-    this.maintainenceCost = maintainenceCost;
-  }
-
-  public feed(energy: number): DoodleCharacteristics {
-    return new DoodleCharacteristics(this.storedEnergy + energy,
-                                     this.maintainenceCost);
-  }
-}
 
 export class DoodleLocalSignal {
   public static rootSignal(rootPoint: ILocalPoint) {

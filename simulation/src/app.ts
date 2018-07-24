@@ -1,14 +1,11 @@
 import { RootPoint } from './doodle/DoodleLocation';
-import { IRootPart } from './doodle/RootDoodle';
 import { Seed } from './doodle/Seed';
 import { SeedGenome } from './doodle/SeedGenome';
-import { DrawingVisitor } from './doodle/Visitor';
+import { SimpleBranchingTree } from './doodle/SimpleBranchingTree';
 import { IDrawingManager, SimpleDrawingManager } from './drawing/SimpleDrawingManager';
 import { Point } from './elements/primitives/Point';
-import { Fern } from './doodle/Fern';
-import { SimpleBranchingTree } from './doodle/SimpleBranchingTree';
-import { World } from './world/World';
 import { Sun } from './world/Sun';
+import { World } from './world/World';
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
@@ -36,7 +33,7 @@ class Simulation {
 }
 
 const doodleGenome = new SimpleBranchingTree();
-//const doodleGenome = new Fern(20, 100);
+// const doodleGenome = new Fern(20, 100);
 const seedGenome = new SeedGenome(doodleGenome);
 
 const starting = [540];

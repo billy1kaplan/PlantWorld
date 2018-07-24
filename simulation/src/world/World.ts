@@ -1,7 +1,7 @@
 import { IRootPart } from '../doodle/RootDoodle';
-import { EnergyCollector, LoggingVisitor, DrawingVisitor } from '../doodle/Visitor';
-import { Sun } from './Sun';
+import { DrawingVisitor, EnergyCollector, LoggingVisitor } from '../doodle/Visitor';
 import { IDrawingManager } from '../drawing/SimpleDrawingManager';
+import { Sun } from './Sun';
 
 export class World {
   private sun: Sun;
@@ -25,7 +25,7 @@ export class World {
   public log(): void {
     this.plants.forEach((p) => p.visit(new LoggingVisitor()));
   }
-  
+
   public draw(drawingManager: IDrawingManager): void {
     this.plants.forEach((p) => p.visit(new DrawingVisitor(drawingManager)));
   }
