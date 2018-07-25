@@ -1,5 +1,7 @@
+import { DrawingVisitor } from '../doodle/doodlevisitor/DrawingVisitor';
+import { EnergyCollector } from '../doodle/doodlevisitor/EnergyCollector';
+import { LoggingVisitor } from '../doodle/doodlevisitor/LoggingVisitor';
 import { IRootPart } from '../doodle/RootDoodle';
-import { DrawingVisitor, EnergyCollector, LoggingVisitor } from '../doodle/Visitor';
 import { IDrawingManager } from '../drawing/SimpleDrawingManager';
 import { Sun } from './Sun';
 

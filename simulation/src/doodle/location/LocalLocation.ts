@@ -1,29 +1,8 @@
-import {LineSegment} from '../elements/primitives/LineSegment';
-import {Point} from '../elements/primitives/Point';
-import {cos, sin} from '../geometricmath/Utility';
+import {LineSegment} from '../../elements/primitives/LineSegment';
+import {Point} from '../../elements/primitives/Point';
+import {cos, sin} from '../../geometricmath/Utility';
 
-export interface ILocalPoint {
-  getGlobalPosition(): Point;
-  getAngularOffset(): number;
-}
-
-export class RootPoint implements ILocalPoint {
-  private point: Point;
-  private angularOffset: number;
-
-  public constructor(point: Point, angularOffset: number) {
-    this.point = point;
-    this.angularOffset = angularOffset;
-  }
-
-  public getGlobalPosition(): Point {
-    return this.point;
-  }
-
-  public getAngularOffset(): number {
-    return this.angularOffset;
-  }
-}
+import {ILocalPoint} from './ILocalPoint';
 
 export class LocalLocation implements ILocalPoint {
   private parent: ILocalPoint;

@@ -1,5 +1,5 @@
 import { DoodleCharacteristics } from './DoodleCharacteristics';
-import { ILocalPoint } from './DoodleLocation';
+import { ILocalPoint } from './location/ILocalPoint';
 
 export class DoodleLocalSignal {
   public static rootSignal(rootPoint: ILocalPoint) {

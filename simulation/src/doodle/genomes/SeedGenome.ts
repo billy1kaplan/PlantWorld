@@ -1,9 +1,9 @@
-import { DoodleCharacteristics } from './DoodleCharacteristics';
-import { IDoodleGenome } from './DoodleGenome';
-import { DoodleLocalSignal } from './DoodleLocalSignal';
-import { LocalLocation } from './DoodleLocation';
-import { DoodleSegment } from './DoodleSegment';
-import { DoodleRoot, IRootPart } from './RootDoodle';
+import {DoodleCharacteristics} from '../DoodleCharacteristics';
+import {DoodleLocalSignal} from '../DoodleLocalSignal';
+import {DoodleSegment} from '../DoodleSegment';
+import {LocalLocation} from '../location/LocalLocation';
+import {DoodleRoot, IRootPart} from '../RootDoodle';
+import {IDoodleGenome} from './DoodleGenome';
 
 export interface ISeedGenome {
   getDoodleGenome: () => IDoodleGenome;

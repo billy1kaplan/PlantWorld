@@ -1,9 +1,10 @@
-import { IDoodleGenome } from './DoodleGenome';
-import { DoodleLocalSignal } from './DoodleLocalSignal';
-import { ILocalPoint, LocalLocation } from './DoodleLocation';
-import { IDoodlePart } from './IDoodlePart';
-import { UndifferentiatedPart } from './UndifferentiatedPart';
-import { IVisitor } from './Visitor';
+import {DoodleLocalSignal} from './DoodleLocalSignal';
+import {IVisitor} from './doodlevisitor/IVisitor';
+import {IDoodleGenome} from './genomes/DoodleGenome';
+import {IDoodlePart} from './IDoodlePart';
+import {ILocalPoint} from './location/ILocalPoint';
+import {LocalLocation} from './location/LocalLocation';
+import {UndifferentiatedPart} from './UndifferentiatedPart';
 
 export class SpokePart implements IDoodlePart {
   public static bud(numberOfElements: number,

@@ -1,8 +1,9 @@
-import { IDoodleGenome } from './DoodleGenome';
-import { DoodleLocalSignal } from './DoodleLocalSignal';
-import { DoodleSegment } from './DoodleSegment';
-import { IDoodlePart } from './IDoodlePart';
-import { SpokePart } from './SpokePart';
+import {DoodleLocalSignal} from '../DoodleLocalSignal';
+import {DoodleSegment} from '../DoodleSegment';
+import {IDoodlePart} from '../IDoodlePart';
+import {SpokePart} from '../SpokePart';
+
+import {IDoodleGenome} from './DoodleGenome';
 
 export class SimpleBranchingTree implements IDoodleGenome {
   public differentiatePart(localSignal: DoodleLocalSignal): IDoodlePart {

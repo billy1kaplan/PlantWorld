@@ -1,8 +1,8 @@
-import { IDoodleGenome } from './DoodleGenome';
-import { DoodleLocalSignal } from './DoodleLocalSignal';
-import { DoodleSegment } from './DoodleSegment';
-import { IDoodlePart } from './IDoodlePart';
-import { SpokePart } from './SpokePart';
+import {DoodleLocalSignal} from '../DoodleLocalSignal';
+import {DoodleSegment} from '../DoodleSegment';
+import {IDoodlePart} from '../IDoodlePart';
+import {IDoodleGenome} from './DoodleGenome';
+import {FernAlternate} from './FernAlternate';
 
 export class Fern implements IDoodleGenome {
     private w: number;
@@ -11,6 +11,7 @@ export class Fern implements IDoodleGenome {
         this.w = w;
         this.h = h;
     }
+
     public differentiatePart(localSignal: DoodleLocalSignal): IDoodlePart {
         const random = Math.random();
         const location = localSignal.doodleLocation;
@@ -48,21 +49,6 @@ export class Fern implements IDoodleGenome {
           Math.round(Math.atan(finalY / finalX) * 360 / (2 * Math.PI));
         const mag = (1 / localSignal.hopLength) * Math.round(Math.sqrt(finalX * finalX + finalY * finalY));
 
-        return DoodleSegment.bud(mag, location, new Alternate(angle, this, splits));
-    }
-}
-
-class Alternate implements IDoodleGenome {
-    private angle: number;
-    private other: IDoodleGenome;
-    private splits: number;
-    constructor(angle: number, other: IDoodleGenome, splits: number) {
-        this.angle = angle;
-        this.other = other;
-        this.splits = splits;
-    }
-
-    public differentiatePart(localSignal: DoodleLocalSignal): IDoodlePart {
-        return SpokePart.bud(this.splits, this.other, -this.angle / 4, this.angle);
+        return DoodleSegment.bud(mag, location, new FernAlternate(angle, this, splits));
     }
 }

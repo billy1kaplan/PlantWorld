@@ -1,16 +1,16 @@
 import {DoodleLocalSignal} from './DoodleLocalSignal';
-import {RootPoint} from './DoodleLocation';
+import {IVisitor} from './doodlevisitor/IVisitor';
+import {ISeedGenome} from './genomes/SeedGenome';
+import {RootLocation} from './location/RootLocation';
 import {IRootPart} from './RootDoodle';
-import {ISeedGenome} from './SeedGenome';
-import {IVisitor} from './Visitor';
 
 export class Seed implements IRootPart {
   private seedGenome: ISeedGenome;
-  private seedLocation: RootPoint;
+  private seedLocation: RootLocation;
   private energy: number;
 
   public constructor(seedGenome: ISeedGenome,
-                     seedLocation: RootPoint,
+                     seedLocation: RootLocation,
                      energy: number) {
     this.seedGenome = seedGenome;
     this.seedLocation = seedLocation;

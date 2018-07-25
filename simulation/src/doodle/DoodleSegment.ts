@@ -1,11 +1,12 @@
 import { LineSegment } from '../elements/primitives/LineSegment';
 import { DoodleCharacteristics } from './DoodleCharacteristics';
-import { IDoodleGenome } from './DoodleGenome';
 import { DoodleLocalSignal } from './DoodleLocalSignal';
-import { ILocalPoint, LocalLocation } from './DoodleLocation';
+import { IVisitor } from './doodlevisitor/IVisitor';
+import { IDoodleGenome } from './genomes/DoodleGenome';
 import { IDoodlePart } from './IDoodlePart';
+import { ILocalPoint } from './location/ILocalPoint';
+import { LocalLocation } from './location/LocalLocation';
 import { UndifferentiatedPart } from './UndifferentiatedPart';
-import { IVisitor } from './Visitor';
 
 export class DoodleSegment implements IDoodlePart {
   public static bud(length: number,

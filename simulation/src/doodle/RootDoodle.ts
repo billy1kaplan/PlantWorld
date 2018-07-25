@@ -1,9 +1,9 @@
 import { DoodleCharacteristics } from './DoodleCharacteristics';
-import { IDoodleGenome } from './DoodleGenome';
 import { DoodleLocalSignal } from './DoodleLocalSignal';
-import { ILocalPoint } from './DoodleLocation';
+import { IVisitor } from './doodlevisitor/IVisitor';
+import { IDoodleGenome } from './genomes/DoodleGenome';
 import { IDoodlePart } from './IDoodlePart';
-import { IVisitor } from './Visitor';
+import { ILocalPoint } from './location/ILocalPoint';
 
 export interface IRootPart {
   grow(energy: number);

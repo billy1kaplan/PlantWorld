@@ -1,7 +1,7 @@
-import {IDoodleGenome} from './DoodleGenome';
 import {DoodleLocalSignal} from './DoodleLocalSignal';
+import {IVisitor} from './doodlevisitor/IVisitor';
+import {IDoodleGenome} from './genomes/DoodleGenome';
 import {IDoodlePart} from './IDoodlePart';
-import {IVisitor} from './Visitor';
 
 export class UndifferentiatedPart implements IDoodlePart {
   private doodleGenome: IDoodleGenome;

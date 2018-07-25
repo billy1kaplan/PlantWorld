@@ -1,7 +1,7 @@
 import { DoodleCharacteristics } from './DoodleCharacteristics';
 import { DoodleLocalSignal } from './DoodleLocalSignal';
+import { IVisitor } from './doodlevisitor/IVisitor';
 import { IDoodlePart } from './IDoodlePart';
-import { IVisitor } from './Visitor';
 
 export class EnergyStorageDoodle implements IDoodlePart {
   // I.e. capacity, discharge
