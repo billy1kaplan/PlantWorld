@@ -4,7 +4,6 @@ import { IVisitor } from './doodlevisitor/IVisitor';
 import { IDoodlePart } from './IDoodlePart';
 
 export class EnergyStorageDoodle implements IDoodlePart {
-  // I.e. capacity, discharge
   private localCharacteristics: DoodleCharacteristics;
   private storageEfficiency: number;
 
@@ -26,6 +25,6 @@ export class EnergyStorageDoodle implements IDoodlePart {
   }
 
   public getStoredEnergy() {
-    return this.localCharacteristics.storedEnergy;
+    return (1 - this.storageEfficiency) * this.localCharacteristics.storedEnergy;
   }
 }

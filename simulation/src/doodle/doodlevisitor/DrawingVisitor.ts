@@ -3,6 +3,9 @@ import {DoodleSegment} from '../DoodleSegment';
 
 import {NoOpVisitorSkeleton} from './NoOpVisitorSkeleton';
 
+/**
+ * Visitor class that draws each segment encountered.
+ */
 export class DrawingVisitor extends NoOpVisitorSkeleton<void> {
   private drawingManager: IDrawingManager;
 

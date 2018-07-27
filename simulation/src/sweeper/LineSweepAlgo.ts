@@ -7,6 +7,7 @@ import { IntersectionEvent } from './IntersectionNode';
 import { LineSubsegment } from './LineSubsegment';
 import { PrioritySegment } from './PrioritySegment';
 import { SweepEvent } from './SweepEvent';
+import { Line } from '../elements/primitives/Line';
 
 export class LineSweeper {
   public static sweepSegments(lineSegments: LineSegment[]): LineSubsegment[] {
@@ -58,11 +59,11 @@ export class LineSweeper {
     while (!this.priority.isEmpty()) {
       const event = this.priority.deleteMin().getOrError();
       const maxSegment = this.lines.findMax();
-      maxSegment.ifPresent((prioritySegment) => {
+      maxSegment.ifPresent((currentMaxSegment) => {
         if (event.point.x !== previousEvent.point.x) {
-          const currentPoint = prioritySegment.getSegment().atPoint(event.point.x).getOrError();
+          const currentPoint = currentMaxSegment.getSegment().atPoint(event.point.x).getOrError();
           const bonusEnergySegment = new LineSubsegment(
-            previousEvent.point, new Point(event.point.x, currentPoint), prioritySegment.getSegment());
+            previousEvent.point, new Point(event.point.x, currentPoint), currentMaxSegment.getSegment());
           bonusEnergy.unshift(bonusEnergySegment);
         }
       });

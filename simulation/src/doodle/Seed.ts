@@ -2,7 +2,7 @@ import {DoodleLocalSignal} from './DoodleLocalSignal';
 import {IVisitor} from './doodlevisitor/IVisitor';
 import {ISeedGenome} from './genomes/SeedGenome';
 import {RootLocation} from './location/RootLocation';
-import {IRootPart} from './RootDoodle';
+import { IRootPart } from './IRootPart';
 
 export class Seed implements IRootPart {
   private seedGenome: ISeedGenome;

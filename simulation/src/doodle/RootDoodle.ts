@@ -4,11 +4,7 @@ import { IVisitor } from './doodlevisitor/IVisitor';
 import { IDoodleGenome } from './genomes/DoodleGenome';
 import { IDoodlePart } from './IDoodlePart';
 import { ILocalPoint } from './location/ILocalPoint';
-
-export interface IRootPart {
-  grow(energy: number);
-  visit<T>(visitor: IVisitor<T>): void;
-}
+import { IRootPart } from './IRootPart';
 
 export class DoodleRoot implements IRootPart {
   private rootPoint: ILocalPoint;
@@ -29,7 +25,8 @@ export class DoodleRoot implements IRootPart {
   }
 
   public grow(energy: number): IRootPart {
-    const propagateSignal = DoodleLocalSignal.rootSignal(this.rootPoint);
+    const propagateSignal =
+      DoodleLocalSignal.rootSignal(this.rootPoint).feed(energy);
     const newChildren = this.children.map((child) => child.grow(propagateSignal));
     return new DoodleRoot(this.rootPoint,
                           this.rootCharacteristics,

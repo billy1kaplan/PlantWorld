@@ -7,6 +7,10 @@ import {UndifferentiatedPart} from '../UndifferentiatedPart';
 
 import {IVisitor} from './IVisitor';
 
+/**
+ * A no op skeleton that visits every node and does nothing to reduce boiler-plate
+ * in visitor's that only carry about certain sub-parts.
+ */
 export abstract class NoOpVisitorSkeleton<T> implements IVisitor<T> {
   public visitSegment(value: DoodleSegment) { return undefined; }
   public visitSpoke(value: SpokePart) { return undefined; }

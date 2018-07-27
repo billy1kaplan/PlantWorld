@@ -23,9 +23,11 @@ export class EndEvent implements IHeapElement {
     }
 
     public equals(other: SweepEvent) {
-        return this.kind === other.kind
+        const res =  this.kind === other.kind
             && this.point.equals(other.point)
             && this.segment.equals(other.segment);
+        console.log("COMP\n", this, other, res, "END COMP\n\n");
+        return res;
     }
 
     public compareTo(other: SweepEvent) {

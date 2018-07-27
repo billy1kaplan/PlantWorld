@@ -1,9 +1,9 @@
 import { DrawingVisitor } from '../doodle/doodlevisitor/DrawingVisitor';
 import { EnergyCollector } from '../doodle/doodlevisitor/EnergyCollector';
 import { LoggingVisitor } from '../doodle/doodlevisitor/LoggingVisitor';
-import { IRootPart } from '../doodle/RootDoodle';
 import { IDrawingManager } from '../drawing/SimpleDrawingManager';
 import { Sun } from './Sun';
+import { IRootPart } from '../doodle/IRootPart';
 
 export class World {
   private sun: Sun;
@@ -16,9 +16,8 @@ export class World {
 
   public step(): World {
     const grownPlants = this.plants.map((p) => {
-      const energyCollector = new EnergyCollector(this.sun);
-      p.visit(energyCollector);
-      const energy = energyCollector.done();
+      const energy = this.collectEnergyFromDoodle(p);
+      console.log(energy);
       return p.grow(energy);
     });
     return new World(this.sun, grownPlants);
@@ -30,5 +29,11 @@ export class World {
 
   public draw(drawingManager: IDrawingManager): void {
     this.plants.forEach((p) => p.visit(new DrawingVisitor(drawingManager)));
+  }
+
+  private collectEnergyFromDoodle(root: IRootPart): number {
+      const energyCollector = new EnergyCollector(this.sun);
+      root.visit(energyCollector);
+      return energyCollector.done();
   }
 }

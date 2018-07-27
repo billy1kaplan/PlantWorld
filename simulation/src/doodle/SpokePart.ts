@@ -7,6 +7,8 @@ import {LocalLocation} from './location/LocalLocation';
 import {UndifferentiatedPart} from './UndifferentiatedPart';
 
 export class SpokePart implements IDoodlePart {
+  private static energyPerTick = 10;
+
   public static bud(numberOfElements: number,
                     genome: IDoodleGenome,
                     offset: number,
@@ -33,8 +35,12 @@ export class SpokePart implements IDoodlePart {
 
   public grow(doodleLocalSignal: DoodleLocalSignal): IDoodlePart {
     const parts = this.doodleParts.map((p, i) => {
-      return p.grow(
-        this.shiftSignal(i, doodleLocalSignal).adjustFactor((_) => 10));
+      const updatedLocalSignal =
+        this.shiftSignal(i, doodleLocalSignal)
+          .adjustFactor((_) => 10)
+          .feed(-SpokePart.energyPerTick * doodleLocalSignal.age *
+                this.doodleParts.length);
+      return p.grow(updatedLocalSignal);
     });
     return new SpokePart(this.genome, parts, this.offset, this.sweepRange);
   }

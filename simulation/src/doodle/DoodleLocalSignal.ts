@@ -70,9 +70,7 @@ export class DoodleLocalSignal {
     if (this.age > 10) {
       return 1.0;
     } else {
-      // const energyRequired = doodleCharacteristics.maintainenceCost;
-      // return Math.max(1.0, this.freeEnergy / energyRequired);
-      return 1 + 0.01 / Math.pow(1 + this.age, 2);
+      return 1 + Math.min(0.1, Math.round(0.001 * this.freeEnergy / (this.age * this.age + 1)));
     }
   }
 

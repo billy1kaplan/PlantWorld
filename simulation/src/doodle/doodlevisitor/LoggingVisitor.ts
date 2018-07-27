@@ -7,6 +7,9 @@ import {UndifferentiatedPart} from '../UndifferentiatedPart';
 
 import {IVisitor} from './IVisitor';
 
+/**
+ * A logging visitor which simple logs each doodle part visited.
+ */
 export class LoggingVisitor implements IVisitor<void> {
   public visitSegment(value: DoodleSegment) {
     console.log(value);
