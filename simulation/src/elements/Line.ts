@@ -1,16 +1,14 @@
-import { IPrimitive } from './IPrimitive';
-import { IPrimitiveLine } from './IPrimitiveLine';
 import { LineSegment } from './LineSegment';
 import { Point } from './Point';
 import { VerticalLine } from './VerticalLine';
 
-export class Line implements IPrimitiveLine {
-  public static fromTwoPoints(p1: Point, p2: Point): IPrimitiveLine {
+export class Line {
+  public static fromTwoPoints(p1: Point, p2: Point): Line|VerticalLine {
     const slope = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX());
     return this.fromPointSlope(slope, p1);
   }
 
-  public static fromPointSlope(slope: number, point: Point): IPrimitiveLine {
+  public static fromPointSlope(slope: number, point: Point): Line|VerticalLine {
     const intercept = -point.getX() * slope + point.getY();
 
     if (Math.abs(slope) === Infinity) {
@@ -21,7 +19,7 @@ export class Line implements IPrimitiveLine {
   }
 
   public static fromSlopeIntercept(slope: number, intercept: number):
-      IPrimitiveLine {
+      Line {
     return new Line(slope, intercept);
   }
 
@@ -29,14 +27,6 @@ export class Line implements IPrimitiveLine {
 
   public evaluate(x: number) {
     return this.slope * x + this.intercept;
-  }
-
-  public evaluate1(x: number) {
-    return this.slope * x + this.intercept;
-  }
-
-  public distanceTo(other: IPrimitive) {
-    return other.distanceToLine(this);
   }
 
   public distanceToPoint(point: Point): number {
@@ -50,9 +40,9 @@ export class Line implements IPrimitiveLine {
 
     const pointA = new Point(xA, this.evaluate(xA));
     const pointB = new Point(xB, this.evaluate(xB));
-    const A = pointA.distanceTo(point);
-    const B = pointB.distanceTo(point);
-    const C = pointA.distanceTo(pointB);
+    const A = pointA.distanceToPoint(point);
+    const B = pointB.distanceToPoint(point);
+    const C = pointA.distanceToPoint(pointB);
     const square = (n) => n * n;
 
     return (square(A) + square(C) - square(B)) / (2 * C);

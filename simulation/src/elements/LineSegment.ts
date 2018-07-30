@@ -1,12 +1,9 @@
 import { Optional } from 'Optional';
-import { IDrawingCanvas } from '../../drawing/IDrawingCanvas';
-import { IDrawable } from '../IDrawable';
-import { IPrimitive } from './IPrimitive';
 import { Line } from './Line';
 import { Point } from './Point';
 import { VerticalLine } from './VerticalLine';
 
-export class LineSegment implements IDrawable, IPrimitive {
+export class LineSegment {
   private static crossProduct(point1: Point, point2: Point) {
     return point1.x * point2.y - point2.x * point1.y;
   }
@@ -23,31 +20,6 @@ export class LineSegment implements IDrawable, IPrimitive {
       this.p1 = p2;
       this.p2 = p1;
     }
-  }
-
-  public draw(drawingManager: IDrawingCanvas) {
-    drawingManager.drawLine(this.p1, this.p2);
-  }
-
-  public erase(drawingManager: IDrawingCanvas) {
-    drawingManager.eraseLine(this.p1, this.p2);
-  }
-
-  public getDistance(origin: Point) {
-    const slope = this.getSlope();
-    const perpendicularSlope = this.perpendicularSlope();
-
-    if (slope === Infinity) {
-      return this.horizontalLineSelect(origin);
-    } else if (Math.abs(perpendicularSlope) === Infinity) {
-      return this.verticalLineSelect(origin);
-    } else {
-      return this.ProjectToLine(origin);
-    }
-  }
-
-  public distanceTo(other: IPrimitive) {
-    return other.distanceToLineSegment(this);
   }
 
   public distanceToPoint(point: Point): number {
@@ -185,62 +157,9 @@ export class LineSegment implements IDrawable, IPrimitive {
     return deltaY / deltaX;
   }
 
-  private perpendicularSlope() {
-    const slope = this.getSlope();
-    return -1 / slope;
-  }
-
-  private verticalLineSelect(origin: Point) {
-    if (origin.getX() > this.p1.getX() && origin.getX() < this.p2.getX()) {
-      return origin.distanceTo(new Point(origin.getX(), this.p1.getY()));
-    } else {
-      return this.minDistance(origin);
-    }
-  }
-
-  private horizontalLineSelect(origin: Point) {
-    if ((origin.getY() > this.p1.getY() && origin.getY() < this.p2.getY()) ||
-        (origin.getY() > this.p2.getY() && origin.getY() < this.p1.getY())) {
-      return origin.distanceTo(new Point(this.p1.getX(), origin.getY()));
-    } else {
-      return this.minDistance(origin);
-    }
-  }
-
-  private ProjectToLine(point: Point) {
-    const slope = this.getSlope();
-    const perpendicularSlope = this.perpendicularSlope();
-
-    const b1 = -this.p1.getX() * slope + this.p1.getY();
-    const b2 = -point.getX() * perpendicularSlope + point.getY();
-
-    const newX = (b2 - b1) / (slope - perpendicularSlope);
-    const newY = point.getY() + perpendicularSlope * (newX - point.getX());
-
-    const minDistanceFromEnds = this.minDistance(point);
-    const distanceFromLine = point.distanceTo(new Point(newX, newY));
-
-    if (newX > this.p1.getX() && newX < this.p2.getX()) {
-      return distanceFromLine;
-    } else {
-      return minDistanceFromEnds;
-    }
-  }
-
   private isFlipOrder(p1: Point, p2: Point) {
     const p1x = p1.getX();
     const p2x = p2.getX();
     return (p2x < p1x) || (p1x === p2x && p1.getY());
-  }
-
-  private minDistance(point: Point) {
-    const p1Distance = this.p1.distanceTo(point);
-    const p2Distance = this.p2.distanceTo(point);
-
-    if (p1Distance < p2Distance) {
-      return p1Distance;
-    } else {
-      return p2Distance;
-    }
   }
 }

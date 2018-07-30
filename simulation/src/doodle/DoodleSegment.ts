@@ -1,4 +1,4 @@
-import { LineSegment } from '../elements/primitives/LineSegment';
+import { LineSegment } from '../elements/LineSegment';
 import { DoodleCharacteristics } from './DoodleCharacteristics';
 import { DoodleLocalSignal } from './DoodleLocalSignal';
 import { IVisitor } from './doodlevisitor/IVisitor';

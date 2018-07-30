@@ -1,5 +1,5 @@
-import {LineSegment} from '../../elements/primitives/LineSegment';
-import {Point} from '../../elements/primitives/Point';
+import {LineSegment} from '../../elements/LineSegment';
+import {Point} from '../../elements/Point';
 import {cos, sin} from '../../geometricmath/Utility';
 
 import {ILocalPoint} from './ILocalPoint';

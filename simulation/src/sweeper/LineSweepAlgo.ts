@@ -1,13 +1,12 @@
 import { BST } from 'bst';
 import { Heap } from 'Heap';
-import { LineSegment } from '../elements/primitives/LineSegment';
-import { Point } from '../elements/primitives/Point';
+import { LineSegment } from '../elements/LineSegment';
+import { Point } from '../elements/Point';
 import { EndEvent } from './EndNode';
 import { IntersectionEvent } from './IntersectionNode';
 import { LineSubsegment } from './LineSubsegment';
 import { PrioritySegment } from './PrioritySegment';
 import { SweepEvent } from './SweepEvent';
-import { Line } from '../elements/primitives/Line';
 
 export class LineSweeper {
   public static sweepSegments(lineSegments: LineSegment[]): LineSubsegment[] {

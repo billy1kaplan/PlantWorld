@@ -1,15 +1,10 @@
-import { IPrimitive } from './IPrimitive';
-import { IPrimitiveLine } from './IPrimitiveLine';
 import { Line } from './Line';
 import { LineSegment } from './LineSegment';
 import { Point } from './Point';
+import { Optional } from 'Optional';
 
-export class VerticalLine implements IPrimitiveLine {
+export class VerticalLine {
   constructor(public x: number) {}
-
-  public distanceTo(other: IPrimitive): number {
-    return other.distanceToVerticalLine(this);
-  }
 
   public distanceToPoint(point: Point): number {
     return Math.abs(this.x - point.getX());
@@ -27,17 +22,11 @@ export class VerticalLine implements IPrimitiveLine {
     return Math.abs(this.x - verticalLine.getX());
   }
 
-  public getX() {
-    return this.x;
+  public evaluate(x: number): Optional<number> {
+    return Optional.empty();
   }
 
-  public evaluate(x: number) {
-    throw new Error('Method not implemented.');
-  }
-  public getSlope() {
-    throw new Error('Method not implemented.');
-  }
-  public getIntercept() {
-    throw new Error('Method not implemented.');
+  public getX() {
+    return this.x;
   }
 }

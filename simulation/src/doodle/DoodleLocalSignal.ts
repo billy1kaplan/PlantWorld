@@ -75,11 +75,10 @@ export class DoodleLocalSignal {
   }
 
   public adjustFactor(transformer: (original: number) => number): DoodleLocalSignal {
-    return new DoodleLocalSignal(
-      this.doodleLocation,
-      this.freeEnergy,
-      this.hopLength,
-      this.age,
-      transformer(this.differentialFactor));
+    return new DoodleLocalSignal(this.doodleLocation,
+                                 this.freeEnergy,
+                                 this.hopLength,
+                                 this.age,
+                                 transformer(this.differentialFactor));
   }
 }

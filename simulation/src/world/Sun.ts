@@ -1,6 +1,7 @@
-import {Line} from '../elements/primitives/Line';
-import {LineSegment} from '../elements/primitives/LineSegment';
-import {Point} from '../elements/primitives/Point';
+import {Line} from '../elements/Line';
+import {LineSegment} from '../elements/LineSegment';
+import {Point} from '../elements/Point';
+import { VerticalLine } from '../elements/VerticalLine';
 
 /**
  * Represents the sun, the life giving force for our doodles.
@@ -30,6 +31,12 @@ export class Sun {
    */
   public energyFunction(p1: Point, p2: Point) {
     const line = Line.fromTwoPoints(p1, p2);
+
+    // Vertical lines cannot provide energy
+    if (line instanceof VerticalLine) {
+      return 0;
+    }
+
     const slope = -line.getSlope();
     const intercept = this.height - line.getIntercept();
     const integrate = (x: number) => -1 / (slope * (intercept + slope * x));

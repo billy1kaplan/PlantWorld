@@ -1,9 +1,8 @@
-import { IPrimitive } from './IPrimitive';
 import { Line } from './Line';
 import { LineSegment } from './LineSegment';
 import { VerticalLine } from './VerticalLine';
 
-export class Point implements IPrimitive {
+export class Point {
   public static fromRadiusAngle(radius: number, angle: number) {
     const x = radius * Math.cos(Point.toRadians(angle));
     const y = radius * Math.sin(Point.toRadians(angle));
@@ -17,10 +16,6 @@ export class Point implements IPrimitive {
   public constructor(public x: number, public y: number) {
     this.x = x;
     this.y = y;
-  }
-
-  public distanceTo(other: IPrimitive) {
-    return other.distanceToPoint(this);
   }
 
   public distanceToPoint(point: Point): number {

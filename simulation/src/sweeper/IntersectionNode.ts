@@ -1,6 +1,6 @@
 import {IHeapElement} from '../../../lib/heap/dist/IHeapElement';
-import {LineSegment} from '../elements/primitives/LineSegment';
-import {Point} from '../elements/primitives/Point';
+import {LineSegment} from '../elements/LineSegment';
+import {Point} from '../elements/Point';
 
 import {SweepEvent} from './SweepEvent';
 
